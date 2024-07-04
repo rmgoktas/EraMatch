@@ -1,0 +1,25 @@
+//
+//  BackgroundView.swift
+//  EraMatch
+//
+//  Created by R. Metehan GÖKTAŞ on 3.07.2024.
+//
+
+import SwiftUI
+
+struct BackgroundView: View {
+    var body: some View {
+        ZStack {
+            Image("bg")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .scaledToFill()
+                .frame(minWidth: 0, maxWidth: .infinity)
+                .edgesIgnoringSafeArea(.all)
+        }
+    }
+}
+
+#Preview {
+    BackgroundView()
+}
