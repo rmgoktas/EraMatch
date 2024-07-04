@@ -56,31 +56,71 @@ struct OnboardingView: View {
                 .tabItem {
                     Text("NGOs")
                 }
+
+                VStack {
+                    Spacer()
+                    VStack(spacing: 8) {
+                        VStack {
+                            Image("travellers")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: UIScreen.main.bounds.width * 0.75)
+                            Button(action: {
+                                // Action for "I'M JUST LOOKING FOR FREE TRAVEL"
+                            }) {
+                                Text("I’M JUST LOOKING FOR FREE TRAVEL")
+                                    .font(.headline)
+                                    .foregroundColor(.black) // Buton yazısını mavi yapıyoruz
+                                    .padding()
+                                    .background(Color.white) // Buton arka planını beyaz yapıyoruz
+                                    .cornerRadius(15)
+                            }
+                        }
+                        VStack {
+                            Image("ngos")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: UIScreen.main.bounds.width * 0.75)
+                            Button(action: {
+                                // Action for "I’M MEMBER OF A NGO"
+                            }) {
+                                Text("I’M MEMBER OF A NGO")
+                                    .font(.headline)
+                                    .foregroundColor(.black) // Buton yazısını mavi yapıyoruz
+                                    .padding()
+                                    .background(Color.white) // Buton arka planını beyaz yapıyoruz
+                                    .cornerRadius(15)
+                            }
+                        }
+                    }
+                    Spacer()
+                }
+                .tag(2)
+                .tabItem {
+                    Text("Choices")
+                }
             }
             .tabViewStyle(PageTabViewStyle())
             .overlay(
                 VStack {
                     Spacer()
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            withAnimation {
-                                if currentTab < 1 {
+                    if currentTab < 2 {
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                withAnimation {
                                     currentTab += 1
-                                } else {
-                                    isFirstLaunch = false
-                                    UserDefaults.standard.set(false, forKey: "isFirstLaunch")
                                 }
+                            }) {
+                                Image(systemName: "arrow.right.circle.fill")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(.white)
                             }
-                        }) {
-                            Image(systemName: "arrow.right.circle.fill")
-                                .resizable()
-                                .frame(width: 50, height: 50)
-                                .foregroundColor(.white)
+                            Spacer()
                         }
-                        Spacer()
+                        .padding(.bottom, 75)
                     }
-                    .padding(.bottom, 75)
                 },
                 alignment: .bottom
             )
