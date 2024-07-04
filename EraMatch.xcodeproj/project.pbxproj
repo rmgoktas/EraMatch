@@ -14,6 +14,8 @@
 		9928ACD22C359D27008F545A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD12C359D27008F545A /* OnboardingView.swift */; };
 		9928ACD42C35A4A0008F545A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD32C35A4A0008F545A /* HomeView.swift */; };
 		9928ACD62C35ACC8008F545A /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD52C35ACC8008F545A /* BackgroundView.swift */; };
+		9928ACDA2C36CE1D008F545A /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD92C36CE1D008F545A /* UserModel.swift */; };
+		9928ACDC2C36CE2A008F545A /* SignInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACDB2C36CE2A008F545A /* SignInService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		9928ACD12C359D27008F545A /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		9928ACD32C35A4A0008F545A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		9928ACD52C35ACC8008F545A /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
+		9928ACD92C36CE1D008F545A /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		9928ACDB2C36CE2A008F545A /* SignInService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +91,7 @@
 		9928ACCA2C3595CA008F545A /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				9928ACD92C36CE1D008F545A /* UserModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -104,6 +109,7 @@
 		9928ACCC2C35969A008F545A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				9928ACDB2C36CE2A008F545A /* SignInService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -182,7 +188,9 @@
 				9928ACD22C359D27008F545A /* OnboardingView.swift in Sources */,
 				9928ACD42C35A4A0008F545A /* HomeView.swift in Sources */,
 				9928ACBD2C358F30008F545A /* ContentView.swift in Sources */,
+				9928ACDA2C36CE1D008F545A /* UserModel.swift in Sources */,
 				9928ACBB2C358F30008F545A /* EraMatchApp.swift in Sources */,
+				9928ACDC2C36CE2A008F545A /* SignInService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
