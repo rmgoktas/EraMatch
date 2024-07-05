@@ -12,10 +12,16 @@
 		9928ACBF2C358F32008F545A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9928ACBE2C358F32008F545A /* Assets.xcassets */; };
 		9928ACC22C358F32008F545A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9928ACC12C358F32008F545A /* Preview Assets.xcassets */; };
 		9928ACD22C359D27008F545A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD12C359D27008F545A /* OnboardingView.swift */; };
-		9928ACD42C35A4A0008F545A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD32C35A4A0008F545A /* HomeView.swift */; };
+		9928ACD42C35A4A0008F545A /* UserHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD32C35A4A0008F545A /* UserHomeView.swift */; };
 		9928ACD62C35ACC8008F545A /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD52C35ACC8008F545A /* BackgroundView.swift */; };
 		9928ACDA2C36CE1D008F545A /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD92C36CE1D008F545A /* UserModel.swift */; };
 		9928ACDC2C36CE2A008F545A /* SignInService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACDB2C36CE2A008F545A /* SignInService.swift */; };
+		9928ACE02C36DCAC008F545A /* NgoHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACDF2C36DCAC008F545A /* NgoHomeView.swift */; };
+		9928ACE52C36F71F008F545A /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACE42C36F71F008F545A /* LoginView.swift */; };
+		9928ACF72C370CAE008F545A /* NgoSignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACF62C370CAE008F545A /* NgoSignUpView.swift */; };
+		9928ACF92C370CC0008F545A /* UserSignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACF82C370CC0008F545A /* UserSignUpView.swift */; };
+		9928ACFB2C370CED008F545A /* SelectStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACFA2C370CED008F545A /* SelectStateView.swift */; };
+		9928ACFD2C383731008F545A /* CountryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACFC2C383731008F545A /* CountryList.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,10 +31,16 @@
 		9928ACBE2C358F32008F545A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9928ACC12C358F32008F545A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9928ACD12C359D27008F545A /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
-		9928ACD32C35A4A0008F545A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		9928ACD32C35A4A0008F545A /* UserHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHomeView.swift; sourceTree = "<group>"; };
 		9928ACD52C35ACC8008F545A /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
 		9928ACD92C36CE1D008F545A /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		9928ACDB2C36CE2A008F545A /* SignInService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInService.swift; sourceTree = "<group>"; };
+		9928ACDF2C36DCAC008F545A /* NgoHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoHomeView.swift; sourceTree = "<group>"; };
+		9928ACE42C36F71F008F545A /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		9928ACF62C370CAE008F545A /* NgoSignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoSignUpView.swift; sourceTree = "<group>"; };
+		9928ACF82C370CC0008F545A /* UserSignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignUpView.swift; sourceTree = "<group>"; };
+		9928ACFA2C370CED008F545A /* SelectStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectStateView.swift; sourceTree = "<group>"; };
+		9928ACFC2C383731008F545A /* CountryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryList.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				9928ACD92C36CE1D008F545A /* UserModel.swift */,
+				9928ACFC2C383731008F545A /* CountryList.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -99,9 +112,9 @@
 		9928ACCB2C3595D0008F545A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				9928ACD12C359D27008F545A /* OnboardingView.swift */,
-				9928ACD32C35A4A0008F545A /* HomeView.swift */,
-				9928ACD52C35ACC8008F545A /* BackgroundView.swift */,
+				9928ACE12C36DCC5008F545A /* CommonStateViews */,
+				9928ACDE2C36DBC1008F545A /* NgoStateViews */,
+				9928ACDD2C36DBAF008F545A /* UserStateViews */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -112,6 +125,35 @@
 				9928ACDB2C36CE2A008F545A /* SignInService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		9928ACDD2C36DBAF008F545A /* UserStateViews */ = {
+			isa = PBXGroup;
+			children = (
+				9928ACD32C35A4A0008F545A /* UserHomeView.swift */,
+				9928ACF82C370CC0008F545A /* UserSignUpView.swift */,
+			);
+			path = UserStateViews;
+			sourceTree = "<group>";
+		};
+		9928ACDE2C36DBC1008F545A /* NgoStateViews */ = {
+			isa = PBXGroup;
+			children = (
+				9928ACDF2C36DCAC008F545A /* NgoHomeView.swift */,
+				9928ACF62C370CAE008F545A /* NgoSignUpView.swift */,
+			);
+			path = NgoStateViews;
+			sourceTree = "<group>";
+		};
+		9928ACE12C36DCC5008F545A /* CommonStateViews */ = {
+			isa = PBXGroup;
+			children = (
+				9928ACD52C35ACC8008F545A /* BackgroundView.swift */,
+				9928ACD12C359D27008F545A /* OnboardingView.swift */,
+				9928ACE42C36F71F008F545A /* LoginView.swift */,
+				9928ACFA2C370CED008F545A /* SelectStateView.swift */,
+			);
+			path = CommonStateViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -184,13 +226,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9928ACFB2C370CED008F545A /* SelectStateView.swift in Sources */,
 				9928ACD62C35ACC8008F545A /* BackgroundView.swift in Sources */,
+				9928ACF72C370CAE008F545A /* NgoSignUpView.swift in Sources */,
 				9928ACD22C359D27008F545A /* OnboardingView.swift in Sources */,
-				9928ACD42C35A4A0008F545A /* HomeView.swift in Sources */,
+				9928ACD42C35A4A0008F545A /* UserHomeView.swift in Sources */,
+				9928ACE02C36DCAC008F545A /* NgoHomeView.swift in Sources */,
 				9928ACBD2C358F30008F545A /* ContentView.swift in Sources */,
 				9928ACDA2C36CE1D008F545A /* UserModel.swift in Sources */,
 				9928ACBB2C358F30008F545A /* EraMatchApp.swift in Sources */,
+				9928ACE52C36F71F008F545A /* LoginView.swift in Sources */,
+				9928ACF92C370CC0008F545A /* UserSignUpView.swift in Sources */,
 				9928ACDC2C36CE2A008F545A /* SignInService.swift in Sources */,
+				9928ACFD2C383731008F545A /* CountryList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,7 +381,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -368,7 +416,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
