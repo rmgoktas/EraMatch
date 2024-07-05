@@ -59,37 +59,39 @@ struct OnboardingView: View {
 
                 VStack {
                     Spacer()
-                    VStack(spacing: 8) {
+                    VStack(spacing: 50) { // Eşit mesafe sağlamak için spacing kullanıyoruz
                         VStack {
                             Image("travellers")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: UIScreen.main.bounds.width * 0.75)
+                                .padding(.bottom, 40)
+                                .padding(.top, 40)
                             Button(action: {
                                 // Action for "I'M JUST LOOKING FOR FREE TRAVEL"
                             }) {
                                 Text("I’M JUST LOOKING FOR FREE TRAVEL")
                                     .font(.headline)
-                                    .foregroundColor(.black) // Buton yazısını mavi yapıyoruz
+                                    .foregroundColor(.black)
                                     .padding()
-                                    .background(Color.white) // Buton arka planını beyaz yapıyoruz
-                                    .cornerRadius(15)
+                                    .background(Color.white)
+                                    .cornerRadius(25)
                             }
                         }
                         VStack {
                             Image("ngos")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: UIScreen.main.bounds.width * 0.75)
+                                .frame(width: UIScreen.main.bounds.width * 0.80)
                             Button(action: {
                                 // Action for "I’M MEMBER OF A NGO"
                             }) {
                                 Text("I’M MEMBER OF A NGO")
                                     .font(.headline)
-                                    .foregroundColor(.black) // Buton yazısını mavi yapıyoruz
+                                    .foregroundColor(.black)
                                     .padding()
-                                    .background(Color.white) // Buton arka planını beyaz yapıyoruz
-                                    .cornerRadius(15)
+                                    .background(Color.white)
+                                    .cornerRadius(25)
                             }
                         }
                     }
@@ -100,7 +102,7 @@ struct OnboardingView: View {
                     Text("Choices")
                 }
             }
-            .tabViewStyle(PageTabViewStyle())
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))  // Sayfa göstergelerini devre dışı bırakıyoruz
             .overlay(
                 VStack {
                     Spacer()
