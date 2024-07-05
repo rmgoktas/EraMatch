@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct EraMatchApp: App {
+    @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
+
     var body: some Scene {
         WindowGroup {
-            BackgroundView()
+            if isFirstLaunch {
+                OnboardingView(isFirstLaunch: $isFirstLaunch)
+            } else {
+                ContentView()
+            }
         }
     }
 }
+
+

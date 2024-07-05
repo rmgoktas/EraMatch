@@ -56,73 +56,30 @@ struct OnboardingView: View {
                 .tabItem {
                     Text("NGOs")
                 }
-
-                VStack {
-                    Spacer()
-                    VStack(spacing: 50) { // Eşit mesafe sağlamak için spacing kullanıyoruz
-                        VStack {
-                            Image("travellers")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: UIScreen.main.bounds.width * 0.75)
-                                .padding(.bottom, 40)
-                                .padding(.top, 40)
-                            Button(action: {
-                                // Action for "I'M JUST LOOKING FOR FREE TRAVEL"
-                            }) {
-                                Text("I’M JUST LOOKING FOR FREE TRAVEL")
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-                                    .padding()
-                                    .background(Color.white)
-                                    .cornerRadius(25)
-                            }
-                        }
-                        VStack {
-                            Image("ngos")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: UIScreen.main.bounds.width * 0.80)
-                            Button(action: {
-                                // Action for "I’M MEMBER OF A NGO"
-                            }) {
-                                Text("I’M MEMBER OF A NGO")
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-                                    .padding()
-                                    .background(Color.white)
-                                    .cornerRadius(25)
-                            }
-                        }
-                    }
-                    Spacer()
-                }
-                .tag(2)
-                .tabItem {
-                    Text("Choices")
-                }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))  // Sayfa göstergelerini devre dışı bırakıyoruz
             .overlay(
                 VStack {
                     Spacer()
-                    if currentTab < 2 {
-                        HStack {
-                            Spacer()
-                            Button(action: {
-                                withAnimation {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            withAnimation {
+                                if currentTab < 1 {
                                     currentTab += 1
+                                } else {
+                                    isFirstLaunch = false
                                 }
-                            }) {
-                                Image(systemName: "arrow.right.circle.fill")
-                                    .resizable()
-                                    .frame(width: 50, height: 50)
-                                    .foregroundColor(.white)
                             }
-                            Spacer()
+                        }) {
+                            Image(systemName: "arrow.right.circle.fill")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(.white)
                         }
-                        .padding(.bottom, 75)
+                        Spacer()
                     }
+                    .padding(.bottom, 75)
                 },
                 alignment: .bottom
             )

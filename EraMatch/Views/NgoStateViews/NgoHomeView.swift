@@ -9,10 +9,16 @@ import SwiftUI
 
 struct NgoHomeView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+            Text("Ngo Home Screen")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.red)
+                .navigationBarBackButtonHidden(true)
     }
 }
 
-#Preview {
-    NgoHomeView()
+struct NgoHomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        NgoHomeView()
+    }
 }

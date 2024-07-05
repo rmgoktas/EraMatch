@@ -9,16 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        ZStack {
-            BackgroundView()  // Arka planı ayarlıyoruz
-
-            VStack {
-                Text("Welcome to EraMatch!")
-                    .font(.largeTitle)
-                    .bold()
-                    .foregroundColor(.white)
-                // Diğer içerikler
-            }
+        NavigationView {
+            LoginView()
         }
     }
 }
@@ -28,4 +20,6 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+
 

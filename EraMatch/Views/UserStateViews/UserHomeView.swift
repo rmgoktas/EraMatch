@@ -7,17 +7,19 @@
 
 import SwiftUI
 
-struct HomeView: View {
+struct UserHomeView: View {
     var body: some View {
-        ZStack {
-            BackgroundView()
-            
-        }
-    }
-    
-    struct HomeView_Previews: PreviewProvider {
-        static var previews: some View {
-            HomeView()
-        }
+        Text("User Home Screen")
+            .font(.largeTitle)
+            .fontWeight(.bold)
+            .foregroundColor(.blue)
+            .navigationBarBackButtonHidden(true)
     }
 }
+    
+    struct UserHomeView_Previews: PreviewProvider {
+        static var previews: some View {
+            UserHomeView()
+        }
+    }
+
