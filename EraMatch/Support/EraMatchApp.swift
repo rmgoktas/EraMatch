@@ -6,20 +6,35 @@
 //
 
 import SwiftUI
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        return true
+    }
+}
 
 @main
 struct EraMatchApp: App {
     @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     var body: some Scene {
         WindowGroup {
-            if isFirstLaunch {
-                OnboardingView(isFirstLaunch: $isFirstLaunch)
-            } else {
-                ContentView()
+            NavigationStack {
+                if isFirstLaunch {
+                    OnboardingView(isFirstLaunch: $isFirstLaunch)
+                } else {
+                    LoginView()
+                }
             }
         }
     }
 }
+
+
 
 

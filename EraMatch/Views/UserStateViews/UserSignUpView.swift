@@ -1,4 +1,5 @@
 import SwiftUI
+import Firebase
 
 struct UserSignUpView: View {
     @State private var userName = ""
@@ -11,6 +12,15 @@ struct UserSignUpView: View {
     // Alert
     @State private var showingAlert = false
     @State private var alertMessage = ""
+    
+    // Navigation
+    @State private var navigateToHome = false
+    
+    // Loading state
+    @State private var isLoading = false
+    
+    // User Type
+    var userType: String // "user" olarak ayarlanacak
 
     var body: some View {
         ZStack {
@@ -18,7 +28,7 @@ struct UserSignUpView: View {
             
             ScrollView {
                 VStack {
-                    Text("Sign up as Traveller")
+                    Text("Sign up as \(userType)")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -50,6 +60,12 @@ struct UserSignUpView: View {
                             .padding()
                             .background(Color.white.opacity(0.2))
                             .cornerRadius(15)
+                            .onChange(of: userEmail) { newValue in
+                                if !newValue.contains("@") {
+                                    alertMessage = "Email must contain '@'."
+                                    showingAlert = true
+                                }
+                            }
                     }
                     
                     // Password
@@ -102,7 +118,7 @@ struct UserSignUpView: View {
                         .actionSheet(isPresented: $showingCountryPicker) {
                             ActionSheet(
                                 title: Text("Select a Country"),
-                                buttons: countries.map { country in
+                                buttons: CountryList.countries.map { country in
                                     .default(Text(country)) {
                                         userCountry = country
                                     }
@@ -115,8 +131,7 @@ struct UserSignUpView: View {
                     // DONE Button
                     Button(action: {
                         if validatePasswords() && isFormValid() {
-                            // Handle done action
-                            print("Form is valid, proceed with sign up")
+                            signUpUser()
                         } else {
                             alertMessage = "Please fill out all fields and ensure passwords match."
                             showingAlert = true
@@ -137,10 +152,21 @@ struct UserSignUpView: View {
                             dismissButton: .default(Text("OK"))
                         )
                     }
+                    .background(
+                        NavigationLink(destination: UserHomeView(), isActive: $navigateToHome) {
+                            EmptyView()
+                        }
+                        .hidden()
+                    )
                     
                     Spacer()
                 }
                 .padding()
+            }
+            if isLoading {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(2)
             }
         }
     }
@@ -158,8 +184,39 @@ struct UserSignUpView: View {
     private func validatePasswords() -> Bool {
         return userPassword == userConfirmedPassword
     }
+    
+    private func signUpUser() {
+        isLoading = true
+        Auth.auth().createUser(withEmail: userEmail, password: userPassword) { authResult, error in
+            if let error = error {
+                alertMessage = error.localizedDescription
+                showingAlert = true
+                isLoading = false
+                return
+            }
+            guard let uid = authResult?.user.uid else { return }
+            let db = Firestore.firestore()
+            db.collection("users").document(uid).setData([
+                "uid": uid,
+                "type": userType, // Burada userType değişkenini kullanarak type alanını ayarlıyoruz
+                "userName": userName,
+                "email": userEmail,
+                "country": userCountry
+            ]) { error in
+                isLoading = false
+                if let error = error {
+                    alertMessage = error.localizedDescription
+                    showingAlert = true
+                } else {
+                    navigateToHome = true
+                }
+            }
+        }
+    }
 }
 
-#Preview {
-    UserSignUpView()
+struct UserSignUpView_Previews: PreviewProvider {
+    static var previews: some View {
+        UserSignUpView(userType: "user") // User türünü burada belirle
+    }
 }

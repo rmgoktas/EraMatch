@@ -1,83 +1,115 @@
 import SwiftUI
+import Firebase
 
 struct LoginView: View {
+    @StateObject private var viewModel = LoginViewModel()
     
-    @State private var email = ""
-    @State private var password = ""
-
     var body: some View {
-        ZStack {
-            BackgroundView() // Arka planı ayarlıyoruz
-            
-            VStack(alignment: .leading) {
-                Text("EraMatch")
-                    .font(.custom("", size: 50))
-                    .foregroundColor(.white)
-                    .padding(.top, 40)
-                Text("Welcome!")
-                    .font(.title)
-                    .bold()
-                    .foregroundColor(.white)
-                    .padding(.top, 10)
-
-                TextField("E-mail", text: $email)
-                    .padding()
-                    .background(Color.white.opacity(0.2))
-                    .cornerRadius(10)
-                    .autocapitalization(.none)
-                    .keyboardType(.emailAddress)
-                    .foregroundColor(.white)
-                    .padding(.top, 20)
-
-                SecureField("Password", text: $password)
-                    .padding()
-                    .background(Color.white.opacity(0.2))
-                    .cornerRadius(10)
-                    .foregroundColor(.white)
-                    .padding(.top, 10)
-
-                HStack {
-                    Spacer()
-                    Button("I forgot my password") {
-                        // Şifre unutma işlemi
-                    }
-                    .foregroundColor(.white)
-                }
-                .padding(.top, 10)
-
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        // Giriş işlemi
-                    }) {
-                        Text("Sign In")
-                            .bold()
-                            .foregroundColor(.black)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white)
-                            .cornerRadius(10)
-                    }
-                }
-                .padding(.top, 10)
-
-                Spacer()
+        NavigationStack {
+            ZStack {
+                BackgroundView()
                 
-                HStack {
-                    Text("Are you new here?")
+                VStack(alignment: .leading) {
+                    Text("EraMatch")
+                        .font(.custom("", size: 50))
                         .foregroundColor(.white)
-                    NavigationLink(destination: SelectStateView()) {
-                        Text("Sign Up")
-                            .bold()
-                            .foregroundColor(.white)
+                        .padding(.top, 40)
+                    Text("Welcome!")
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(.white)
+                        .padding(.top, 10)
+                    
+                    TextField("E-mail", text: $viewModel.email)
+                        .padding()
+                        .background(Color.white.opacity(0.2))
+                        .cornerRadius(10)
+                        .autocapitalization(.none)
+                        .keyboardType(.emailAddress)
+                        .foregroundColor(.white)
+                        .padding(.top, 20)
+                    
+                    SecureField("Password", text: $viewModel.password)
+                        .padding()
+                        .background(Color.white.opacity(0.2))
+                        .cornerRadius(10)
+                        .foregroundColor(.white)
+                        .padding(.top, 10)
+                    
+                    HStack {
+                        Spacer()
+                        Button("I forgot my password") {
+                            // Şifre unutma işlemi
+                        }
+                        .foregroundColor(.white)
                     }
+                    .padding(.top, 10)
+                    
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            viewModel.loginUser()
+                        }) {
+                            Text("Sign In")
+                                .bold()
+                                .foregroundColor(.black)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(10)
+                        }
+                    }
+                    .padding(.top, 10)
+                    
+                    Spacer()
+                    
+                    HStack {
+                        Text("Are you new here?")
+                            .foregroundColor(.white)
+                        NavigationLink(destination: SelectStateView()) {
+                            Text("Sign Up")
+                                .bold()
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .padding(.bottom, 20)
+                    Spacer()
                 }
-                .padding(.bottom, 20)
-                Spacer()
+                .padding()
+                
+                if viewModel.isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(2)
+                }
             }
-            .padding()
+            .alert(isPresented: $viewModel.showingAlert) {
+                Alert(
+                    title: Text("Login Error"),
+                    message: Text(viewModel.alertMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+            // Kullanıcı türüne göre yönlendirme
+            .background(
+                NavigationLink(
+                    destination: UserHomeView(),
+                    isActive: $viewModel.navigateToTravellerHome
+                ) {
+                    EmptyView()
+                }
+                .hidden()
+            )
+            .background(
+                NavigationLink(
+                    destination: NgoHomeView(),
+                    isActive: $viewModel.navigateToNGOHome
+                ) {
+                    EmptyView()
+                }
+                .hidden()
+            )
         }
-        .navigationBarHidden(false)
     }
 }
 

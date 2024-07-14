@@ -15,7 +15,7 @@ struct SelectStateView: View {
                     .padding(.bottom, 40)
                     .padding(.top, 40)
                 
-                NavigationLink(destination: UserSignUpView()) {
+                NavigationLink(destination: UserSignUpView(userType: "traveller")) {
                     Text("I’M JUST LOOKING FOR FREE TRAVEL")
                         .font(.headline)
                         .foregroundColor(.black)
@@ -27,7 +27,6 @@ struct SelectStateView: View {
                     UserDefaults.standard.set("traveller", forKey: "UserRole")
                 }
 
-
                 Spacer()
 
                 Image("ngos")
@@ -35,7 +34,7 @@ struct SelectStateView: View {
                     .scaledToFit()
                     .frame(width: UIScreen.main.bounds.width * 0.80)
                 
-                NavigationLink(destination: NgoSignUpView()) {
+                NavigationLink(destination: NgoSignUpView(userType: "ngo")) {
                     Text("I’M MEMBER OF A NGO")
                         .font(.headline)
                         .foregroundColor(.black)
@@ -55,7 +54,7 @@ struct SelectStateView: View {
     }
 }
 
-struct SelectStateVaiew_Previews: PreviewProvider {
+struct SelectStateView_Previews: PreviewProvider {
     static var previews: some View {
         SelectStateView()
     }
