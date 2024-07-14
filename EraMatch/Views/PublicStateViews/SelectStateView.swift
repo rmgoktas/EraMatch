@@ -55,7 +55,7 @@ struct SelectStateView: View {
     }
 }
 
-struct SelectStateView_Previews: PreviewProvider {
+struct SelectStateVaiew_Previews: PreviewProvider {
     static var previews: some View {
         SelectStateView()
     }

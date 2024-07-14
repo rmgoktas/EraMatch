@@ -1,6 +1,8 @@
 import SwiftUI
+import Firebase
 
 struct NgoSignUpView: View {
+    
     @State private var oidNumber = "E00000000"
     @State private var ngoEmail = ""
     @State private var ngoPassword = ""
@@ -8,16 +10,18 @@ struct NgoSignUpView: View {
     @State private var ngoCountry = ""
     @State private var ngoName = ""
     
-    // MARK: - File Pickers
     @State private var showingCountryPicker = false
     @State private var showLogoPicker = false
     @State private var showPifPicker = false
     @State private var logoUrl: URL?
     @State private var pifUrl: URL?
     
-    // Alert
     @State private var showingAlert = false
     @State private var alertMessage = ""
+    @State private var isLoading = false
+    @State private var navigateToHome = false
+    
+    var userType: String
 
     var body: some View {
         ZStack {
@@ -54,27 +58,25 @@ struct NgoSignUpView: View {
                             .foregroundColor(.white)
                             .padding(.leading, 5)
                         
-                            
-                            TextField("Enter 8 digits", text: $oidNumber)
-                                .keyboardType(.numberPad)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.white.opacity(0.2))
-                                .cornerRadius(15)
-                                .onChange(of: oidNumber) { newValue in
-                                    let filtered = newValue.filter { $0.isNumber }
-                                    if filtered.count > 8 {
-                                        oidNumber = "E" + String(filtered.prefix(8))
-                                    } else {
-                                        oidNumber = "E" + filtered
-                                    }
+                        TextField("Enter 8 digits", text: $oidNumber)
+                            .keyboardType(.numberPad)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.white.opacity(0.2))
+                            .cornerRadius(15)
+                            .onChange(of: oidNumber) { newValue in
+                                let filtered = newValue.filter { $0.isNumber }
+                                if filtered.count > 8 {
+                                    oidNumber = "E" + String(filtered.prefix(8))
+                                } else {
+                                    oidNumber = "E" + filtered
                                 }
-                                .onAppear {
-                                    if !oidNumber.hasPrefix("E") {
-                                        oidNumber = "E00000000"
-                                    }
+                            }
+                            .onAppear {
+                                if !oidNumber.hasPrefix("E") {
+                                    oidNumber = "E00000000"
                                 }
-                        
+                            }
                     }
                     .padding(.top)
                     
@@ -91,7 +93,6 @@ struct NgoSignUpView: View {
                             .cornerRadius(15)
                             .onChange(of: ngoEmail) { newValue in
                                 if !newValue.contains("@") {
-                                    // Alert the user if '@' is not present
                                     alertMessage = "Email must contain '@'."
                                     showingAlert = true
                                 }
@@ -208,21 +209,18 @@ struct NgoSignUpView: View {
                     // DONE Button
                     Button(action: {
                         if validatePasswords() && isFormValid() {
-                            // Handle done action
-                            print("Passwords match, proceed with sign up")
+                            signUpNgo()
                         } else {
                             alertMessage = "Please fill out all fields, ensure passwords match, and check email format."
                             showingAlert = true
                         }
                     }) {
-                        NavigationLink(destination: NgoHomeView()) {
-                            Text("DONE")
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                                .padding()
-                                .background(Color.white.opacity(1))
-                                .cornerRadius(15)
-                        }
+                        Text("DONE")
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                            .padding()
+                            .background(Color.white.opacity(1))
+                            .cornerRadius(15)
                     }
                     .padding(.top, 40)
                     .alert(isPresented: $showingAlert) {
@@ -232,6 +230,12 @@ struct NgoSignUpView: View {
                             dismissButton: .default(Text("OK"))
                         )
                     }
+                    .background(
+                        NavigationLink(destination: NgoHomeView(), isActive: $navigateToHome) {
+                            EmptyView()
+                        }
+                        .hidden()
+                    )
                     
                     Spacer()
                 }
@@ -242,7 +246,6 @@ struct NgoSignUpView: View {
 
     // MARK: - Form Validation
     private func isFormValid() -> Bool {
-        // Check if all fields are filled and the OID number is valid
         let isOidNumberValid = oidNumber.count == 9 && oidNumber.first == "E"
         return !ngoName.isEmpty &&
                isOidNumberValid &&
@@ -256,8 +259,41 @@ struct NgoSignUpView: View {
     private func validatePasswords() -> Bool {
         return ngoPassword == ngoConfirmedPassword
     }
+    
+    private func signUpNgo() {
+        isLoading = true
+        Auth.auth().createUser(withEmail: ngoEmail, password: ngoPassword) { authResult, error in
+            if let error = error {
+                alertMessage = error.localizedDescription
+                showingAlert = true
+                isLoading = false
+                return
+            }
+            guard let uid = authResult?.user.uid else { return }
+            let db = Firestore.firestore()
+            db.collection("users").document(uid).setData([
+                "uid": uid,
+                "type": "NGO",
+                "ngoName": ngoName,
+                "oidNumber": oidNumber,
+                "email": ngoEmail,
+                "country": ngoCountry,
+                "logoUrl": logoUrl?.absoluteString ?? "",
+                "pifUrl": pifUrl?.absoluteString ?? ""
+            ]) { error in
+                isLoading = false
+                if let error = error {
+                    alertMessage = error.localizedDescription
+                    showingAlert = true
+                } else {
+                    navigateToHome = true
+                }
+            }
+        }
+    }
 }
-
-#Preview {
-    NgoSignUpView()
+struct NgoSignUpView_Previews: PreviewProvider {
+    static var previews: some View {
+        NgoSignUpView(userType: "ngo")
+    }
 }
