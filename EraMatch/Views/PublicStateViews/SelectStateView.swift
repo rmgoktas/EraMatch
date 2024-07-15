@@ -16,7 +16,7 @@ struct SelectStateView: View {
                     .padding(.top, 40)
                 
                 NavigationLink(destination: UserSignUpView(userType: "traveller")) {
-                    Text("I’M JUST LOOKING FOR FREE TRAVEL")
+                    Text("I’M JUST LOOKING FOR TRAVEL")
                         .font(.headline)
                         .foregroundColor(.black)
                         .padding()
