@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NgoHomeView: View {
     var body: some View {
-            Text("Ngo Home Screen")
+            Text("Ngo Home")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.red)
