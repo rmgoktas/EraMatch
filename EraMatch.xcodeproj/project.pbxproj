@@ -138,7 +138,6 @@
 				9928AD772C44854B008F545A /* ViewModels */,
 				9928ACCB2C3595D0008F545A /* Views */,
 				9928ACCA2C3595CA008F545A /* Models */,
-				9928ACCC2C35969A008F545A /* Services */,
 				9928ACC92C359570008F545A /* Support */,
 				9928ACC02C358F32008F545A /* Preview Content */,
 			);
@@ -181,13 +180,6 @@
 				9928ACDD2C36DBAF008F545A /* UserStateViews */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		9928ACCC2C35969A008F545A /* Services */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Services;
 			sourceTree = "<group>";
 		};
 		9928ACDD2C36DBAF008F545A /* UserStateViews */ = {
