@@ -2,22 +2,7 @@ import SwiftUI
 import Firebase
 
 struct UserSignUpView: View {
-    @State private var userName = ""
-    @State private var userEmail = ""
-    @State private var userPassword = ""
-    @State private var userConfirmedPassword = ""
-    @State private var userCountry = ""
-    @State private var showingCountryPicker = false
-    
-    // Alert
-    @State private var showingAlert = false
-    @State private var alertMessage = ""
-    
-    // Navigation
-    @State private var navigateToHome = false
-    
-    // Loading state
-    @State private var isLoading = false
+    @ObservedObject var viewModel = UserSignUpViewModel()
     
     // User Type
     var userType: String // "user" olarak ayarlanacak
@@ -41,7 +26,7 @@ struct UserSignUpView: View {
                             .font(.title3)
                             .foregroundColor(.white)
                             .padding(.leading, 5)
-                        TextField("", text: $userName)
+                        TextField("", text: $viewModel.userName)
                             .foregroundColor(.white)
                             .padding()
                             .background(Color.white.opacity(0.2))
@@ -55,15 +40,15 @@ struct UserSignUpView: View {
                             .font(.title3)
                             .foregroundColor(.white)
                             .padding(.leading, 5)
-                        TextField("", text: $userEmail)
+                        TextField("", text: $viewModel.userEmail)
                             .foregroundColor(.white)
                             .padding()
                             .background(Color.white.opacity(0.2))
                             .cornerRadius(15)
-                            .onChange(of: userEmail) { newValue in
-                                if !newValue.contains("@") {
-                                    alertMessage = "Email must contain '@'."
-                                    showingAlert = true
+                            .onSubmit {
+                                if !viewModel.userEmail.contains("@") {
+                                    viewModel.alertMessage = "Email must contain '@'."
+                                    viewModel.showingAlert = true
                                 }
                             }
                     }
@@ -74,7 +59,7 @@ struct UserSignUpView: View {
                             .font(.title3)
                             .foregroundColor(.white)
                             .padding(.leading, 5)
-                        SecureField("", text: $userPassword)
+                        SecureField("", text: $viewModel.userPassword)
                             .foregroundColor(.white)
                             .padding()
                             .background(Color.white.opacity(0.2))
@@ -87,7 +72,7 @@ struct UserSignUpView: View {
                             .font(.title3)
                             .foregroundColor(.white)
                             .padding(.leading, 5)
-                        SecureField("", text: $userConfirmedPassword)
+                        SecureField("", text: $viewModel.userConfirmedPassword)
                             .foregroundColor(.white)
                             .padding()
                             .background(Color.white.opacity(0.2))
@@ -101,10 +86,10 @@ struct UserSignUpView: View {
                             .foregroundColor(.white)
                             .padding(.leading, 5)
                         Button(action: {
-                            showingCountryPicker.toggle()
+                            viewModel.showingCountryPicker.toggle()
                         }) {
                             HStack {
-                                Text(userCountry.isEmpty ? "Select Country" : userCountry)
+                                Text(viewModel.userCountry.isEmpty ? "Select Country" : viewModel.userCountry)
                                     .foregroundColor(.white)
                                     .padding()
                                 Spacer()
@@ -115,12 +100,12 @@ struct UserSignUpView: View {
                             .cornerRadius(15)
                         }
                         .padding(.top, 5)
-                        .actionSheet(isPresented: $showingCountryPicker) {
+                        .actionSheet(isPresented: $viewModel.showingCountryPicker) {
                             ActionSheet(
                                 title: Text("Select a Country"),
-                                buttons: CountryList.countries.map { country in
+                                buttons: viewModel.countries.map { country in
                                     .default(Text(country)) {
-                                        userCountry = country
+                                        viewModel.userCountry = country
                                     }
                                 } + [.cancel()]
                             )
@@ -130,11 +115,11 @@ struct UserSignUpView: View {
                     
                     // DONE Button
                     Button(action: {
-                        if validatePasswords() && isFormValid() {
-                            signUpUser()
+                        if viewModel.validatePasswords() && viewModel.isFormValid() {
+                            viewModel.signUpUser(userType: userType)
                         } else {
-                            alertMessage = "Please fill out all fields and ensure passwords match."
-                            showingAlert = true
+                            viewModel.alertMessage = "Please fill out all fields and ensure passwords match."
+                            viewModel.showingAlert = true
                         }
                     }) {
                         Text("DONE")
@@ -145,15 +130,15 @@ struct UserSignUpView: View {
                             .cornerRadius(15)
                     }
                     .padding(.top, 40)
-                    .alert(isPresented: $showingAlert) {
+                    .alert(isPresented: $viewModel.showingAlert) {
                         Alert(
                             title: Text("Form Incomplete"),
-                            message: Text(alertMessage),
+                            message: Text(viewModel.alertMessage),
                             dismissButton: .default(Text("OK"))
                         )
                     }
                     .background(
-                        NavigationLink(destination: UserHomeView(), isActive: $navigateToHome) {
+                        NavigationLink(destination: UserHomeView(), isActive: $viewModel.navigateToHome) {
                             EmptyView()
                         }
                         .hidden()
@@ -163,53 +148,10 @@ struct UserSignUpView: View {
                 }
                 .padding()
             }
-            if isLoading {
+            if viewModel.isLoading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     .scaleEffect(2)
-            }
-        }
-    }
-
-    // MARK: - Form Validation
-    private func isFormValid() -> Bool {
-        return !userName.isEmpty &&
-               !userEmail.isEmpty &&
-               !userPassword.isEmpty &&
-               userPassword == userConfirmedPassword &&
-               !userCountry.isEmpty
-    }
-    
-    // MARK: - Password Validation
-    private func validatePasswords() -> Bool {
-        return userPassword == userConfirmedPassword
-    }
-    
-    private func signUpUser() {
-        isLoading = true
-        Auth.auth().createUser(withEmail: userEmail, password: userPassword) { authResult, error in
-            if let error = error {
-                alertMessage = error.localizedDescription
-                showingAlert = true
-                isLoading = false
-                return
-            }
-            guard let uid = authResult?.user.uid else { return }
-            let db = Firestore.firestore()
-            db.collection("users").document(uid).setData([
-                "uid": uid,
-                "type": userType, // Burada userType değişkenini kullanarak type alanını ayarlıyoruz
-                "userName": userName,
-                "email": userEmail,
-                "country": userCountry
-            ]) { error in
-                isLoading = false
-                if let error = error {
-                    alertMessage = error.localizedDescription
-                    showingAlert = true
-                } else {
-                    navigateToHome = true
-                }
             }
         }
     }
