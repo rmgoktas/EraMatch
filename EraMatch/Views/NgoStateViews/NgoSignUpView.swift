@@ -73,8 +73,8 @@ struct NgoSignUpView: View {
                             .padding()
                             .background(Color.white.opacity(0.2))
                             .cornerRadius(15)
-                            .onChange(of: viewModel.ngoEmail) { newValue in
-                                if !newValue.contains("@") {
+                            .onSubmit {
+                                if !viewModel.ngoEmail.contains("@") {
                                     viewModel.alertMessage = "Email must contain '@'."
                                     viewModel.showingAlert = true
                                 }
