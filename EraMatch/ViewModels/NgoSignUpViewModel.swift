@@ -1,12 +1,6 @@
-//
-//  NgoSignUpViewModel.swift
-//  EraMatch
-//
-//  Created by R. Metehan GÖKTAŞ on 15.07.2024.
-//
-
 import SwiftUI
 import Firebase
+import FirebaseStorage
 
 class NgoSignUpViewModel: ObservableObject {
     @Published var ngoName = ""
@@ -23,6 +17,9 @@ class NgoSignUpViewModel: ObservableObject {
     @Published var navigateToHome = false
     
     @Published var isLoading = false
+
+    @Published var pifUrl: URL?
+    @Published var logoUrl: URL?
     
     let countries = CountryList.countries // CountryList.swift dosyasından gelen ülkeler dizisi
     
@@ -52,13 +49,15 @@ class NgoSignUpViewModel: ObservableObject {
             }
             guard let uid = authResult?.user.uid else { return }
             let db = Firestore.firestore()
-            db.collection("users").document(uid).setData([
+            db.collection("ngos").document(uid).setData([
                 "uid": uid,
                 "type": userType, // Burada userType değişkenini kullanarak type alanını ayarlıyoruz
                 "ngoName": self.ngoName,
                 "email": self.ngoEmail,
                 "oidNumber": self.oidNumber,
-                "country": self.ngoCountry
+                "country": self.ngoCountry,
+                "logoUrl": self.logoUrl?.absoluteString ?? "",
+                "pifUrl": self.pifUrl?.absoluteString ?? ""
             ]) { error in
                 self.isLoading = false
                 if let error = error {
@@ -70,5 +69,45 @@ class NgoSignUpViewModel: ObservableObject {
             }
         }
     }
-}
+    
+    func handleFileUpload(fileUrl: URL, isPIF: Bool, completion: @escaping (URL?, String) -> Void) {
+        let storageRef = Storage.storage().reference()
+        let fileName = UUID().uuidString
+        let fileRef = isPIF ? storageRef.child("pifs/\(fileName).pdf") : storageRef.child("logos/\(fileName).png")
 
+        // Access security scoped resource
+        guard fileUrl.startAccessingSecurityScopedResource() else {
+            print("Couldn't access security-scoped resource")
+            completion(nil, "")
+            return
+        }
+
+        do {
+            let fileData = try Data(contentsOf: fileUrl)
+            fileRef.putData(fileData, metadata: nil) { metadata, error in
+                // Release security scoped resource
+                fileUrl.stopAccessingSecurityScopedResource()
+
+                if let error = error {
+                    print("File upload error: \(error.localizedDescription)")
+                    completion(nil, "")
+                    return
+                }
+
+                fileRef.downloadURL { url, error in
+                    if let error = error {
+                        print("Failed to retrieve download URL: \(error.localizedDescription)")
+                        completion(nil, "")
+                        return
+                    }
+                    completion(url, fileUrl.lastPathComponent)
+                }
+            }
+        } catch {
+            // Release security scoped resource
+            fileUrl.stopAccessingSecurityScopedResource()
+            print("Error reading file data: \(error.localizedDescription)")
+            completion(nil, "")
+        }
+    }
+}
