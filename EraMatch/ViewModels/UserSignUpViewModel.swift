@@ -50,7 +50,7 @@ class UserSignUpViewModel: ObservableObject {
             }
             guard let uid = authResult?.user.uid else { return }
             let db = Firestore.firestore()
-            db.collection("users").document(uid).setData([
+            db.collection("travellers").document(uid).setData([
                 "uid": uid,
                 "type": userType, // Burada userType değişkenini kullanarak type alanını ayarlıyoruz
                 "userName": self.userName,
