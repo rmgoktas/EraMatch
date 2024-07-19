@@ -1,10 +1,3 @@
-//
-//  LoginViewModel.swift
-//  EraMatch
-//
-//  Created by R. Metehan GÖKTAŞ on 15.07.2024.
-//
-
 import SwiftUI
 import Firebase
 
@@ -22,16 +15,23 @@ class LoginViewModel: ObservableObject {
         isLoading = true
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {
-                self.alertMessage = error.localizedDescription
+                self.alertMessage = "Error: \(error.localizedDescription)"
                 self.showingAlert = true
                 self.isLoading = false
                 return
             }
             
-            guard let uid = authResult?.user.uid else { return }
-            let db = Firestore.firestore()
-            db.collection("users").document(uid).getDocument { document, error in
+            guard let uid = authResult?.user.uid else {
+                self.alertMessage = "User ID not found."
+                self.showingAlert = true
                 self.isLoading = false
+                return
+            }
+            
+            let db = Firestore.firestore()
+            
+            // Check in 'ngos' collection
+            db.collection("ngos").document(uid).getDocument { document, error in
                 if let document = document, document.exists {
                     let userData = document.data()
                     let userType = userData?["type"] as? String ?? ""
@@ -44,9 +44,18 @@ class LoginViewModel: ObservableObject {
                         self.alertMessage = "Unknown user type."
                         self.showingAlert = true
                     }
+                    self.isLoading = false
                 } else {
-                    self.alertMessage = "User data not found."
-                    self.showingAlert = true
+                    // Check in 'travellers' collection if not found in 'users'
+                    db.collection("travellers").document(uid).getDocument { document, error in
+                        if let document = document, document.exists {
+                            self.navigateToTravellerHome = true
+                        } else {
+                            self.alertMessage = "User data not found."
+                            self.showingAlert = true
+                        }
+                        self.isLoading = false
+                    }
                 }
             }
         }
