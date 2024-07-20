@@ -14,7 +14,6 @@
 		9928ACD22C359D27008F545A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD12C359D27008F545A /* OnboardingView.swift */; };
 		9928ACD42C35A4A0008F545A /* UserHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD32C35A4A0008F545A /* UserHomeView.swift */; };
 		9928ACD62C35ACC8008F545A /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD52C35ACC8008F545A /* BackgroundView.swift */; };
-		9928ACDA2C36CE1D008F545A /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACD92C36CE1D008F545A /* UserModel.swift */; };
 		9928ACE02C36DCAC008F545A /* NgoHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACDF2C36DCAC008F545A /* NgoHomeView.swift */; };
 		9928ACE52C36F71F008F545A /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACE42C36F71F008F545A /* LoginView.swift */; };
 		9928ACF72C370CAE008F545A /* NgoSignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACF62C370CAE008F545A /* NgoSignUpView.swift */; };
@@ -54,6 +53,8 @@
 		9928AD7C2C448750008F545A /* NgoSignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928AD7B2C448750008F545A /* NgoSignUpViewModel.swift */; };
 		9928AD7E2C448760008F545A /* UserSignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928AD7D2C448760008F545A /* UserSignUpViewModel.swift */; };
 		99F0FC212C4BDB1C00D51776 /* UserHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F0FC202C4BDB1C00D51776 /* UserHomeViewModel.swift */; };
+		99F0FC252C4C156900D51776 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F0FC242C4C156900D51776 /* ImagePickerView.swift */; };
+		99F0FC292C4C1A1A00D51776 /* UserSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F0FC282C4C1A1A00D51776 /* UserSliderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,7 +66,6 @@
 		9928ACD12C359D27008F545A /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		9928ACD32C35A4A0008F545A /* UserHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHomeView.swift; sourceTree = "<group>"; };
 		9928ACD52C35ACC8008F545A /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
-		9928ACD92C36CE1D008F545A /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		9928ACDF2C36DCAC008F545A /* NgoHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoHomeView.swift; sourceTree = "<group>"; };
 		9928ACE42C36F71F008F545A /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		9928ACF62C370CAE008F545A /* NgoSignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoSignUpView.swift; sourceTree = "<group>"; };
@@ -77,6 +77,8 @@
 		9928AD7B2C448750008F545A /* NgoSignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoSignUpViewModel.swift; sourceTree = "<group>"; };
 		9928AD7D2C448760008F545A /* UserSignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignUpViewModel.swift; sourceTree = "<group>"; };
 		99F0FC202C4BDB1C00D51776 /* UserHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHomeViewModel.swift; sourceTree = "<group>"; };
+		99F0FC242C4C156900D51776 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
+		99F0FC282C4C1A1A00D51776 /* UserSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSliderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,7 +170,6 @@
 		9928ACCA2C3595CA008F545A /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				9928ACD92C36CE1D008F545A /* UserModel.swift */,
 				9928ACFC2C383731008F545A /* CountryList.swift */,
 			);
 			path = Models;
@@ -189,6 +190,7 @@
 			children = (
 				9928ACD32C35A4A0008F545A /* UserHomeView.swift */,
 				9928ACF82C370CC0008F545A /* UserSignUpView.swift */,
+				99F0FC282C4C1A1A00D51776 /* UserSliderView.swift */,
 			);
 			path = UserStateViews;
 			sourceTree = "<group>";
@@ -209,6 +211,7 @@
 				9928ACD12C359D27008F545A /* OnboardingView.swift */,
 				9928ACE42C36F71F008F545A /* LoginView.swift */,
 				9928ACFA2C370CED008F545A /* SelectStateView.swift */,
+				99F0FC242C4C156900D51776 /* ImagePickerView.swift */,
 			);
 			path = PublicStateViews;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 			files = (
 				9928ACFB2C370CED008F545A /* SelectStateView.swift in Sources */,
 				9928ACD62C35ACC8008F545A /* BackgroundView.swift in Sources */,
+				99F0FC292C4C1A1A00D51776 /* UserSliderView.swift in Sources */,
 				9928ACF72C370CAE008F545A /* NgoSignUpView.swift in Sources */,
 				9928ACD22C359D27008F545A /* OnboardingView.swift in Sources */,
 				9928ACD42C35A4A0008F545A /* UserHomeView.swift in Sources */,
@@ -353,13 +357,13 @@
 				99F0FC212C4BDB1C00D51776 /* UserHomeViewModel.swift in Sources */,
 				9928ACE02C36DCAC008F545A /* NgoHomeView.swift in Sources */,
 				9928ACBD2C358F30008F545A /* ContentView.swift in Sources */,
-				9928ACDA2C36CE1D008F545A /* UserModel.swift in Sources */,
 				9928AD792C448725008F545A /* LoginViewModel.swift in Sources */,
 				9928ACBB2C358F30008F545A /* EraMatchApp.swift in Sources */,
 				9928ACE52C36F71F008F545A /* LoginView.swift in Sources */,
 				9928AD7E2C448760008F545A /* UserSignUpViewModel.swift in Sources */,
 				9928ACF92C370CC0008F545A /* UserSignUpView.swift in Sources */,
 				9928ACFD2C383731008F545A /* CountryList.swift in Sources */,
+				99F0FC252C4C156900D51776 /* ImagePickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
