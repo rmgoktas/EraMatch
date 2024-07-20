@@ -111,3 +111,75 @@ class NgoSignUpViewModel: ObservableObject {
         }
     }
 }
+
+    func saveImageToDocuments(image: UIImage) -> URL? {
+            guard let data = image.jpegData(compressionQuality: 1) else { return nil }
+            let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let fileName = UUID().uuidString + ".jpg"
+            let fileUrl = documents.appendingPathComponent(fileName)
+
+            do {
+                try data.write(to: fileUrl)
+                return fileUrl
+            } catch {
+                print("Error saving image: \(error.localizedDescription)")
+                return nil
+            }
+        }
+
+    func handleFileUpload(fileUrl: URL, isPIF: Bool, completion: @escaping (URL?, String) -> Void) {
+            let storageRef = Storage.storage().reference()
+            let fileName = UUID().uuidString
+            let fileRef = isPIF ? storageRef.child("pifs/\(fileName).pdf") : storageRef.child("logos/\(fileName).png")
+
+            // Access security scoped resource
+            guard fileUrl.startAccessingSecurityScopedResource() else {
+                print("Couldn't access security-scoped resource")
+                completion(nil, "")
+                return
+            }
+
+            do {
+                let fileData = try Data(contentsOf: fileUrl)
+                fileRef.putData(fileData, metadata: nil) { metadata, error in
+                    // Release security scoped resource
+                    fileUrl.stopAccessingSecurityScopedResource()
+
+                    if let error = error {
+                        print("File upload error: \(error.localizedDescription)")
+                        completion(nil, "")
+                        return
+                    }
+
+                    fileRef.downloadURL { url, error in
+                        if let error = error {
+                            print("Failed to retrieve download URL: \(error.localizedDescription)")
+                            completion(nil, "")
+                            return
+                        }
+                        completion(url, fileUrl.lastPathComponent)
+                    }
+                }
+            } catch {
+                // Release security scoped resource
+                fileUrl.stopAccessingSecurityScopedResource()
+                print("Error reading file data: \(error.localizedDescription)")
+                completion(nil, "")
+            }
+          }
+        
+
+    /*func handleFileUpload(fileUrl: URL, isPIF: Bool, completionHandler: @escaping (UIImage?) -> Void) {
+    let viewModel = NgoSignUpViewModel() // ViewModel örneği oluşturulması
+    viewModel.handleFileUpload(fileUrl: fileUrl, isPIF: isPIF) { url, fileName in
+        DispatchQueue.main.async {
+            if let url = url {
+                viewModel.logoUrl = url
+                completionHandler(UIImage(contentsOfFile: fileUrl.path))
+            } else {
+                viewModel.alertMessage = "Logo upload failed."
+                viewModel.showingAlert = true
+            }
+        }
+    }
+    }*/
