@@ -11,6 +11,8 @@ import FirebaseFirestore
 
 class UserHomeViewModel: ObservableObject {
     @Published var userName: String = ""
+    @Published var topics = ["Improve Yourself", "Climate Change", "Artistic Skills", "Equality Rights", "Digital Skills (STEM)", "Health Care"]
+        
     private var db = Firestore.firestore()
 
     init() {
