@@ -60,4 +60,18 @@ class LoginViewModel: ObservableObject {
             }
         }
     }
+    
+    func logoutUser() {
+        do {
+            try Auth.auth().signOut()
+            // Reset navigation flags or navigate back to login screen
+            navigateToTravellerHome = false
+            navigateToNGOHome = false
+        } catch let signOutError as NSError {
+            self.alertMessage = "Error signing out: \(signOutError.localizedDescription)"
+            self.showingAlert = true
+        }
+    }
 }
+
+
