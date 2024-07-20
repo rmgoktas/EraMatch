@@ -217,11 +217,27 @@
 			isa = PBXGroup;
 			children = (
 				9928AD782C448725008F545A /* LoginViewModel.swift */,
-				9928AD7B2C448750008F545A /* NgoSignUpViewModel.swift */,
-				9928AD7D2C448760008F545A /* UserSignUpViewModel.swift */,
-				99F0FC202C4BDB1C00D51776 /* UserHomeViewModel.swift */,
+				99F0FC232C4BDCF700D51776 /* NgoViewModels */,
+				99F0FC222C4BDCDF00D51776 /* UserViewModels */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		99F0FC222C4BDCDF00D51776 /* UserViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				99F0FC202C4BDB1C00D51776 /* UserHomeViewModel.swift */,
+				9928AD7D2C448760008F545A /* UserSignUpViewModel.swift */,
+			);
+			path = UserViewModels;
+			sourceTree = "<group>";
+		};
+		99F0FC232C4BDCF700D51776 /* NgoViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9928AD7B2C448750008F545A /* NgoSignUpViewModel.swift */,
+			);
+			path = NgoViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
