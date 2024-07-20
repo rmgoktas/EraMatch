@@ -8,18 +8,29 @@
 import SwiftUI
 
 struct UserHomeView: View {
+    @StateObject private var viewModel = UserHomeViewModel()
+
     var body: some View {
-        Text("User Home Screen")
-            .font(.largeTitle)
-            .fontWeight(.bold)
-            .foregroundColor(.blue)
-            .navigationBarBackButtonHidden(true)
+        VStack {
+            Text("Welcome, \(viewModel.userName)!")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.blue)
+                .padding()
+            
+            // Diğer UI elemanları burada
+        }
+        .onAppear {
+            viewModel.fetchUsername()
+        }
+        .navigationBarBackButtonHidden(true)
     }
 }
-    
-    struct UserHomeView_Previews: PreviewProvider {
-        static var previews: some View {
-            UserHomeView()
-        }
+
+struct UserHomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        UserHomeView()
     }
+}
+
 
