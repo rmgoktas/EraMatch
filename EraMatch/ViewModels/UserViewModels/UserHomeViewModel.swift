@@ -12,11 +12,24 @@ import FirebaseFirestore
 class UserHomeViewModel: ObservableObject {
     @Published var userName: String = ""
     @Published var topics = ["Improve Yourself", "Climate Change", "Artistic Skills", "Equality Rights", "Digital Skills (STEM)", "Health Care"]
-        
+    
+    @Published var username = ""
+    @Published var bio = ""
+    @Published var country = ""
+    @Published var email = ""
+    @Published var instagram = ""
+    @Published var facebook = ""
+
     private var db = Firestore.firestore()
+    
+    private var userId: String {
+        // Firebase Auth ile giriş yapmış kullanıcının ID'sini alıyoruz
+        return Auth.auth().currentUser?.uid ?? ""
+    }
 
     init() {
         fetchUsername()
+        loadUserData()
     }
 
     func fetchUsername() {
@@ -34,5 +47,22 @@ class UserHomeViewModel: ObservableObject {
             }
         }
     }
+    
+    func loadUserData() {
+        db.collection("users").document(userId).getDocument { document, error in
+            if let document = document, document.exists {
+                let data = document.data()
+                self.username = data?["username"] as? String ?? "isimSoyisim"
+                self.bio = data?["bio"] as? String ?? ""
+                self.country = data?["country"] as? String ?? "Türkiye"
+                self.email = data?["email"] as? String ?? "email@provider.com"
+                self.instagram = data?["instagram"] as? String ?? ""
+                self.facebook = data?["facebook"] as? String ?? ""
+            } else {
+                print("Document does not exist")
+            }
+        }
+    }
 }
+
 
