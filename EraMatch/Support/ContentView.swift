@@ -8,9 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var loginViewModel: LoginViewModel
+
     var body: some View {
         NavigationView {
-            LoginView()
+            if loginViewModel.navigateToTravellerHome {
+                UserHomeView()
+                    .environmentObject(loginViewModel) // Ekstra geçiş
+            } else if loginViewModel.navigateToNGOHome {
+                NgoHomeView()
+                    .environmentObject(loginViewModel) // Ekstra geçiş
+            } else {
+                LoginView()
+                    .environmentObject(loginViewModel) // Ekstra geçiş
+            }
         }
     }
 }
@@ -18,8 +29,14 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(LoginViewModel())
     }
 }
+
+
+
+
+
 
 
 

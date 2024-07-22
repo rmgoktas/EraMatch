@@ -19,8 +19,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct EraMatchApp: App {
     @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
-    
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var loginViewModel = LoginViewModel()
 
     var body: some Scene {
         WindowGroup {
@@ -28,12 +28,16 @@ struct EraMatchApp: App {
                 if isFirstLaunch {
                     OnboardingView(isFirstLaunch: $isFirstLaunch)
                 } else {
-                    LoginView()
+                    ContentView()
+                        .environmentObject(loginViewModel)
                 }
             }
         }
     }
 }
+
+
+
 
 
 
