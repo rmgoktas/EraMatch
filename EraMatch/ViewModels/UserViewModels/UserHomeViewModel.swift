@@ -49,20 +49,28 @@ class UserHomeViewModel: ObservableObject {
     }
     
     func loadUserData() {
-        db.collection("users").document(userId).getDocument { document, error in
+        guard !userId.isEmpty else {
+            print("User ID is empty")
+            return
+        }
+
+        db.collection("travellers").document(userId).getDocument { document, error in
             if let document = document, document.exists {
                 let data = document.data()
-                self.username = data?["username"] as? String ?? "isimSoyisim"
-                self.bio = data?["bio"] as? String ?? ""
-                self.country = data?["country"] as? String ?? "Türkiye"
-                self.email = data?["email"] as? String ?? "email@provider.com"
-                self.instagram = data?["instagram"] as? String ?? ""
-                self.facebook = data?["facebook"] as? String ?? ""
+                DispatchQueue.main.async {
+                    self.username = data?["username"] as? String ?? ""
+                    self.bio = data?["bio"] as? String ?? ""
+                    self.country = data?["country"] as? String ?? ""
+                    self.email = data?["email"] as? String ?? ""
+                    self.instagram = data?["instagram"] as? String ?? ""
+                    self.facebook = data?["facebook"] as? String ?? ""
+                }
             } else {
                 print("Document does not exist")
             }
         }
     }
 }
+
 
 

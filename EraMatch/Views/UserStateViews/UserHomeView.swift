@@ -11,7 +11,6 @@ struct UserHomeView: View {
     @StateObject private var homeViewModel = UserHomeViewModel()
     @State private var isMenuOpen = false
     @EnvironmentObject var loginViewModel: LoginViewModel
-    @State private var selectedTab: String = "Home" // Selected tab state
 
     var body: some View {
         ZStack {
@@ -106,7 +105,7 @@ struct UserHomeView: View {
             
             VStack {
                 Spacer()
-                UserNavBarView(selectedTab: $selectedTab)
+                UserNavBarView()
                     .padding(.horizontal, 10)
                     .frame(maxWidth: .infinity)
                     
