@@ -13,15 +13,33 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             if loginViewModel.navigateToTravellerHome {
-                UserHomeView()
-                    .environmentObject(loginViewModel) // Ekstra geçiş
+                travellerHomeView
             } else if loginViewModel.navigateToNGOHome {
-                NgoHomeView()
-                    .environmentObject(loginViewModel) // Ekstra geçiş
+                ngoHomeView
             } else {
                 LoginView()
-                    .environmentObject(loginViewModel) // Ekstra geçiş
+                    .environmentObject(loginViewModel)
             }
+        }
+    }
+
+    private var travellerHomeView: some View {
+        VStack {
+            NavigationLink(destination: UserHomeView()) {
+                EmptyView()
+            }.hidden()
+            Spacer()
+            UserNavBarView()
+        }
+    }
+
+    private var ngoHomeView: some View {
+        VStack {
+            NavigationLink(destination: NgoHomeView()) {
+                EmptyView()
+            }.hidden()
+            Spacer()
+            UserNavBarView()
         }
     }
 }
@@ -32,11 +50,4 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(LoginViewModel())
     }
 }
-
-
-
-
-
-
-
 
