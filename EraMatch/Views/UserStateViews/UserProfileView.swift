@@ -8,14 +8,42 @@
 import SwiftUI
 
 struct UserProfileView: View {
-    @StateObject private var viewModel = UserHomeViewModel()
-    @State private var selectedTab: String = "Profile" // Selected tab state
+    @StateObject private var homeViewModel = UserHomeViewModel()
+    @EnvironmentObject var loginViewModel: LoginViewModel
+    @State private var selectedTab: String = "Profile"
+    
+    @State private var isEditingBio = false
+    @State private var isEditingCountry = false
+    @State private var isEditingEmail = false
+    @State private var isEditingInstagram = false
+    @State private var isEditingFacebook = false
 
     var body: some View {
         VStack {
-            UserNavBarView(selectedTab: $selectedTab)
-                .padding(.bottom, 20)
+            HStack {
+                Button(action: {
+                    // Menu action removed
+                }) {
+                    Image(systemName: "line.horizontal.3")
+                        .font(.title)
+                        .foregroundColor(.white)
+                }
 
+                Spacer()
+
+                Text("Profile")
+                    .font(.headline)
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                Image(systemName: "magnifyingglass")
+                    .font(.title)
+                    .foregroundColor(.white)
+            }
+            .padding()
+
+            // Profile content
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
@@ -25,7 +53,7 @@ struct UserProfileView: View {
                             .clipShape(Circle())
                         Spacer()
                         VStack(alignment: .leading) {
-                            Text(viewModel.username)
+                            Text(homeViewModel.userName)
                                 .font(.title)
                                 .fontWeight(.bold)
                             Button(action: {
@@ -40,76 +68,86 @@ struct UserProfileView: View {
                     }
                     .padding(.horizontal)
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Bio")
-                            .font(.headline)
-                        TextField("Write about yourself...", text: $viewModel.bio)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray, lineWidth: 1)
-                            )
-                        
-                        Text("Country")
-                            .font(.headline)
-                        TextField("Country", text: $viewModel.country)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray, lineWidth: 1)
-                            )
-                        
-                        Text("E-Mail")
-                            .font(.headline)
-                        TextField("email@provider.com", text: $viewModel.email)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray, lineWidth: 1)
-                            )
-                        
-                        Text("Instagram Profile")
-                            .font(.headline)
-                        TextField("Instagram Profile", text: $viewModel.instagram)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray, lineWidth: 1)
-                            )
-                        
-                        Text("Facebook Profile")
-                            .font(.headline)
-                        TextField("Facebook Profile", text: $viewModel.facebook)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray, lineWidth: 1)
-                            )
-                        
-                        Button(action: {
-                            // Change password action
-                        }) {
-                            Text("Change Password")
-                                .foregroundColor(.blue)
-                        }
+                    profileField(title: "Bio", text: $homeViewModel.bio, isEditing: $isEditingBio, field: "bio", isBio: true)
+                    profileField(title: "Country", text: $homeViewModel.country, isEditing: $isEditingCountry, field: "country")
+                    profileField(title: "E-Mail", text: $homeViewModel.email, isEditing: $isEditingEmail, field: "email")
+                    profileField(title: "Instagram Profile", text: $homeViewModel.instagram, isEditing: $isEditingInstagram, field: "instagram")
+                    profileField(title: "Facebook Profile", text: $homeViewModel.facebook, isEditing: $isEditingFacebook, field: "facebook")
+                }
+                .padding()
+                .background(Color.white)
+                .cornerRadius(25)
+                .padding(.top, 50)
+            }
+            .padding(.leading, 10)
+            .padding(.trailing, 10)
+
+            Spacer()
+
+            // Include the navigation bar
+            UserNavBarView()
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .background(Color.clear) // Make background transparent
+        }
+        .background(BackgroundView())
+        .onAppear {
+            homeViewModel.loadUserData()
+        }
+        .navigationBarBackButtonHidden(true)
+    }
+
+    private func profileField(title: String, text: Binding<String>, isEditing: Binding<Bool>, field: String, isBio: Bool = false) -> some View {
+        VStack {
+            HStack {
+                Text(title)
+                    .font(.headline)
+                    .padding(.top, 8)
+                
+                Spacer()
+                
+                if isEditing.wrappedValue {
+                    Button(action: {
+                        homeViewModel.updateUserField(field: field, value: text.wrappedValue)
+                        isEditing.wrappedValue = false
+                    }) {
+                        Text("Done")
+                            .font(.caption)
+                            .foregroundColor(.blue)
                     }
-                    .padding()
+                } else {
+                    Button(action: {
+                        isEditing.wrappedValue = true
+                    }) {
+                        Text("Edit")
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                    }
                 }
             }
-            .background(BackgroundView())
-        }
-        .onAppear {
-            viewModel.loadUserData()
+            
+            if isBio {
+                TextEditor(text: text)
+                    .frame(height: 150) // Daha geniş bir giriş alanı için yükseklik artırıldı
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray, lineWidth: 1)
+                    )
+                    .disabled(!isEditing.wrappedValue)
+            } else {
+                TextField(title, text: text)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray, lineWidth: 1)
+                    )
+                    .disabled(!isEditing.wrappedValue)
+            }
         }
     }
 }
@@ -117,5 +155,8 @@ struct UserProfileView: View {
 struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
         UserProfileView()
+            .environmentObject(LoginViewModel())
     }
 }
+
+
