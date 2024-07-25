@@ -8,86 +8,49 @@
 import SwiftUI
 
 struct UserNavBarView: View {
-    @Binding var selectedTab: String
-    
+    @EnvironmentObject var loginViewModel: LoginViewModel
+
     var body: some View {
         HStack {
-            Button(action: {
-                selectedTab = "Home"
-            }) {
-                VStack {
-                    Image(systemName: "house")
-                        .font(.title)
-                    Text("Home")
-                        .font(.caption)
-                }
-                .foregroundColor(selectedTab == "Home" ? .purple : .gray)
-            }
-            
+            navBarButton(imageName: "house", title: "Home", destination: UserHomeView())
             Spacer()
-            
-            Button(action: {
-                selectedTab = "Events"
-            }) {
-                VStack {
-                    Image(systemName: "calendar")
-                        .font(.title)
-                    Text("Events")
-                        .font(.caption)
-                }
-                .foregroundColor(selectedTab == "Events" ? .purple : .gray)
-            }
-            
+            navBarButton(imageName: "calendar", title: "Events", destination: Text("Events View")) // Replace with actual view
             Spacer()
-            
-            Button(action: {
-                selectedTab = "Submissions"
-            }) {
-                VStack {
-                    Image(systemName: "paperplane")
-                        .font(.title)
-                    Text("Submissions")
-                        .font(.caption)
-                }
-                .foregroundColor(selectedTab == "Submissions" ? .purple : .gray)
-            }
-            
+            navBarButton(imageName: "paperplane", title: "Submissions", destination: Text("Submissions View")) // Replace with actual view
             Spacer()
-            
-            Button(action: {
-                selectedTab = "Profile"
-            }) {
-                VStack {
-                    Image(systemName: "person")
-                        .font(.title)
-                    Text("Profile")
-                        .font(.caption)
-                }
-                .foregroundColor(selectedTab == "Profile" ? .purple : .gray)
-            }
+            navBarButton(imageName: "person", title: "Profile", destination: UserProfileView())
         }
-        .padding(.horizontal) // Adjust horizontal padding for spacing
-        .padding(.vertical, 10) // Vertical padding for top and bottom
+        .padding(.horizontal)
+        .padding(.vertical, 10)
         .background(Color.white)
-        .cornerRadius(15) // Border radius added
-        .shadow(radius: 5) // Optional shadow for better visual effect
+        .cornerRadius(15)
+        .shadow(radius: 5)
         .overlay(
             RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.black, lineWidth: 1) // Border with corner radius
+                .stroke(Color.black, lineWidth: 0.5)
         )
-        .frame(maxWidth: .infinity) // Expand to fit the width of the screen
+        .frame(maxWidth: .infinity)
+    }
+
+    private func navBarButton<Destination: View>(imageName: String, title: String, destination: Destination) -> some View {
+        NavigationLink(destination: destination) {
+            VStack {
+                Image(systemName: imageName)
+                    .font(.title)
+                Text(title)
+                    .font(.caption)
+            }
+            .foregroundColor(.purple)
+        }
     }
 }
 
 struct UserNavBarView_Previews: PreviewProvider {
     static var previews: some View {
-        UserNavBarView(selectedTab: .constant("Home"))
+        UserNavBarView()
+            .environmentObject(LoginViewModel())
             .previewLayout(.sizeThatFits)
-            .padding() // Padding to preview
+            .padding()
     }
 }
-
-
-
-
 
