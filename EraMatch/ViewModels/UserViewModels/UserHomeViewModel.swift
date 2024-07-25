@@ -48,6 +48,19 @@ class UserHomeViewModel: ObservableObject {
         }
     }
     
+    func updateUserField(field: String, value: String) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        let db = Firestore.firestore()
+        db.collection("travellers").document(userId).updateData([field: value]) { error in
+            if let error = error {
+                print("Error updating user \(field): \(error)")
+            } else {
+                print("\(field) updated successfully")
+            }
+        }
+    }
+    
     func loadUserData() {
         guard !userId.isEmpty else {
             print("User ID is empty")

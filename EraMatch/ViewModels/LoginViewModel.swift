@@ -2,6 +2,8 @@ import SwiftUI
 import Firebase
 
 class LoginViewModel: ObservableObject {
+    
+    @Published var currentUser: Firebase.User? = Auth.auth().currentUser
     @Published var email = ""
     @Published var password = ""
     @Published var showingAlert = false
@@ -10,6 +12,12 @@ class LoginViewModel: ObservableObject {
     
     @Published var navigateToTravellerHome = false
     @Published var navigateToNGOHome = false
+    
+    init() {
+        Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            self?.currentUser = user
+        }
+    }
     
     func loginUser() {
         isLoading = true

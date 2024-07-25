@@ -50,4 +50,3 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(LoginViewModel())
     }
 }
-
