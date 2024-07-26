@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		991F3A712C52A6C900E1CC1C /* NgoProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F3A702C52A6C900E1CC1C /* NgoProfileView.swift */; };
+		991F3A732C53F15100E1CC1C /* NgoNavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F3A722C53F15100E1CC1C /* NgoNavBarView.swift */; };
+		991F3A752C53F46C00E1CC1C /* EventCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F3A742C53F46C00E1CC1C /* EventCardView.swift */; };
 		9928ACBB2C358F30008F545A /* EraMatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACBA2C358F30008F545A /* EraMatchApp.swift */; };
 		9928ACBD2C358F30008F545A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACBC2C358F30008F545A /* ContentView.swift */; };
 		9928ACBF2C358F32008F545A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9928ACBE2C358F32008F545A /* Assets.xcassets */; };
@@ -60,6 +63,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		991F3A702C52A6C900E1CC1C /* NgoProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoProfileView.swift; sourceTree = "<group>"; };
+		991F3A722C53F15100E1CC1C /* NgoNavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoNavBarView.swift; sourceTree = "<group>"; };
+		991F3A742C53F46C00E1CC1C /* EventCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCardView.swift; sourceTree = "<group>"; };
 		9928ACB72C358F30008F545A /* EraMatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EraMatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9928ACBA2C358F30008F545A /* EraMatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EraMatchApp.swift; sourceTree = "<group>"; };
 		9928ACBC2C358F30008F545A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -206,6 +212,8 @@
 			children = (
 				9928ACDF2C36DCAC008F545A /* NgoHomeView.swift */,
 				9928ACF62C370CAE008F545A /* NgoSignUpView.swift */,
+				991F3A702C52A6C900E1CC1C /* NgoProfileView.swift */,
+				991F3A722C53F15100E1CC1C /* NgoNavBarView.swift */,
 			);
 			path = NgoStateViews;
 			sourceTree = "<group>";
@@ -218,6 +226,7 @@
 				9928ACE42C36F71F008F545A /* LoginView.swift */,
 				9928ACFA2C370CED008F545A /* SelectStateView.swift */,
 				99F0FC242C4C156900D51776 /* ImagePickerView.swift */,
+				991F3A742C53F46C00E1CC1C /* EventCardView.swift */,
 			);
 			path = PublicStateViews;
 			sourceTree = "<group>";
@@ -356,15 +365,18 @@
 				9928ACFB2C370CED008F545A /* SelectStateView.swift in Sources */,
 				99F0FC2D2C4D2D3300D51776 /* UserNavBarView.swift in Sources */,
 				9928ACD62C35ACC8008F545A /* BackgroundView.swift in Sources */,
+				991F3A712C52A6C900E1CC1C /* NgoProfileView.swift in Sources */,
 				9928ACF72C370CAE008F545A /* NgoSignUpView.swift in Sources */,
 				9928ACD22C359D27008F545A /* OnboardingView.swift in Sources */,
 				99F0FC2F2C4EC81000D51776 /* UserProfileView.swift in Sources */,
+				991F3A732C53F15100E1CC1C /* NgoNavBarView.swift in Sources */,
 				9928ACD42C35A4A0008F545A /* UserHomeView.swift in Sources */,
 				9928AD7C2C448750008F545A /* NgoSignUpViewModel.swift in Sources */,
 				99F0FC212C4BDB1C00D51776 /* UserHomeViewModel.swift in Sources */,
 				9928ACE02C36DCAC008F545A /* NgoHomeView.swift in Sources */,
 				9928ACBD2C358F30008F545A /* ContentView.swift in Sources */,
 				9928AD792C448725008F545A /* LoginViewModel.swift in Sources */,
+				991F3A752C53F46C00E1CC1C /* EventCardView.swift in Sources */,
 				9928ACBB2C358F30008F545A /* EraMatchApp.swift in Sources */,
 				9928ACE52C36F71F008F545A /* LoginView.swift in Sources */,
 				9928AD7E2C448760008F545A /* UserSignUpViewModel.swift in Sources */,
