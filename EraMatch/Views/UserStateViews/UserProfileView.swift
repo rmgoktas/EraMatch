@@ -130,7 +130,7 @@ struct UserProfileView: View {
                 TextEditor(text: text)
                     .frame(height: 150) // Daha geniş bir giriş alanı için yükseklik artırıldı
                     .padding()
-                    .background(Color(.systemGray6))
+                    .background(Color(.white))
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
@@ -140,7 +140,7 @@ struct UserProfileView: View {
             } else {
                 TextField(title, text: text)
                     .padding()
-                    .background(Color(.systemGray6))
+                    .background(Color(.white))
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)

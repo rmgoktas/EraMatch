@@ -8,155 +8,179 @@
 import SwiftUI
 
 struct NgoProfileView: View {
-    @State private var bio: String = "Write about your STK..."
-    @State private var country: String = "Türkiye"
-    @State private var oidNumber: String = "9999999999"
-    @State private var email: String = "email@provider.com"
-    @State private var instagramProfile: String = ""
-    @State private var facebookProfile: String = ""
+    @EnvironmentObject var signUpViewModel: NgoSignUpViewModel
 
     var body: some View {
-        ZStack {
-            BackgroundView()
-
-            VStack(spacing: 20) {
-                // Profile Picture and Name
-                HStack {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .frame(width: 80, height: 80)
-                    Text("STKAdi")
-                        .font(.largeTitle)
-                        .bold()
-                    Spacer()
-                    Button(action: {
-                        // Share action
-                    }) {
-                        Image(systemName: "square.and.arrow.up")
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                    }
-                }
-                .padding()
-
-                // Bio
-                VStack(alignment: .leading) {
-                    Text("Bio")
-                        .font(.headline)
-                    TextField("Write about your STK...", text: $bio)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                }
-                .padding(.horizontal)
-
-                // Country and OID Number
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Country")
-                            .font(.headline)
-                        TextField("Country", text: $country)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                    }
-                    VStack(alignment: .leading) {
-                        Text("OID Number")
-                            .font(.headline)
-                        TextField("OID Number", text: $oidNumber)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                    }
-                }
-                .padding(.horizontal)
-
-                // Email
-                VStack(alignment: .leading) {
-                    Text("E-Mail")
-                        .font(.headline)
-                    TextField("email@provider.com", text: $email)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                }
-                .padding(.horizontal)
-
-                // Social Profiles
-                VStack(alignment: .leading) {
+        NavigationView {
+            ZStack {
+                BackgroundView()
+                
+                VStack {
+                    // Üst çubuk
                     HStack {
-                        Text("Instagram Profile")
-                            .font(.headline)
-                        TextField("Instagram Profile", text: $instagramProfile)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .overlay(
-                                Image(systemName: "link")
+                        Button(action: {
+                            // Menu action
+                        }) {
+                            Image(systemName: "line.horizontal.3")
+                                .font(.title)
+                                .foregroundColor(.white)
+                        }
+
+                        Spacer()
+
+                        Text("Profile")
+                            .font(.title3)
+                            .bold()
+                            .foregroundColor(.white)
+
+                        Spacer()
+
+                        Image(systemName: "magnifyingglass")
+                            .font(.title)
+                            .foregroundColor(.white)
+                    }
+                    .padding(.top, 30)
+                    .padding(.horizontal)
+                    .background(Color.black.opacity(0))
+
+                    GeometryReader { geometry in
+                        ScrollView {
+                            VStack {
+                                VStack(spacing: 20) {
+                                    // Profile Picture and Name
+                                    HStack {
+                                        Image(systemName: "person.circle.fill")
+                                            .resizable()
+                                            .frame(width: 50, height: 50)
+                                        Text(signUpViewModel.ngoName.isEmpty ? "STKAdi" : signUpViewModel.ngoName)
+                                            .font(.largeTitle)
+                                            .bold()
+                                        Spacer()
+                                        Button(action: {
+                                            // Share action
+                                        }) {
+                                            Image(systemName: "square.and.arrow.up")
+                                                .resizable()
+                                                .frame(width: 24, height: 24)
+                                        }
+                                    }
                                     .padding()
-                                    .background(Color(.systemGray6))
-                                    .cornerRadius(8),
-                                alignment: .trailing
-                            )
-                    }
-                    HStack {
-                        Text("Facebook Profile")
-                            .font(.headline)
-                        TextField("Facebook Profile", text: $facebookProfile)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .overlay(
-                                Image(systemName: "link")
-                                    .padding()
-                                    .background(Color(.systemGray6))
-                                    .cornerRadius(8),
-                                alignment: .trailing
-                            )
+                                    // Country and OID Number
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            Text("Country")
+                                                .font(.headline)
+                                            TextField("Country", text: $signUpViewModel.ngoCountry)
+                                                .padding()
+                                                .background(Color(.systemGray6))
+                                                .cornerRadius(8)
+                                        }
+                                        VStack(alignment: .leading) {
+                                            Text("OID Number")
+                                                .font(.headline)
+                                            TextField("OID Number", text: $signUpViewModel.oidNumber)
+                                                .padding()
+                                                .background(Color(.systemGray6))
+                                                .cornerRadius(8)
+                                        }
+                                    }
+                                    .padding(.horizontal)
+
+                                    // Email
+                                    VStack(alignment: .leading) {
+                                        Text("E-Mail")
+                                            .font(.headline)
+                                        TextField("email@provider.com", text: $signUpViewModel.ngoEmail)
+                                            .padding()
+                                            .background(Color(.systemGray6))
+                                            .cornerRadius(8)
+                                    }
+                                    .padding(.horizontal)
+
+                                    // Social Profiles
+                                    VStack(alignment: .leading) {
+                                        HStack {
+                                            Text("Instagram Profile")
+                                                .font(.headline)
+                                            TextField("Instagram Profile", text: $signUpViewModel.instagram)
+                                                .padding()
+                                                .background(Color(.systemGray6))
+                                                .cornerRadius(8)
+                                                .overlay(
+                                                    Image(systemName: "link")
+                                                        .padding()
+                                                        .background(Color(.systemGray6))
+                                                        .cornerRadius(8),
+                                                    alignment: .trailing
+                                                )
+                                        }
+                                        HStack {
+                                            Text("Facebook Profile")
+                                                .font(.headline)
+                                            TextField("Facebook Profile", text: $signUpViewModel.facebook)
+                                                .padding()
+                                                .background(Color(.systemGray6))
+                                                .cornerRadius(8)
+                                                .overlay(
+                                                    Image(systemName: "link")
+                                                        .padding()
+                                                        .background(Color(.systemGray6))
+                                                        .cornerRadius(8),
+                                                    alignment: .trailing
+                                                )
+                                        }
+                                    }
+                                    .padding(.horizontal)
+
+                                    // Download PIF Button
+                                    Button(action: {
+                                        // Download PIF action
+                                    }) {
+                                        Text("DOWNLOAD PIF")
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+                                            .padding()
+                                            .background(Color.white)
+                                            .cornerRadius(8)
+                                    }
+                                    .padding(.horizontal)
+                                }
+                                .padding(.all, 20)
+                                .background(Color.white)
+                                .cornerRadius(8)
+                                .padding(.horizontal)
+                                .padding(.top, geometry.safeAreaInsets.top + 40)
+                            }
+                        }
                     }
                 }
-                .padding(.horizontal)
-
-                // Change Password
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        // Change password action
-                    }) {
-                        Text("Change Password")
-                            .foregroundColor(.blue)
-                    }
-                }
-                .padding(.horizontal)
-
-                // Download PIF Button
-                Button(action: {
-                    // Download PIF action
-                }) {
-                    Text("DOWNLOAD PIF")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.black)
-                        .cornerRadius(8)
-                }
-                .padding(.horizontal)
-
-                Spacer()
 
                 // NGO Nav Bar
-                NgoNavBarView()
-                    .padding(.top, 10)
+                VStack {
+                    Spacer()
+                    NgoNavBarView()
+                        .padding(.horizontal)
+                        .padding(.top, 10)
+                }
+
+                // Floating Action Button
+                VStack {
+                    Spacer()
+                }
             }
+            .navigationBarHidden(true)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
 struct NgoProfileView_Previews: PreviewProvider {
     static var previews: some View {
         NgoProfileView()
+            .environmentObject(NgoSignUpViewModel())
     }
 }
+
 
 
 

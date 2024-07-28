@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct NgoNavBarView: View {
+    @State private var selectedTab: String = "My Events"
+
     var body: some View {
         HStack {
-            navBarButton(imageName: "calendar", title: "My Events", destination: Text("My Events View")) // Replace with actual view
+            navBarButton(imageName: "calendar", title: "My Events", selectedTab: $selectedTab)
             Spacer()
-            navBarButton(imageName: "checkmark.circle", title: "Submissions", destination: Text("Submissions View")) // Replace with actual view
+            navBarButton(imageName: "checkmark.circle", title: "Submissions", selectedTab: $selectedTab)
             Spacer()
-            navBarButton(imageName: "person", title: "Profile", destination: Text("Profile View")) // Replace with actual view
+            navBarButton(imageName: "person", title: "Profile", selectedTab: $selectedTab)
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
@@ -28,15 +30,17 @@ struct NgoNavBarView: View {
         .frame(maxWidth: .infinity)
     }
 
-    private func navBarButton<Destination: View>(imageName: String, title: String, destination: Destination) -> some View {
-        NavigationLink(destination: destination) {
+    private func navBarButton(imageName: String, title: String, selectedTab: Binding<String>) -> some View {
+        Button(action: {
+            selectedTab.wrappedValue = title
+        }) {
             VStack {
                 Image(systemName: imageName)
                     .font(.title)
                 Text(title)
                     .font(.caption)
             }
-            .foregroundColor(.purple)
+            .foregroundColor(selectedTab.wrappedValue == title ? .purple : .gray)
         }
     }
 }
@@ -48,4 +52,5 @@ struct NGONavBarView_Previews: PreviewProvider {
             .padding()
     }
 }
+
 

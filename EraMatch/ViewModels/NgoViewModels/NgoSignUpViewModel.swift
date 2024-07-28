@@ -10,6 +10,8 @@ class NgoSignUpViewModel: ObservableObject {
     @Published var ngoConfirmedPassword = ""
     @Published var ngoCountry = ""
     @Published var showingCountryPicker = false
+    @Published var instagram = ""
+    @Published var facebook = ""
     
     @Published var showingAlert = false
     @Published var alertMessage = ""
