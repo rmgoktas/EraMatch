@@ -21,26 +21,18 @@ struct ContentView: View {
                     .environmentObject(loginViewModel)
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationBarHidden(true)
     }
 
     private var travellerHomeView: some View {
-        VStack {
-            NavigationLink(destination: UserHomeView()) {
-                EmptyView()
-            }.hidden()
-            Spacer()
-            UserNavBarView()
-        }
+        UserHomeView()
+            .navigationBarHidden(true)
     }
 
     private var ngoHomeView: some View {
-        VStack {
-            NavigationLink(destination: NgoHomeView()) {
-                EmptyView()
-            }.hidden()
-            Spacer()
-            UserNavBarView()
-        }
+        NgoHomeView()
+            .navigationBarHidden(true)
     }
 }
 
@@ -50,3 +42,4 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(LoginViewModel())
     }
 }
+

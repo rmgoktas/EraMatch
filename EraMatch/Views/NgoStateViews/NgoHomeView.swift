@@ -12,127 +12,125 @@ struct NgoHomeView: View {
     @EnvironmentObject var loginViewModel: LoginViewModel
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                BackgroundView()
+        ZStack {
+            BackgroundView()
 
-                VStack {
-                    // Üst çubuk
-                    HStack {
-                        Button(action: {
-                            withAnimation {
-                                isMenuOpen.toggle()
-                            }
-                        }) {
-                            Image(systemName: "line.horizontal.3")
-                                .font(.title)
-                                .foregroundColor(.white)
+            VStack {
+                // Üst çubuk
+                HStack {
+                    Button(action: {
+                        withAnimation {
+                            isMenuOpen.toggle()
                         }
-
-                        Spacer()
-
-                        Text("My Events")
-                            .font(.title3)
-                            .bold()
-                            .foregroundColor(.white)
-
-                        Spacer()
-
-                        Image(systemName: "magnifyingglass")
+                    }) {
+                        Image(systemName: "line.horizontal.3")
                             .font(.title)
                             .foregroundColor(.white)
                     }
-                    .padding(.top, 30)
-                    .padding(.horizontal)
-                    .background(Color.black.opacity(0))
 
-                    GeometryReader { geometry in
-                        ScrollView {
-                            VStack(spacing: 30) {
-                                // Event Cards
-                                EventCardView(
-                                    title: "Hidden Geniuses",
-                                    subtitle: "Training Course on “Digital Skills”",
-                                    location: "Madrid, SPAIN",
-                                    dateRange: "14 Apr 2024 - 21 Apr 2024",
-                                    onDetailTap: {
-                                        // Navigate to event details
-                                    }
-                                )
-
-                                EventCardView(
-                                    title: "Youth Exchange",
-                                    subtitle: "Exploring Cultural Diversity",
-                                    location: "Berlin, GERMANY",
-                                    dateRange: "10 Jun 2024 - 20 Jun 2024",
-                                    onDetailTap: {
-                                        // Navigate to event details
-                                    }
-                                )
-
-                                EventCardView(
-                                    title: "Environmental Summit",
-                                    subtitle: "Actions for a Sustainable Future",
-                                    location: "Oslo, NORWAY",
-                                    dateRange: "5 Jul 2024 - 12 Jul 2024",
-                                    onDetailTap: {
-                                        // Navigate to event details
-                                    }
-                                )
-
-                                Spacer(minLength: 90) // Floating Action Button için altta yer bırakmak amacıyla spacer ekledim
-                            }
-                            .padding(.top, geometry.safeAreaInsets.top + 60)
-                        }
-                    }
-                }
-
-                // NGO Nav Bar
-                VStack {
                     Spacer()
-                    NgoNavBarView()
-                        .padding(.horizontal)
-                        .padding(.top, 10)
-                }
 
-                if isMenuOpen {
-                    Color.black.opacity(0.5)
-                        .edgesIgnoringSafeArea(.all)
-                        .transition(.opacity)
-                        .onTapGesture {
-                            withAnimation {
-                                isMenuOpen = false
-                            }
-                        }
+                    Text("My Events")
+                        .font(.title3)
+                        .bold()
+                        .foregroundColor(.white)
 
-                    sliderMenu
-                        .transition(.move(edge: .leading))
-                        .animation(.easeInOut(duration: 0.3))
-                }
-
-                // Floating Action Button
-                VStack {
                     Spacer()
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            // Add new event action
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 32))
-                                .foregroundColor(.white)
-                                .padding(20)
-                                .background(Color.purple)
-                                .cornerRadius(40)
+
+                    Image(systemName: "magnifyingglass")
+                        .font(.title)
+                        .foregroundColor(.white)
+                }
+                .padding(.top, 30)
+                .padding(.horizontal)
+                .background(Color.black.opacity(0))
+
+                GeometryReader { geometry in
+                    ScrollView {
+                        VStack(spacing: 30) {
+                            // Event Cards
+                            EventCardView(
+                                title: "Hidden Geniuses",
+                                subtitle: "Training Course on “Digital Skills”",
+                                location: "Madrid, SPAIN",
+                                dateRange: "14 Apr 2024 - 21 Apr 2024",
+                                onDetailTap: {
+                                    // Navigate to event details
+                                }
+                            )
+
+                            EventCardView(
+                                title: "Youth Exchange",
+                                subtitle: "Exploring Cultural Diversity",
+                                location: "Berlin, GERMANY",
+                                dateRange: "10 Jun 2024 - 20 Jun 2024",
+                                onDetailTap: {
+                                    // Navigate to event details
+                                }
+                            )
+
+                            EventCardView(
+                                title: "Environmental Summit",
+                                subtitle: "Actions for a Sustainable Future",
+                                location: "Oslo, NORWAY",
+                                dateRange: "5 Jul 2024 - 12 Jul 2024",
+                                onDetailTap: {
+                                    // Navigate to event details
+                                }
+                            )
+
+                            Spacer(minLength: 90) // Floating Action Button için altta yer bırakmak amacıyla spacer ekledim
                         }
-                        .padding(.trailing, 20)
-                        .padding(.bottom, 90)
+                        .padding(.top, geometry.safeAreaInsets.top + 20)
                     }
                 }
             }
-            .navigationBarHidden(true)
+
+            // NGO Nav Bar
+            VStack {
+                Spacer()
+                NgoNavBarView()
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+            }
+
+            if isMenuOpen {
+                Color.black.opacity(0.5)
+                    .edgesIgnoringSafeArea(.all)
+                    .transition(.opacity)
+                    .onTapGesture {
+                        withAnimation {
+                            isMenuOpen = false
+                        }
+                    }
+
+                sliderMenu
+                    .transition(.move(edge: .leading))
+                    .animation(.easeInOut(duration: 0.3))
+            }
+
+            // Floating Action Button
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        // Add new event action
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 32))
+                            .foregroundColor(.white)
+                            .padding(20)
+                            .background(Color.purple)
+                            .cornerRadius(40)
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 90)
+                }
+            }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
     }
 
     // Slider menü bileşeni
@@ -203,6 +201,8 @@ struct NgoHomeView_Previews: PreviewProvider {
             .environmentObject(LoginViewModel())
     }
 }
+
+
 
 
 
