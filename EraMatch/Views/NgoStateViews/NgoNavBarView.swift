@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NgoNavBarView: View {
-    @State private var selectedTab: String = "My Events"
+    @Binding var selectedTab: String
 
     var body: some View {
         HStack {
@@ -47,10 +47,11 @@ struct NgoNavBarView: View {
 
 struct NGONavBarView_Previews: PreviewProvider {
     static var previews: some View {
-        NgoNavBarView()
+        NgoNavBarView(selectedTab: .constant("My Events"))
             .previewLayout(.sizeThatFits)
             .padding()
     }
 }
+
 
 

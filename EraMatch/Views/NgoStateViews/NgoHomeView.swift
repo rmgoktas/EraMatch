@@ -10,6 +10,7 @@ import SwiftUI
 struct NgoHomeView: View {
     @State private var isMenuOpen = false
     @EnvironmentObject var loginViewModel: LoginViewModel
+    @State private var selectedTab: String = "My Events" // Seçilen sekmeyi takip etmek için
 
     var body: some View {
         ZStack {
@@ -48,40 +49,51 @@ struct NgoHomeView: View {
                 GeometryReader { geometry in
                     ScrollView {
                         VStack(spacing: 30) {
-                            // Event Cards
-                            EventCardView(
-                                title: "Hidden Geniuses",
-                                subtitle: "Training Course on “Digital Skills”",
-                                location: "Madrid, SPAIN",
-                                dateRange: "14 Apr 2024 - 21 Apr 2024",
-                                onDetailTap: {
-                                    // Navigate to event details
-                                }
-                            )
+                            // Seçilen sekmeye göre görünümü göster
+                            if selectedTab == "My Events" {
+                                EventCardView(
+                                    title: "Hidden Geniuses",
+                                    subtitle: "Training Course on “Digital Skills”",
+                                    location: "Madrid, SPAIN",
+                                    dateRange: "14 Apr 2024 - 21 Apr 2024",
+                                    onDetailTap: {
+                                        // Navigate to event details
+                                    }
+                                )
 
-                            EventCardView(
-                                title: "Youth Exchange",
-                                subtitle: "Exploring Cultural Diversity",
-                                location: "Berlin, GERMANY",
-                                dateRange: "10 Jun 2024 - 20 Jun 2024",
-                                onDetailTap: {
-                                    // Navigate to event details
-                                }
-                            )
+                                EventCardView(
+                                    title: "Youth Exchange",
+                                    subtitle: "Exploring Cultural Diversity",
+                                    location: "Berlin, GERMANY",
+                                    dateRange: "10 Jun 2024 - 20 Jun 2024",
+                                    onDetailTap: {
+                                        // Navigate to event details
+                                    }
+                                )
 
-                            EventCardView(
-                                title: "Environmental Summit",
-                                subtitle: "Actions for a Sustainable Future",
-                                location: "Oslo, NORWAY",
-                                dateRange: "5 Jul 2024 - 12 Jul 2024",
-                                onDetailTap: {
-                                    // Navigate to event details
-                                }
-                            )
+                                EventCardView(
+                                    title: "Environmental Summit",
+                                    subtitle: "Actions for a Sustainable Future",
+                                    location: "Oslo, NORWAY",
+                                    dateRange: "5 Jul 2024 - 12 Jul 2024",
+                                    onDetailTap: {
+                                        // Navigate to event details
+                                    }
+                                )
+                            } else if selectedTab == "Submissions" {
+                                // Submissions görünümü
+                                Text("Submissions Page")
+                                    .font(.title)
+                                    .padding()
+                            } else if selectedTab == "Profile" {
+                                // Profile görünümü
+                                NgoProfileView(selectedTab: $selectedTab) // NgoProfileView'yi burada çağırıyoruz
+                                    .environmentObject(NgoSignUpViewModel())
+                            }
 
                             Spacer(minLength: 90) // Floating Action Button için altta yer bırakmak amacıyla spacer ekledim
                         }
-                        .padding(.top, geometry.safeAreaInsets.top + 20)
+                        .padding(.top, geometry.safeAreaInsets.top + 60)
                     }
                 }
             }
@@ -89,7 +101,7 @@ struct NgoHomeView: View {
             // NGO Nav Bar
             VStack {
                 Spacer()
-                NgoNavBarView()
+                NgoNavBarView(selectedTab: $selectedTab) // Seçilen sekmeyi güncellemek için binding kullan
                     .padding(.horizontal)
                     .padding(.top, 10)
             }
@@ -149,49 +161,38 @@ struct NgoHomeView: View {
                             isMenuOpen = false
                         }
                     }) {
-                        Image(systemName: "arrow.backward")
+                        Image(systemName: "xmark")
                             .font(.title)
-                            .foregroundColor(.black)
+                            .foregroundColor(.white)
+                            .padding()
                     }
                 }
                 .padding()
 
-                List {
-                    NavigationLink(destination: GuideScreenView(content: .whatIsEraMatch)) {
-                        Text("What is EraMatch ?")
-                    }
-                    NavigationLink(destination: GuideScreenView(content: .howDoIParticipate)) {
-                        Text("How Do I Participate ?")
-                    }
-                    NavigationLink(destination: GuideScreenView(content: .doIHaveToPay)) {
-                        Text("Do I Have to Pay ?")
-                    }
-                    NavigationLink(destination: GuideScreenView(content: .whatCanIDo)) {
-                        Text("What Can I Do on EraMatch ?")
+                // Menü içeriği
+                ForEach(["Home", "My Events", "Submissions", "Profile"], id: \.self) { item in
+                    Button(action: {
+                        withAnimation {
+                            selectedTab = item
+                            isMenuOpen = false
+                        }
+                    }) {
+                        Text(item)
+                            .foregroundColor(.white)
+                            .font(.title2)
+                            .padding()
+                            .background(selectedTab == item ? Color.gray.opacity(0.2) : Color.clear)
+                            .cornerRadius(8)
+                            .padding(.horizontal)
                     }
                 }
 
                 Spacer()
-
-                Button(action: {
-                    loginViewModel.logoutUser()
-                    withAnimation {
-                        isMenuOpen = false
-                    }
-                }) {
-                    HStack {
-                        Text("Sign Out")
-                        Image(systemName: "arrow.right.circle")
-                    }
-                    .padding(.bottom, 50)
-                    .padding(.leading, 180)
-                }
             }
-            .frame(width: 300)
-            .background(Color.white)
-            .offset(x: isMenuOpen ? 0 : -300, y: 50)
-            .edgesIgnoringSafeArea(.top)
         }
+        .frame(width: 250)
+        .background(Color.black)
+        .edgesIgnoringSafeArea(.all)
     }
 }
 
