@@ -1,5 +1,7 @@
 # EraMatch
 
+## Status: 🚧 Under Development
+
 **EraMatch** is a SwiftUI-based mobile application that bridges the gap between travelers and NGOs. Whether you're a traveler looking for exciting opportunities to explore new places or an NGO seeking enthusiastic participants for your events, EraMatch has you covered.
 
 ## Features
