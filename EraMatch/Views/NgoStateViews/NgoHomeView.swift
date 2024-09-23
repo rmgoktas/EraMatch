@@ -10,14 +10,13 @@ import SwiftUI
 struct NgoHomeView: View {
     @State private var isMenuOpen = false
     @EnvironmentObject var loginViewModel: LoginViewModel
-    @State private var selectedTab: String = "My Events" // Seçilen sekmeyi takip etmek için
+    @State private var selectedTab: String = "My Events"
 
     var body: some View {
         ZStack {
             BackgroundView()
 
             VStack {
-                // Üst çubuk
                 HStack {
                     Button(action: {
                         withAnimation {
