@@ -37,20 +37,26 @@ class NgoHomeViewModel: ObservableObject {
         }
 
         db.collection("ngos").document(userId).getDocument { document, error in
-            if let document = document, document.exists {
-                let data = document.data()
-                DispatchQueue.main.async {
-                    self.ngoName = data?["ngoName"] as? String ?? ""
-                    self.oidNumber = data?["oidNumber"] as? String ?? ""
-                    self.country = data?["country"] as? String ?? ""
-                    self.email = data?["email"] as? String ?? ""
-                    self.logoUrl = data?["logoUrl"] as? String ?? ""
-                    self.pifUrl = data?["pifUrl"] as? String ?? ""
-                    self.instagram = data?["instagram"] as? String ?? ""
-                    self.facebook = data?["facebook"] as? String ?? ""
-                }
-            } else {
+            if let error = error {
+                print("Error fetching document: \(error)")
+                return
+            }
+            
+            guard let document = document, document.exists else {
                 print("Document does not exist")
+                return
+            }
+            
+            let data = document.data()
+            DispatchQueue.main.async {
+                self.ngoName = data?["ngoName"] as? String ?? ""
+                self.oidNumber = data?["oidNumber"] as? String ?? ""
+                self.country = data?["country"] as? String ?? ""
+                self.email = data?["email"] as? String ?? ""
+                self.logoUrl = data?["logoUrl"] as? String ?? ""
+                self.pifUrl = data?["pifUrl"] as? String ?? ""
+                self.instagram = data?["instagram"] as? String ?? ""
+                self.facebook = data?["facebook"] as? String ?? ""
             }
         }
     }
