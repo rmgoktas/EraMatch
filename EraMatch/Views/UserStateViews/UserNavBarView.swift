@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct UserNavBarView: View {
-    @EnvironmentObject var loginViewModel: LoginViewModel
+    @Binding var selectedTab: String // Seçili sekmeyi tutacak binding değişkeni
 
     var body: some View {
         HStack {
-            navBarButton(imageName: "house", title: "Home", destination: UserHomeView())
+            navBarButton(imageName: "house", title: "Home", selectedTab: $selectedTab, tabName: "Home")
             Spacer()
-            navBarButton(imageName: "calendar", title: "Events", destination: Text("Events View")) // Replace with actual view
+            navBarButton(imageName: "calendar", title: "My Events", selectedTab: $selectedTab, tabName: "Events")
             Spacer()
-            navBarButton(imageName: "paperplane", title: "Submissions", destination: Text("Submissions View")) // Replace with actual view
+            navBarButton(imageName: "paperplane", title: "Submissions", selectedTab: $selectedTab, tabName: "Submissions")
             Spacer()
-            navBarButton(imageName: "person", title: "Profile", destination: UserProfileView())
+            navBarButton(imageName: "person", title: "Profile", selectedTab: $selectedTab, tabName: "Profile")
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
@@ -31,26 +31,39 @@ struct UserNavBarView: View {
         )
         .frame(maxWidth: .infinity)
     }
-
-    private func navBarButton<Destination: View>(imageName: String, title: String, destination: Destination) -> some View {
-        NavigationLink(destination: destination) {
+    
+    private func navBarButton(imageName: String, title: String, selectedTab: Binding<String>, tabName: String) -> some View {
+        Button(action: {
+            selectedTab.wrappedValue = tabName // Seçili sekmeyi güncelle
+        }) {
             VStack {
                 Image(systemName: imageName)
                     .font(.title)
                 Text(title)
                     .font(.caption)
             }
-            .foregroundColor(.purple)
+            .foregroundColor(selectedTab.wrappedValue == tabName ? .purple : .gray) 
         }
     }
 }
 
 struct UserNavBarView_Previews: PreviewProvider {
     static var previews: some View {
-        UserNavBarView()
+        // Seçili sekme için bir örnek Binding oluştur
+        StateWrapper()
             .environmentObject(LoginViewModel())
             .previewLayout(.sizeThatFits)
             .padding()
     }
 }
+
+// StateWrapper, selectedTab'ı Binding olarak sağlamak için kullanılabilir
+struct StateWrapper: View {
+    @State private var selectedTab: String = "Home"
+    
+    var body: some View {
+        UserNavBarView(selectedTab: $selectedTab)
+    }
+}
+
 

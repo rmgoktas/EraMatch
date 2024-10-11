@@ -3,9 +3,10 @@ import Firebase
 
 struct UserSignUpView: View {
     @ObservedObject var viewModel = UserSignUpViewModel()
+    @EnvironmentObject var loginViewModel: LoginViewModel
     
     // User Type
-    var userType: String // "user" olarak ayarlanacak
+    var userType: String
 
     var body: some View {
         ZStack {
@@ -159,6 +160,6 @@ struct UserSignUpView: View {
 
 struct UserSignUpView_Previews: PreviewProvider {
     static var previews: some View {
-        UserSignUpView(userType: "user") // User türünü burada belirle
+        UserSignUpView(userType: "user") 
     }
 }

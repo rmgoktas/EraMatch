@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct UserProfileView: View {
-    @StateObject private var homeViewModel = UserHomeViewModel()
     @EnvironmentObject var loginViewModel: LoginViewModel
+    @StateObject private var homeViewModel = UserHomeViewModel()
     @State private var selectedTab: String = "Profile"
     
     @State private var isEditingBio = false
@@ -73,6 +73,24 @@ struct UserProfileView: View {
                     profileField(title: "E-Mail", text: $homeViewModel.email, isEditing: $isEditingEmail, field: "email")
                     profileField(title: "Instagram Profile", text: $homeViewModel.instagram, isEditing: $isEditingInstagram, field: "instagram")
                     profileField(title: "Facebook Profile", text: $homeViewModel.facebook, isEditing: $isEditingFacebook, field: "facebook")
+                    
+                    // Sign out button
+                    Button(action: {
+                        loginViewModel.logoutUser() // Logout action
+                    }) {
+                        Text("Sign Out")
+                            .foregroundColor(.red)
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.red, lineWidth: 2)
+                            )
+                    }
+                    .padding(.top, 20)
                 }
                 .padding()
                 .background(Color.white)
@@ -85,10 +103,10 @@ struct UserProfileView: View {
             Spacer()
 
             // Include the navigation bar
-            UserNavBarView()
+            UserNavBarView(selectedTab: $selectedTab)
                 .padding(.horizontal)
                 .padding(.vertical, 10)
-                .background(Color.clear) // Make background transparent
+                .background(Color.clear)
         }
         .background(BackgroundView())
         .onAppear {
@@ -128,7 +146,7 @@ struct UserProfileView: View {
             
             if isBio {
                 TextEditor(text: text)
-                    .frame(height: 150) // Daha geniş bir giriş alanı için yükseklik artırıldı
+                    .frame(height: 150) 
                     .padding()
                     .background(Color(.white))
                     .cornerRadius(8)
@@ -152,11 +170,8 @@ struct UserProfileView: View {
     }
 }
 
-struct UserProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserProfileView()
-            .environmentObject(LoginViewModel())
-    }
-}
+
+
+
 
 
