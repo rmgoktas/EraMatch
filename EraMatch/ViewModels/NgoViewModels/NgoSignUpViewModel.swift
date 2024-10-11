@@ -77,7 +77,6 @@ class NgoSignUpViewModel: ObservableObject {
         let fileName = UUID().uuidString
         let fileRef = isPIF ? storageRef.child("pifs/\(fileName).pdf") : storageRef.child("logos/\(fileName).png")
 
-        // Access security scoped resource
         guard fileUrl.startAccessingSecurityScopedResource() else {
             print("Couldn't access security-scoped resource")
             completion(nil, "")
@@ -87,7 +86,6 @@ class NgoSignUpViewModel: ObservableObject {
         do {
             let fileData = try Data(contentsOf: fileUrl)
             fileRef.putData(fileData, metadata: nil) { metadata, error in
-                // Release security scoped resource
                 fileUrl.stopAccessingSecurityScopedResource()
 
                 if let error = error {
@@ -106,7 +104,6 @@ class NgoSignUpViewModel: ObservableObject {
                 }
             }
         } catch {
-            // Release security scoped resource
             fileUrl.stopAccessingSecurityScopedResource()
             print("Error reading file data: \(error.localizedDescription)")
             completion(nil, "")
@@ -134,7 +131,6 @@ class NgoSignUpViewModel: ObservableObject {
             let fileName = UUID().uuidString
             let fileRef = isPIF ? storageRef.child("pifs/\(fileName).pdf") : storageRef.child("logos/\(fileName).png")
 
-            // Access security scoped resource
             guard fileUrl.startAccessingSecurityScopedResource() else {
                 print("Couldn't access security-scoped resource")
                 completion(nil, "")
@@ -144,7 +140,6 @@ class NgoSignUpViewModel: ObservableObject {
             do {
                 let fileData = try Data(contentsOf: fileUrl)
                 fileRef.putData(fileData, metadata: nil) { metadata, error in
-                    // Release security scoped resource
                     fileUrl.stopAccessingSecurityScopedResource()
 
                     if let error = error {
@@ -163,12 +158,14 @@ class NgoSignUpViewModel: ObservableObject {
                     }
                 }
             } catch {
-                // Release security scoped resource
                 fileUrl.stopAccessingSecurityScopedResource()
                 print("Error reading file data: \(error.localizedDescription)")
                 completion(nil, "")
             }
           }
+
+
+    
         
 
     /*func handleFileUpload(fileUrl: URL, isPIF: Bool, completionHandler: @escaping (UIImage?) -> Void) {

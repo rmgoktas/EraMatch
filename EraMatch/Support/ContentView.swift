@@ -9,16 +9,20 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var loginViewModel: LoginViewModel
+    @StateObject var ngoHomeViewModel = NgoHomeViewModel()
+    @StateObject var userHomeViewModel = UserHomeViewModel()
 
     var body: some View {
         NavigationView {
-            if loginViewModel.navigateToTravellerHome {
-                travellerHomeView
-            } else if loginViewModel.navigateToNGOHome {
-                ngoHomeView
-            } else {
-                LoginView()
-                    .environmentObject(loginViewModel)
+            Group {
+                if loginViewModel.navigateToTravellerHome {
+                    travellerHomeView
+                } else if loginViewModel.navigateToNGOHome {
+                    ngoHomeView
+                } else {
+                    LoginView()
+                        .environmentObject(loginViewModel)
+                }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
@@ -26,12 +30,14 @@ struct ContentView: View {
     }
 
     private var travellerHomeView: some View {
-        UserHomeView()
+        UserHomeView() // homeViewModel geçmeden
+            .environmentObject(loginViewModel) // LoginViewModel geç
             .navigationBarHidden(true)
     }
 
     private var ngoHomeView: some View {
-        NgoHomeView()
+        NgoHomeView(homeViewModel: ngoHomeViewModel)
+            .environmentObject(loginViewModel)
             .navigationBarHidden(true)
     }
 }
@@ -39,7 +45,7 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-            .environmentObject(LoginViewModel())
+            .environmentObject(LoginViewModel()) 
     }
 }
 

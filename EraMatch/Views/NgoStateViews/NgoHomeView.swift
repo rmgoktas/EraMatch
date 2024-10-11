@@ -9,13 +9,13 @@ import SwiftUI
 
 struct NgoHomeView: View {
     @State private var isMenuOpen = false
-    @EnvironmentObject var loginViewModel: LoginViewModel
     @State private var selectedTab: String = "My Events"
+    @ObservedObject var homeViewModel: NgoHomeViewModel
+    @EnvironmentObject var loginViewModel: LoginViewModel
 
     var body: some View {
         ZStack {
             BackgroundView()
-
             VStack {
                 HStack {
                     Button(action: {
@@ -30,7 +30,7 @@ struct NgoHomeView: View {
 
                     Spacer()
 
-                    Text("My Events")
+                    Text(selectedTab)
                         .font(.title3)
                         .bold()
                         .foregroundColor(.white)
@@ -45,79 +45,25 @@ struct NgoHomeView: View {
                 .padding(.horizontal)
                 .background(Color.black.opacity(0))
 
-                GeometryReader { geometry in
-                    ScrollView {
-                        VStack(spacing: 30) {
-                            // Seçilen sekmeye göre görünümü göster
-                            if selectedTab == "My Events" {
-                                EventCardView(
-                                    title: "Hidden Geniuses",
-                                    subtitle: "Training Course on “Digital Skills”",
-                                    location: "Madrid, SPAIN",
-                                    dateRange: "14 Apr 2024 - 21 Apr 2024",
-                                    onDetailTap: {
-                                        // Navigate to event details
-                                    }
-                                )
-
-                                EventCardView(
-                                    title: "Youth Exchange",
-                                    subtitle: "Exploring Cultural Diversity",
-                                    location: "Berlin, GERMANY",
-                                    dateRange: "10 Jun 2024 - 20 Jun 2024",
-                                    onDetailTap: {
-                                        // Navigate to event details
-                                    }
-                                )
-
-                                EventCardView(
-                                    title: "Environmental Summit",
-                                    subtitle: "Actions for a Sustainable Future",
-                                    location: "Oslo, NORWAY",
-                                    dateRange: "5 Jul 2024 - 12 Jul 2024",
-                                    onDetailTap: {
-                                        // Navigate to event details
-                                    }
-                                )
-                            } else if selectedTab == "Submissions" {
-                                // Submissions görünümü
-                                Text("Submissions Page")
-                                    .font(.title)
-                                    .padding()
-                            } else if selectedTab == "Profile" {
-                                // Profile görünümü
-                                NgoProfileView(selectedTab: $selectedTab) // NgoProfileView'yi burada çağırıyoruz
-                                    .environmentObject(NgoSignUpViewModel())
-                            }
-
-                            Spacer(minLength: 90) // Floating Action Button için altta yer bırakmak amacıyla spacer ekledim
+                ScrollView {
+                    VStack(spacing: 20) {
+                        if selectedTab == "My Events" {
+                            NgoMyEventsView()
+                        } else if selectedTab == "Submissions" {
+                            NgoSubmissionsView()
+                        } else if selectedTab == "Profile" {
+                            NgoProfileView(homeViewModel: homeViewModel)
+                               
                         }
-                        .padding(.top, geometry.safeAreaInsets.top + 60)
                     }
+                    .padding(.horizontal)
+                    .padding(.vertical)
+                    .background(Color.clear)
                 }
-            }
 
-            // NGO Nav Bar
-            VStack {
-                Spacer()
-                NgoNavBarView(selectedTab: $selectedTab) // Seçilen sekmeyi güncellemek için binding kullan
+                NgoNavBarView(selectedTab: $selectedTab)
                     .padding(.horizontal)
                     .padding(.top, 10)
-            }
-
-            if isMenuOpen {
-                Color.black.opacity(0.5)
-                    .edgesIgnoringSafeArea(.all)
-                    .transition(.opacity)
-                    .onTapGesture {
-                        withAnimation {
-                            isMenuOpen = false
-                        }
-                    }
-
-                sliderMenu
-                    .transition(.move(edge: .leading))
-                    .animation(.easeInOut(duration: 0.3))
             }
 
             // Floating Action Button
@@ -129,11 +75,12 @@ struct NgoHomeView: View {
                         // Add new event action
                     }) {
                         Image(systemName: "plus")
-                            .font(.system(size: 32))
+                            .font(.system(size: 24))
                             .foregroundColor(.white)
                             .padding(20)
                             .background(Color.purple)
                             .cornerRadius(40)
+                            .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5)
                     }
                     .padding(.trailing, 20)
                     .padding(.bottom, 90)
@@ -143,72 +90,7 @@ struct NgoHomeView: View {
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
     }
-
-    // Slider menü bileşeni
-    var sliderMenu: some View {
-        ZStack(alignment: .leading) {
-            BackgroundView()
-
-            VStack(alignment: .leading) {
-                HStack {
-                    Text("EraMatch")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    Spacer()
-                    Button(action: {
-                        withAnimation {
-                            isMenuOpen = false
-                        }
-                    }) {
-                        Image(systemName: "xmark")
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .padding()
-                    }
-                }
-                .padding()
-
-                // Menü içeriği
-                ForEach(["Home", "My Events", "Submissions", "Profile"], id: \.self) { item in
-                    Button(action: {
-                        withAnimation {
-                            selectedTab = item
-                            isMenuOpen = false
-                        }
-                    }) {
-                        Text(item)
-                            .foregroundColor(.white)
-                            .font(.title2)
-                            .padding()
-                            .background(selectedTab == item ? Color.gray.opacity(0.2) : Color.clear)
-                            .cornerRadius(8)
-                            .padding(.horizontal)
-                    }
-                }
-
-                Spacer()
-            }
-        }
-        .frame(width: 250)
-        .background(Color.black)
-        .edgesIgnoringSafeArea(.all)
-    }
 }
-
-struct NgoHomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        NgoHomeView()
-            .environmentObject(LoginViewModel())
-    }
-}
-
-
-
-
-
-
-
-
 
 
 

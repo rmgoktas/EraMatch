@@ -3,23 +3,27 @@ import Firebase
 
 struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
-    
+    @StateObject private var ngoHomeViewModel = NgoHomeViewModel()
+    @StateObject private var userHomeViewModel = UserHomeViewModel()
+
     var body: some View {
         NavigationStack {
             ZStack {
                 BackgroundView()
-                
+
                 VStack(alignment: .leading) {
                     Text("EraMatch")
                         .font(.custom("", size: 50))
                         .foregroundColor(.white)
                         .padding(.top, 60)
+
                     Text("Welcome!")
                         .font(.title)
                         .bold()
                         .foregroundColor(.white)
                         .padding(.top, 75)
-                    
+
+                    // E-mail TextField
                     TextField("E-mail", text: $viewModel.email)
                         .padding()
                         .background(Color.white.opacity(0.2))
@@ -28,14 +32,16 @@ struct LoginView: View {
                         .keyboardType(.emailAddress)
                         .foregroundColor(.white)
                         .padding(.top, 20)
-                    
+
+                    // Password SecureField
                     SecureField("Password", text: $viewModel.password)
                         .padding()
                         .background(Color.white.opacity(0.2))
                         .cornerRadius(10)
                         .foregroundColor(.white)
                         .padding(.top, 10)
-                    
+
+                    // Forgot Password
                     HStack {
                         Spacer()
                         Button("I forgot my password") {
@@ -44,7 +50,8 @@ struct LoginView: View {
                         .foregroundColor(.white)
                     }
                     .padding(.top, 10)
-                    
+
+                    // Sign In Button
                     HStack {
                         Spacer()
                         Button(action: {
@@ -60,9 +67,10 @@ struct LoginView: View {
                         }
                     }
                     .padding(.top, 10)
-                    
+
                     Spacer()
-                    
+
+                    // Sign Up Section
                     HStack {
                         Text("Are you new here?")
                             .foregroundColor(.white)
@@ -73,10 +81,12 @@ struct LoginView: View {
                         }
                     }
                     .padding(.bottom, 20)
+
                     Spacer()
                 }
                 .padding()
-                
+
+                // Loading Indicator
                 if viewModel.isLoading {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
@@ -93,7 +103,8 @@ struct LoginView: View {
             // Kullanıcı türüne göre yönlendirme
             .background(
                 NavigationLink(
-                    destination: UserHomeView(),
+                    destination: UserHomeView()
+                        .environmentObject(viewModel),
                     isActive: $viewModel.navigateToTravellerHome
                 ) {
                     EmptyView()
@@ -102,7 +113,8 @@ struct LoginView: View {
             )
             .background(
                 NavigationLink(
-                    destination: NgoHomeView(),
+                    destination: NgoHomeView(homeViewModel: ngoHomeViewModel)
+                        .environmentObject(viewModel), 
                     isActive: $viewModel.navigateToNGOHome
                 ) {
                     EmptyView()
@@ -118,3 +130,5 @@ struct LoginView_Previews: PreviewProvider {
         LoginView()
     }
 }
+
+

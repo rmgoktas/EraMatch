@@ -4,6 +4,8 @@ import PhotosUI
 
 struct NgoSignUpView: View {
     @StateObject private var viewModel = NgoSignUpViewModel()
+    @StateObject private var homeViewModel = NgoHomeViewModel()
+    @EnvironmentObject var loginViewModel: LoginViewModel
     @State private var showingPIFPicker = false
     @State private var showingLogoPicker = false
     
@@ -191,7 +193,6 @@ struct NgoSignUpView: View {
                                                     viewModel.logoUrl = url
                                                     logoFileName = fileName
                                                 } else {
-                                                    // Handle URL is nil case
                                                     viewModel.alertMessage = "Logo upload failed."
                                                     viewModel.showingAlert = true
                                                 }
@@ -244,7 +245,6 @@ struct NgoSignUpView: View {
                                             viewModel.pifUrl = url
                                             pifFileName = fileName
                                         } else {
-                                            // Handle URL is nil case
                                             viewModel.alertMessage = "PIF upload failed."
                                             viewModel.showingAlert = true
                                         }
@@ -278,9 +278,8 @@ struct NgoSignUpView: View {
                         
                         Spacer()
 
-                        // NavigationLink for navigation
                         NavigationLink(
-                            destination: NgoHomeView(),
+                            destination: NgoHomeView(homeViewModel: homeViewModel),
                             isActive: $viewModel.navigateToHome,
                             label: {
                                 EmptyView()

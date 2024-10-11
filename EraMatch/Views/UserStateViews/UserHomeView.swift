@@ -11,6 +11,7 @@ struct UserHomeView: View {
     @StateObject private var homeViewModel = UserHomeViewModel()
     @State private var isMenuOpen = false
     @EnvironmentObject var loginViewModel: LoginViewModel
+    @State private var selectedTab: String = "Home"
 
     var body: some View {
         ZStack {
@@ -105,7 +106,7 @@ struct UserHomeView: View {
             
             VStack {
                 Spacer()
-                UserNavBarView()
+                UserNavBarView(selectedTab: $selectedTab)
                     .padding(.horizontal, 10)
                     .frame(maxWidth: .infinity)
                     
@@ -173,7 +174,8 @@ struct UserHomeView: View {
                 Spacer()
                 
                 Button(action: {
-                    loginViewModel.logoutUser()
+                    print("Logging out, loginViewModel: \(loginViewModel)")
+                    loginViewModel.logoutUser() // Çıkış işlemi
                     withAnimation {
                         isMenuOpen = false
                     }
@@ -194,12 +196,9 @@ struct UserHomeView: View {
     }
 }
 
-struct UserHomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserHomeView()
-            .environmentObject(LoginViewModel())
-    }
-}
+
+
+
 
 
 

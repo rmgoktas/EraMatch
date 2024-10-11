@@ -12,8 +12,14 @@ class LoginViewModel: ObservableObject {
     
     @Published var navigateToTravellerHome = false
     @Published var navigateToNGOHome = false
+    @Published var isLoggedIn: Bool = true
     
     init() {
+        // Kullanıcı oturumunu kontrol
+        if let savedEmail = UserDefaults.standard.string(forKey: "userEmail") {
+            self.email = savedEmail
+        }
+        
         Auth.auth().addStateDidChangeListener { [weak self] _, user in
             self?.currentUser = user
         }
@@ -36,9 +42,12 @@ class LoginViewModel: ObservableObject {
                 return
             }
             
+            // Kullanıcı email'ini sakla
+            UserDefaults.standard.set(self.email, forKey: "userEmail")
+            UserDefaults.standard.set(true, forKey: "isLoggedIn") // Oturum açıldığını belirt
+
             let db = Firestore.firestore()
             
-            // Check in 'ngos' collection
             db.collection("ngos").document(uid).getDocument { document, error in
                 if let document = document, document.exists {
                     let userData = document.data()
@@ -54,7 +63,6 @@ class LoginViewModel: ObservableObject {
                     }
                     self.isLoading = false
                 } else {
-                    // Check in 'travellers' collection if not found in 'users'
                     db.collection("travellers").document(uid).getDocument { document, error in
                         if let document = document, document.exists {
                             self.navigateToTravellerHome = true
@@ -72,12 +80,18 @@ class LoginViewModel: ObservableObject {
     func logoutUser() {
         do {
             try Auth.auth().signOut()
-            // Reset navigation flags or navigate back to login screen
             navigateToTravellerHome = false
             navigateToNGOHome = false
+            // Kullanıcı bilgilerini sıfırla
+            UserDefaults.standard.removeObject(forKey: "userEmail")
+            UserDefaults.standard.set(false, forKey: "isLoggedIn") // Oturumu kapat
+            self.isLoggedIn = false 
         } catch let signOutError as NSError {
-            self.alertMessage = "Error signing out: \(signOutError.localizedDescription)"
-            self.showingAlert = true
+            alertMessage = "Error signing out: \(signOutError.localizedDescription)"
+            showingAlert = true
+            print("Sign out error: \(signOutError.localizedDescription)") 
+            
         }
     }
 }
+
