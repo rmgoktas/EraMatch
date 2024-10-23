@@ -169,7 +169,7 @@ class NgoSignUpViewModel: ObservableObject {
         
 
     /*func handleFileUpload(fileUrl: URL, isPIF: Bool, completionHandler: @escaping (UIImage?) -> Void) {
-    let viewModel = NgoSignUpViewModel() // ViewModel örneği oluşturulması
+    let viewModel = NgoSignUpViewModel() 
     viewModel.handleFileUpload(fileUrl: fileUrl, isPIF: isPIF) { url, fileName in
         DispatchQueue.main.async {
             if let url = url {
