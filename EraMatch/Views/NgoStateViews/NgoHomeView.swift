@@ -47,13 +47,15 @@ struct NgoHomeView: View {
 
                 ScrollView {
                     VStack(spacing: 20) {
-                        if selectedTab == "My Events" {
+                        switch selectedTab {
+                        case "My Events":
                             NgoMyEventsView()
-                        } else if selectedTab == "Submissions" {
+                        case "Submissions":
                             NgoSubmissionsView()
-                        } else if selectedTab == "Profile" {
+                        case "Profile":
                             NgoProfileView(homeViewModel: homeViewModel)
-                               
+                        default:
+                            Text("Unknown Tab")
                         }
                     }
                     .padding(.horizontal)
@@ -72,7 +74,7 @@ struct NgoHomeView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        // Add new event action
+                        // TODO add new event view
                     }) {
                         Image(systemName: "plus")
                             .font(.system(size: 24))

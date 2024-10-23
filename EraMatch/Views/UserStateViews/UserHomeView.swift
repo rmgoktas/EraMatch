@@ -15,116 +15,35 @@ struct UserHomeView: View {
 
     var body: some View {
         ZStack {
+            BackgroundView()
+
             VStack {
-                HStack {
-                    Button(action: {
-                        withAnimation {
-                            isMenuOpen.toggle()
-                        }
-                    }) {
-                        Image(systemName: "line.horizontal.3")
-                            .font(.title)
-                            .foregroundColor(.white)
-                    }
-                    
-                    Spacer()
-                    
-                    Text("Home")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "magnifyingglass")
-                        .font(.title)
-                        .foregroundColor(.white)
-                }
-                .padding()
-                
-                // Ana içerik
+                headerView
                 ScrollView {
-                    VStack {
-                        Text("Hi, \(homeViewModel.userName)!")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding(.top, 25)
-                            .padding(.trailing, 100)
-                        
-                        VStack {
-                            Text("What to Do ?")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .padding(.top, 20)
-                            
-                            HStack {
-                                Image(systemName: "airplane")
-                                    .font(.title2)
-                                VStack(alignment: .leading) {
-                                    Text("Search Free Travels")
-                                        .font(.headline)
-                                    Text("Find and filter travel events")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                            }
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                            
-                            // Event by Topics
-                            VStack(alignment: .leading) {
-                                Text("Events by Topics")
-                                    .font(.title3)
-                                    .padding(.top, 10)
-                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                                    ForEach(homeViewModel.topics, id: \.self) { topic in
-                                        Text(topic)
-                                            .padding()
-                                            .background(Color.white)
-                                            .cornerRadius(15)
-                                            .shadow(radius: 5)
-                                    }
-                                }
-                            }
-                            .padding(.top, 30)
+                    VStack(spacing: 20) {
+                        switch selectedTab {
+                        case "Home":
+                            homeTabView
+                        case "Profile":
+                            UserProfileView(homeViewModel: homeViewModel)
+                        case "Events":
+                            UserEventsView()
+                        case "Submissions":
+                            UserSubmissionsView()
+                        default:
+                            Text("Unknown Tab")
                         }
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(25)
-                        .padding(.top, 50)
                     }
-                    .padding(.leading, 10)
-                    .padding(.trailing, 10)
-                    
+                    .padding(.horizontal)
                 }
-            }
-            .background(BackgroundView())
-            
-            VStack {
-                Spacer()
-                UserNavBarView(selectedTab: $selectedTab)
-                    .padding(.horizontal, 10)
-                    .frame(maxWidth: .infinity)
-                    
-            }
-            
-            if isMenuOpen {
-                Color.black.opacity(0.5)
-                    .edgesIgnoringSafeArea(.all)
-                    .transition(.opacity)
-                    .onTapGesture {
-                        withAnimation {
-                            isMenuOpen = false
-                        }
-                    }
                 
-                sliderMenu
-                    .transition(.move(edge: .leading))
-                    .animation(.easeInOut(duration: 0.3))
+                UserNavBarView(selectedTab: $selectedTab)
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+            }
+
+            if isMenuOpen {
+                overlayMenu
             }
         }
         .onAppear {
@@ -132,9 +51,110 @@ struct UserHomeView: View {
         }
         .navigationBarBackButtonHidden(true)
     }
+    
+    private var headerView: some View {
+        HStack {
+            Button(action: {
+                withAnimation {
+                    isMenuOpen.toggle()
+                }
+            }) {
+                Image(systemName: "line.horizontal.3")
+                    .font(.title)
+                    .foregroundColor(.white)
+            }
+            
+            Spacer()
+            
+            Text(selectedTab)
+                .font(.title3)
+                .bold()
+                .foregroundColor(.white)
+            
+            Spacer()
+            
+            Image(systemName: "magnifyingglass")
+                .font(.title)
+                .foregroundColor(.white)
+        }
+        .padding(.top, 30)
+        .padding(.horizontal)
+    }
+    
+    private var homeTabView: some View {
+        VStack {
+            Text("Hi, \(homeViewModel.userName)!")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .padding(.top, 25)
+            
+            VStack {
+                Text("What to Do ?")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .padding(.top, 20)
+                
+                HStack {
+                    Image(systemName: "airplane")
+                        .font(.title2)
+                    VStack(alignment: .leading) {
+                        Text("Search Free Travels")
+                            .font(.headline)
+                        Text("Find and filter travel events")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                }
+                .padding()
+                .background(Color.white)
+                .cornerRadius(15)
+                .shadow(radius: 5)
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(25)
+            .padding(.top, 50)
+        }
+    }
+    
+    private var topicsTabView: some View {
+        VStack(alignment: .leading) {
+            Text("Events by Topics")
+                .font(.title3)
+                .padding(.top, 10)
+            
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                ForEach(homeViewModel.topics, id: \.self) { topic in
+                    Text(topic)
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
+                }
+            }
+        }
+    }
+    
+    private var overlayMenu: some View {
+        ZStack(alignment: .leading) {
+            Color.black.opacity(0.5)
+                .edgesIgnoringSafeArea(.all)
+                .onTapGesture {
+                    withAnimation {
+                        isMenuOpen = false
+                    }
+                }
 
-    // Slider menü bileşeni
-    var sliderMenu: some View {
+            sliderMenu
+                .transition(.move(edge: .leading))
+                .animation(.easeInOut(duration: 0.3))
+        }
+    }
+
+    private var sliderMenu: some View {
         ZStack(alignment: .leading) {
             BackgroundView()
             
@@ -174,8 +194,7 @@ struct UserHomeView: View {
                 Spacer()
                 
                 Button(action: {
-                    print("Logging out, loginViewModel: \(loginViewModel)")
-                    loginViewModel.logoutUser() // Çıkış işlemi
+                    loginViewModel.logoutUser()
                     withAnimation {
                         isMenuOpen = false
                     }
@@ -195,6 +214,8 @@ struct UserHomeView: View {
         }
     }
 }
+
+
 
 
 
