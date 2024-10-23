@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserProfileView: View {
     @EnvironmentObject var loginViewModel: LoginViewModel
-    @StateObject private var homeViewModel = UserHomeViewModel()
+    @ObservedObject var homeViewModel: UserHomeViewModel
     @State private var selectedTab: String = "Profile"
     
     @State private var isEditingBio = false
@@ -20,30 +20,6 @@ struct UserProfileView: View {
 
     var body: some View {
         VStack {
-            HStack {
-                Button(action: {
-                    // Menu action removed
-                }) {
-                    Image(systemName: "line.horizontal.3")
-                        .font(.title)
-                        .foregroundColor(.white)
-                }
-
-                Spacer()
-
-                Text("Profile")
-                    .font(.headline)
-                    .foregroundColor(.white)
-
-                Spacer()
-
-                Image(systemName: "magnifyingglass")
-                    .font(.title)
-                    .foregroundColor(.white)
-            }
-            .padding()
-
-            // Profile content
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
@@ -57,7 +33,7 @@ struct UserProfileView: View {
                                 .font(.title)
                                 .fontWeight(.bold)
                             Button(action: {
-                                // Profile picture update action
+                                // TODO pp update
                             }) {
                                 Text("Update profile picture")
                                     .font(.caption)
@@ -74,9 +50,8 @@ struct UserProfileView: View {
                     profileField(title: "Instagram Profile", text: $homeViewModel.instagram, isEditing: $isEditingInstagram, field: "instagram")
                     profileField(title: "Facebook Profile", text: $homeViewModel.facebook, isEditing: $isEditingFacebook, field: "facebook")
                     
-                    // Sign out button
                     Button(action: {
-                        loginViewModel.logoutUser() // Logout action
+                        loginViewModel.logoutUser()
                     }) {
                         Text("Sign Out")
                             .foregroundColor(.red)
@@ -99,16 +74,7 @@ struct UserProfileView: View {
             }
             .padding(.leading, 10)
             .padding(.trailing, 10)
-
-            Spacer()
-
-            // Include the navigation bar
-            UserNavBarView(selectedTab: $selectedTab)
-                .padding(.horizontal)
-                .padding(.vertical, 10)
-                .background(Color.clear)
         }
-        .background(BackgroundView())
         .onAppear {
             homeViewModel.loadUserData()
         }
