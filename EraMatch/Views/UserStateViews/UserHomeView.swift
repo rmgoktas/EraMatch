@@ -12,6 +12,8 @@ struct UserHomeView: View {
     @State private var isMenuOpen = false
     @EnvironmentObject var loginViewModel: LoginViewModel
     @State private var selectedTab: String = "Home"
+    @State private var isSearching = false
+    @State private var searchText = ""
 
     var body: some View {
         ZStack {
@@ -19,27 +21,26 @@ struct UserHomeView: View {
 
             VStack {
                 headerView
-                ScrollView {
-                    VStack(spacing: 20) {
-                        switch selectedTab {
-                        case "Home":
-                            homeTabView
-                        case "Profile":
-                            UserProfileView(homeViewModel: homeViewModel)
-                        case "Events":
-                            UserEventsView()
-                        case "Submissions":
-                            UserSubmissionsView()
-                        default:
-                            Text("Unknown Tab")
-                        }
+                VStack(spacing: 20) {
+                    switch selectedTab {
+                    case "Home":
+                        homeTabView
+                    case "Profile":
+                        UserProfileView(homeViewModel: homeViewModel)
+                    case "Events":
+                        UserEventsView()
+                    case "Submissions":
+                        UserSubmissionsView()
+                    default:
+                        Text("Unknown Tab")
                     }
-                    .padding(.horizontal)
                 }
-                
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
                 UserNavBarView(selectedTab: $selectedTab)
                     .padding(.horizontal)
-                    .padding(.top, 10)
+                    .padding(.top)
             }
 
             if isMenuOpen {
@@ -66,16 +67,42 @@ struct UserHomeView: View {
             
             Spacer()
             
-            Text(selectedTab)
-                .font(.title3)
-                .bold()
-                .foregroundColor(.white)
+            if isSearching {
+                HStack {
+                    TextField("Search...", text: $searchText)
+                        .padding(.leading, 10)
+                    Button(action: {
+                        withAnimation {
+                            isSearching = false
+                            searchText = ""
+                        }
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                    }
+                }
+                .padding(10)
+                .background(Color.white)
+                .cornerRadius(10)
+                .transition(.move(edge: .trailing))
+            } else {
+                Text(selectedTab)
+                    .font(.title3)
+                    .bold()
+                    .foregroundColor(.white)
+            }
             
             Spacer()
             
-            Image(systemName: "magnifyingglass")
-                .font(.title)
-                .foregroundColor(.white)
+            Button(action: {
+                withAnimation {
+                    isSearching.toggle()
+                }
+            }) {
+                Image(systemName: isSearching ? "xmark" : "magnifyingglass")
+                    .font(.title)
+                    .foregroundColor(.white)
+            }
         }
         .padding(.top, 30)
         .padding(.horizontal)
@@ -87,56 +114,77 @@ struct UserHomeView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
-                .padding(.top, 25)
-            
+                .padding(.top, 40)
+
             VStack {
-                Text("What to Do ?")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .padding(.top, 20)
-                
-                HStack {
-                    Image(systemName: "airplane")
-                        .font(.title2)
-                    VStack(alignment: .leading) {
-                        Text("Search Free Travels")
-                            .font(.headline)
-                        Text("Find and filter travel events")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                VStack {
+                    HStack {
+                        Text("What to Do ?")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.top, 10)
+                        Spacer()
                     }
-                    Spacer()
-                    Image(systemName: "chevron.right")
+
+                    HStack {
+                        Image(systemName: "airplane")
+                            .font(.title2)
+                        VStack(alignment: .leading) {
+                            Text("Search Free Travels")
+                                .font(.headline)
+                                .foregroundColor(.black)
+                            Text("Find and filter travel events")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(15)
+                    .shadow(radius: 5)
                 }
                 .padding()
                 .background(Color.white)
-                .cornerRadius(15)
-                .shadow(radius: 5)
+                .cornerRadius(25)
+
+                // New Section for Topics
+                VStack(alignment: .leading) {
+                    Text("   Search by Topics")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .padding(.top, 20)
+
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
+                        ForEach(homeViewModel.topics, id: \.self) { topic in
+                            Button(action: {
+                                print("Selected topic: \(topic)")
+                            }) {
+                                HStack {
+                                    Text(topic)
+                                        .padding(10)
+                                        .frame(maxWidth: .infinity)
+                                        .foregroundColor(.black)
+                                        .background(Color.white)
+                                        .cornerRadius(12)
+                                        .shadow(radius: 2)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+                .padding(.bottom, 30)
             }
             .padding()
             .background(Color.white)
             .cornerRadius(25)
-            .padding(.top, 50)
+            .shadow(radius: 10)
+            .padding(.top, 60) 
         }
     }
-    
-    private var topicsTabView: some View {
-        VStack(alignment: .leading) {
-            Text("Events by Topics")
-                .font(.title3)
-                .padding(.top, 10)
-            
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                ForEach(homeViewModel.topics, id: \.self) { topic in
-                    Text(topic)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(15)
-                        .shadow(radius: 5)
-                }
-            }
-        }
-    }
+
     
     private var overlayMenu: some View {
         ZStack(alignment: .leading) {
@@ -215,12 +263,11 @@ struct UserHomeView: View {
     }
 }
 
-
-
-
-
-
-
-
-
+struct UserHomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        UserHomeView()
+            .environmentObject(LoginViewModel())
+            .environmentObject(UserHomeViewModel())
+    }
+}
 
