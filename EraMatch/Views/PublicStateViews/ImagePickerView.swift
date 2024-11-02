@@ -10,7 +10,7 @@ import PhotosUI
 
 struct ImagePickerView: UIViewControllerRepresentable {
     var sourceType: UIImagePickerController.SourceType = .photoLibrary
-    var completionHandler: (UIImage?) -> Void
+    var completionHandler: (UIImage?, String?) -> Void
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self, completionHandler: completionHandler)
@@ -27,24 +27,26 @@ struct ImagePickerView: UIViewControllerRepresentable {
 
     class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
         var parent: ImagePickerView
-        var completionHandler: (UIImage?) -> Void
+        var completionHandler: (UIImage?, String?) -> Void // Update the completion handler type
 
-        init(_ parent: ImagePickerView, completionHandler: @escaping (UIImage?) -> Void) {
+        init(_ parent: ImagePickerView, completionHandler: @escaping (UIImage?, String?) -> Void) {
             self.parent = parent
             self.completionHandler = completionHandler
         }
 
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-            if let image = info[.originalImage] as? UIImage {
-                completionHandler(image)
+            if let assetUrl = info[.imageURL] as? URL,
+               let image = info[.originalImage] as? UIImage {
+                let fileExtension = assetUrl.pathExtension
+                completionHandler(image, fileExtension)
             } else {
-                completionHandler(nil)
+                completionHandler(nil, nil)
             }
             picker.dismiss(animated: true, completion: nil)
         }
 
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            completionHandler(nil)
+            completionHandler(nil, nil)
             picker.dismiss(animated: true, completion: nil)
         }
     }
