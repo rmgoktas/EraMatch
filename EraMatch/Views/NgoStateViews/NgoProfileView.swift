@@ -6,114 +6,95 @@
 //
 
 import SwiftUI
+import PDFKit
 
 struct NgoProfileView: View {
     @ObservedObject var homeViewModel: NgoHomeViewModel
     @EnvironmentObject var loginViewModel: LoginViewModel
 
+    @State private var showPDFView: Bool = false
+    @State private var showFilePicker: Bool = false
+    @State private var isPDF: Bool = false
+    @State private var showLogoUpdateSheet: Bool = false
+    @State private var selectedFileURL: URL? = nil
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Profile Picture and Name
+                // Logo ve NGO adı
                 HStack {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .frame(width: 50, height: 50)
+                    if let logoUrl = homeViewModel.logoUrl {
+                        Button(action: {
+                            showLogoUpdateSheet = true
+                        }) {
+                            AsyncImage(url: logoUrl) { image in
+                                image.resizable()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                        }
+                    } else {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                            .onTapGesture {
+                                showLogoUpdateSheet = true
+                            }
+                    }
+
                     Text(homeViewModel.ngoName)
                         .font(.largeTitle)
                         .bold()
-                    Spacer()
-                    Button(action: {
-                        // Share action
-                    }) {
-                        Image(systemName: "square.and.arrow.up")
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                    }
                 }
                 .padding()
-                
-                // Country and OID Number
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Country")
-                            .font(.headline)
-                        TextField("Country", text: $homeViewModel.country)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                    }
-                    VStack(alignment: .leading) {
-                        Text("OID Number")
-                            .font(.headline)
-                        TextField("OID Number", text: $homeViewModel.oidNumber)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                    }
-                }
-                .padding(.horizontal)
 
-                // Email
-                VStack(alignment: .leading) {
-                    Text("E-Mail")
-                        .font(.headline)
-                    TextField("email@provider.com", text: $homeViewModel.email)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                }
-                .padding(.horizontal)
+                // Profil alanları
+                profileFieldView(fieldName: "Country", fieldKey: "country", fieldText: $homeViewModel.country)
+                profileFieldView(fieldName: "OID Number", fieldKey: "oidNumber", fieldText: $homeViewModel.oidNumber)
+                profileFieldView(fieldName: "E-Mail", fieldKey: "email", fieldText: $homeViewModel.email)
+                profileFieldView(fieldName: "Instagram Profile", fieldKey: "instagram", fieldText: $homeViewModel.instagram)
+                profileFieldView(fieldName: "Facebook Profile", fieldKey: "facebook", fieldText: $homeViewModel.facebook)
 
-                // Social Profiles
-                VStack(alignment: .leading) {
-                    HStack {
-                        Text("Instagram Profile")
-                            .font(.headline)
-                        TextField("Instagram Profile", text: $homeViewModel.instagram)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .overlay(
-                                Image(systemName: "link")
-                                    .padding()
-                                    .background(Color(.systemGray6))
-                                    .cornerRadius(8),
-                                alignment: .trailing
-                            )
-                    }
-                    HStack {
-                        Text("Facebook Profile")
-                            .font(.headline)
-                        TextField("Facebook Profile", text: $homeViewModel.facebook)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .overlay(
-                                Image(systemName: "link")
-                                    .padding()
-                                    .background(Color(.systemGray6))
-                                    .cornerRadius(8),
-                                alignment: .trailing
-                            )
-                    }
-                }
-                .padding(.horizontal)
-
-                // Download PIF Button
+                // PIF güncelleme butonu
                 Button(action: {
-                    // Download PIF action
+                    isPDF = true
+                    showFilePicker = true
                 }) {
-                    Text("DOWNLOAD PIF")
-                        .font(.headline)
+                    Text("Update PIF")
+                        .font(.footnote)
                         .foregroundColor(.black)
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(8)
                 }
-                .padding(.horizontal)
+                .padding(.top, 5)
+                .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.pdf]) { result in
+                    switch result {
+                    case .success(let url):
+                        homeViewModel.uploadPDF(url: url)
+                    case .failure(let error):
+                        print("Error selecting file: \(error.localizedDescription)")
+                    }
+                }
                 
-                // Sign Out Button
+                if let pifUrl = homeViewModel.pifUrl {
+                    Button(action: {
+                        homeViewModel.loadPDFData()
+                        showPDFView = true
+                    }) {
+                        Text("View PIF")
+                            .font(.headline)
+                            .foregroundColor(.black)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                    }
+                    .padding(.horizontal)
+                }
+                if homeViewModel.isLoading {
+                    ProgressView("Uploading...")
+                }
+
                 Button(action: {
                     loginViewModel.logoutUser()
                 }) {
@@ -121,8 +102,11 @@ struct NgoProfileView: View {
                         .font(.headline)
                         .foregroundColor(.red)
                         .padding()
-                        .background(Color.white)
-                        .cornerRadius(8)
+                        .frame(maxWidth: .infinity)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.red, lineWidth: 2)
+                        )
                 }
                 .padding(.horizontal)
             }
@@ -131,18 +115,57 @@ struct NgoProfileView: View {
             .cornerRadius(8)
             .padding(.horizontal)
         }
+        .sheet(isPresented: $showPDFView) {
+            if let pdfData = homeViewModel.pdfData {
+                PDFViewer(pdfData: pdfData)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+        }
+        .fileImporter(isPresented: $showFilePicker, allowedContentTypes: isPDF ? [.pdf] : [.image], onCompletion: { result in
+            switch result {
+            case .success(let url):
+                selectedFileURL = url
+                if isPDF {
+                    homeViewModel.uploadPDF(url: url)
+                } else {
+                    homeViewModel.uploadLogo(url: url)
+                }
+            case .failure(let error):
+                print("File selection error: \(error.localizedDescription)")
+            }
+        })
+        .actionSheet(isPresented: $showLogoUpdateSheet) {
+            ActionSheet(title: Text("Update Logo"), buttons: [
+                .default(Text("Choose Photo")) {
+                    isPDF = false
+                    showFilePicker = true
+                },
+                .cancel()
+            ])
+        }
+    }
+
+    private func profileFieldView(fieldName: String, fieldKey: String, fieldText: Binding<String>) -> some View {
+        ZStack(alignment: .topTrailing) {
+            VStack(alignment: .leading) {
+                Text(fieldName)
+                    .font(.headline)
+                TextField(fieldName, text: fieldText)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                    .disabled(!homeViewModel.isEditingField(fieldKey))
+            }
+            .padding(.horizontal)
+
+            Button(action: {
+                homeViewModel.toggleEditing(for: fieldKey, fieldText: fieldText.wrappedValue)
+            }) {
+                Text(homeViewModel.isEditingField(fieldKey) ? "Done" : "Edit")
+                    .foregroundColor(.black)
+            }
+            .padding([.top, .trailing], 10)
+        }
     }
 }
-
-struct NgoProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        NgoProfileView(homeViewModel: NgoHomeViewModel())
-            .environmentObject(LoginViewModel()) 
-    }
-}
-
-
-
-
-
 

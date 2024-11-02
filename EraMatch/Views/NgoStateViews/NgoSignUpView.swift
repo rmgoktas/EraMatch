@@ -186,7 +186,7 @@ struct NgoSignUpView: View {
                         .sheet(isPresented: $showingLogoPicker) {
                             ImagePickerView(sourceType: .photoLibrary) { image in
                                 if let image = image {
-                                    if let fileUrl = saveImageToDocuments(image: image) {
+                                    if let fileUrl = viewModel.saveImageToDocuments(image: image) {
                                         viewModel.handleFileUpload(fileUrl: fileUrl, isPIF: false) { url, fileName in
                                             DispatchQueue.main.async {
                                                 if let url = url {

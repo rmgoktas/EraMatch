@@ -19,7 +19,7 @@ class NgoSignUpViewModel: ObservableObject {
     @Published var navigateToHome = false
     
     @Published var isLoading = false
-
+    
     @Published var pifUrl: URL?
     @Published var logoUrl: URL?
     
@@ -28,11 +28,11 @@ class NgoSignUpViewModel: ObservableObject {
     // MARK: - Form Validation
     func isFormValid() -> Bool {
         return !ngoName.isEmpty &&
-               !oidNumber.isEmpty &&
-               !ngoEmail.isEmpty &&
-               !ngoPassword.isEmpty &&
-               ngoPassword == ngoConfirmedPassword &&
-               !ngoCountry.isEmpty
+        !oidNumber.isEmpty &&
+        !ngoEmail.isEmpty &&
+        !ngoPassword.isEmpty &&
+        ngoPassword == ngoConfirmedPassword &&
+        !ngoCountry.isEmpty
     }
     
     // MARK: - Password Validation
@@ -53,7 +53,7 @@ class NgoSignUpViewModel: ObservableObject {
             let db = Firestore.firestore()
             db.collection("ngos").document(uid).setData([
                 "uid": uid,
-                "type": userType, // Burada userType değişkenini kullanarak type alanını ayarlıyoruz
+                "type": userType,
                 "ngoName": self.ngoName,
                 "email": self.ngoEmail,
                 "oidNumber": self.oidNumber,
@@ -76,109 +76,56 @@ class NgoSignUpViewModel: ObservableObject {
         let storageRef = Storage.storage().reference()
         let fileName = UUID().uuidString
         let fileRef = isPIF ? storageRef.child("pifs/\(fileName).pdf") : storageRef.child("logos/\(fileName).png")
-
-        guard fileUrl.startAccessingSecurityScopedResource() else {
-            print("Couldn't access security-scoped resource")
-            completion(nil, "")
+        
+        let shouldStopAccessing = fileUrl.startAccessingSecurityScopedResource()
+        defer {
+            if shouldStopAccessing {
+                fileUrl.stopAccessingSecurityScopedResource()
+            }
+        }
+        
+        guard FileManager.default.fileExists(atPath: fileUrl.path) else {
+            print("File does not exist at path: \(fileUrl.path)")
+            completion(nil, "File not found")
             return
         }
-
+        
         do {
             let fileData = try Data(contentsOf: fileUrl)
             fileRef.putData(fileData, metadata: nil) { metadata, error in
-                fileUrl.stopAccessingSecurityScopedResource()
-
                 if let error = error {
                     print("File upload error: \(error.localizedDescription)")
-                    completion(nil, "")
+                    completion(nil, error.localizedDescription)
                     return
                 }
-
+                
                 fileRef.downloadURL { url, error in
                     if let error = error {
                         print("Failed to retrieve download URL: \(error.localizedDescription)")
-                        completion(nil, "")
+                        completion(nil, error.localizedDescription)
                         return
                     }
                     completion(url, fileUrl.lastPathComponent)
                 }
             }
         } catch {
-            fileUrl.stopAccessingSecurityScopedResource()
             print("Error reading file data: \(error.localizedDescription)")
-            completion(nil, "")
+            completion(nil, error.localizedDescription)
+        }
+    }
+
+    func saveImageToDocuments(image: UIImage) -> URL? {
+        guard let data = image.jpegData(compressionQuality: 1) else { return nil }
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let fileName = UUID().uuidString + ".jpg"
+        let fileUrl = documents.appendingPathComponent(fileName)
+        
+        do {
+            try data.write(to: fileUrl)
+            return fileUrl
+        } catch {
+            print("Error saving image: \(error.localizedDescription)")
+            return nil
         }
     }
 }
-
-    func saveImageToDocuments(image: UIImage) -> URL? {
-            guard let data = image.jpegData(compressionQuality: 1) else { return nil }
-            let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-            let fileName = UUID().uuidString + ".jpg"
-            let fileUrl = documents.appendingPathComponent(fileName)
-
-            do {
-                try data.write(to: fileUrl)
-                return fileUrl
-            } catch {
-                print("Error saving image: \(error.localizedDescription)")
-                return nil
-            }
-        }
-
-    func handleFileUpload(fileUrl: URL, isPIF: Bool, completion: @escaping (URL?, String) -> Void) {
-            let storageRef = Storage.storage().reference()
-            let fileName = UUID().uuidString
-            let fileRef = isPIF ? storageRef.child("pifs/\(fileName).pdf") : storageRef.child("logos/\(fileName).png")
-
-            guard fileUrl.startAccessingSecurityScopedResource() else {
-                print("Couldn't access security-scoped resource")
-                completion(nil, "")
-                return
-            }
-
-            do {
-                let fileData = try Data(contentsOf: fileUrl)
-                fileRef.putData(fileData, metadata: nil) { metadata, error in
-                    fileUrl.stopAccessingSecurityScopedResource()
-
-                    if let error = error {
-                        print("File upload error: \(error.localizedDescription)")
-                        completion(nil, "")
-                        return
-                    }
-
-                    fileRef.downloadURL { url, error in
-                        if let error = error {
-                            print("Failed to retrieve download URL: \(error.localizedDescription)")
-                            completion(nil, "")
-                            return
-                        }
-                        completion(url, fileUrl.lastPathComponent)
-                    }
-                }
-            } catch {
-                fileUrl.stopAccessingSecurityScopedResource()
-                print("Error reading file data: \(error.localizedDescription)")
-                completion(nil, "")
-            }
-          }
-
-
-    
-        
-
-    /*func handleFileUpload(fileUrl: URL, isPIF: Bool, completionHandler: @escaping (UIImage?) -> Void) {
-    let viewModel = NgoSignUpViewModel() 
-    viewModel.handleFileUpload(fileUrl: fileUrl, isPIF: isPIF) { url, fileName in
-        DispatchQueue.main.async {
-            if let url = url {
-                viewModel.logoUrl = url
-                completionHandler(UIImage(contentsOfFile: fileUrl.path))
-            } else {
-                viewModel.alertMessage = "Logo upload failed."
-                viewModel.showingAlert = true
-            }
-        }
-    }
-    }*/
