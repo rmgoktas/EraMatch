@@ -15,7 +15,6 @@ class LoginViewModel: ObservableObject {
     @Published var isLoggedIn: Bool = true
     
     init() {
-        // Kullanıcı oturumunu kontrol
         if let savedEmail = UserDefaults.standard.string(forKey: "userEmail") {
             self.email = savedEmail
         }
@@ -42,9 +41,8 @@ class LoginViewModel: ObservableObject {
                 return
             }
             
-            // Kullanıcı email'ini sakla
             UserDefaults.standard.set(self.email, forKey: "userEmail")
-            UserDefaults.standard.set(true, forKey: "isLoggedIn") // Oturum açıldığını belirt
+            UserDefaults.standard.set(true, forKey: "isLoggedIn")
 
             let db = Firestore.firestore()
             
@@ -82,9 +80,8 @@ class LoginViewModel: ObservableObject {
             try Auth.auth().signOut()
             navigateToTravellerHome = false
             navigateToNGOHome = false
-            // Kullanıcı bilgilerini sıfırla
             UserDefaults.standard.removeObject(forKey: "userEmail")
-            UserDefaults.standard.set(false, forKey: "isLoggedIn") // Oturumu kapat
+            UserDefaults.standard.set(false, forKey: "isLoggedIn")
             self.isLoggedIn = false 
         } catch let signOutError as NSError {
             alertMessage = "Error signing out: \(signOutError.localizedDescription)"
