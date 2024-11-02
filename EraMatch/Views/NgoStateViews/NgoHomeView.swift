@@ -74,7 +74,7 @@ struct NgoHomeView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        // TODO add new event view
+                        // ADD EVENT SHEET
                     }) {
                         Image(systemName: "plus")
                             .font(.system(size: 24))
