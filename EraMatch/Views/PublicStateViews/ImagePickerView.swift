@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct ImagePickerView: UIViewControllerRepresentable {
-    var sourceType: UIImagePickerController.SourceType
+    var sourceType: UIImagePickerController.SourceType = .photoLibrary
     var completionHandler: (UIImage?) -> Void
 
     func makeCoordinator() -> Coordinator {
