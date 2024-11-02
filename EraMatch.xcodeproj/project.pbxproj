@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		99008C502CD6C1710099BFCF /* PDFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99008C4F2CD6C1710099BFCF /* PDFView.swift */; };
 		991F3A712C52A6C900E1CC1C /* NgoProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F3A702C52A6C900E1CC1C /* NgoProfileView.swift */; };
 		991F3A752C53F46C00E1CC1C /* EventCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F3A742C53F46C00E1CC1C /* EventCardView.swift */; };
 		9928ACBB2C358F30008F545A /* EraMatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACBA2C358F30008F545A /* EraMatchApp.swift */; };
@@ -68,6 +69,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		99008C4F2CD6C1710099BFCF /* PDFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFView.swift; sourceTree = "<group>"; };
 		991F3A702C52A6C900E1CC1C /* NgoProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoProfileView.swift; sourceTree = "<group>"; };
 		991F3A742C53F46C00E1CC1C /* EventCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCardView.swift; sourceTree = "<group>"; };
 		9928ACB72C358F30008F545A /* EraMatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EraMatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -241,6 +243,7 @@
 				9928ACFA2C370CED008F545A /* SelectStateView.swift */,
 				99F0FC242C4C156900D51776 /* ImagePickerView.swift */,
 				991F3A742C53F46C00E1CC1C /* EventCardView.swift */,
+				99008C4F2CD6C1710099BFCF /* PDFView.swift */,
 			);
 			path = PublicStateViews;
 			sourceTree = "<group>";
@@ -403,6 +406,7 @@
 				9928ACFD2C383731008F545A /* CountryList.swift in Sources */,
 				9937C5292CB9D04500EFEA38 /* UserSubmissionsView.swift in Sources */,
 				99F0FC252C4C156900D51776 /* ImagePickerView.swift in Sources */,
+				99008C502CD6C1710099BFCF /* PDFView.swift in Sources */,
 				99F0FC2B2C4D0E1A00D51776 /* UserGuideScreenView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -542,12 +546,14 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EraMatch/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library so you can choose and upload images for your profile and other features.\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -578,12 +584,14 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EraMatch/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library so you can choose and upload images for your profile and other features.\n";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
