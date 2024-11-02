@@ -125,6 +125,36 @@ class NgoHomeViewModel: ObservableObject {
         }
     }
     
+    func handleImageUpload(image: UIImage, fileExtension: String, completion: @escaping (URL?, String?) -> Void) {
+        let storageRef = Storage.storage().reference()
+        let fileName = UUID().uuidString + "." + fileExtension
+        let fileRef = storageRef.child("logos/\(fileName)")
+
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            print("Image data conversion failed")
+            completion(nil, "Image data conversion failed")
+            return
+        }
+        
+        fileRef.putData(imageData, metadata: nil) { metadata, error in
+            if let error = error {
+                print("File upload error: \(error.localizedDescription)")
+                completion(nil, error.localizedDescription)
+                return
+            }
+            
+            fileRef.downloadURL { url, error in
+                if let error = error {
+                    print("Failed to retrieve download URL: \(error.localizedDescription)")
+                    completion(nil, error.localizedDescription)
+                    return
+                }
+                completion(url, nil) 
+            }
+        }
+    }
+
+    
     func handleFileUpload(fileUrl: URL, isPIF: Bool, completion: @escaping (URL?, String) -> Void) {
         let storageRef = Storage.storage().reference()
         let fileName = UUID().uuidString

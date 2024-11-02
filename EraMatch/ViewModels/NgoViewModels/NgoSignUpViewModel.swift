@@ -72,6 +72,35 @@ class NgoSignUpViewModel: ObservableObject {
         }
     }
     
+    func handleImageUpload(image: UIImage, isPIF: Bool, completion: @escaping (URL?, String) -> Void) {
+        guard let imageData = image.pngData() else {
+            completion(nil, "Failed to convert image to data")
+            return
+        }
+        
+        let storageRef = Storage.storage().reference()
+        let fileName = UUID().uuidString
+        let fileRef = isPIF ? storageRef.child("pifs/\(fileName).pdf") : storageRef.child("logos/\(fileName).png")
+        
+        fileRef.putData(imageData, metadata: nil) { metadata, error in
+            if let error = error {
+                print("Image upload error: \(error.localizedDescription)")
+                completion(nil, error.localizedDescription)
+                return
+            }
+            
+            fileRef.downloadURL { url, error in
+                if let error = error {
+                    print("Failed to retrieve download URL: \(error.localizedDescription)")
+                    completion(nil, error.localizedDescription)
+                    return
+                }
+                completion(url, fileName)
+            }
+        }
+    }
+
+    
     func handleFileUpload(fileUrl: URL, isPIF: Bool, completion: @escaping (URL?, String) -> Void) {
         let storageRef = Storage.storage().reference()
         let fileName = UUID().uuidString

@@ -11,13 +11,15 @@ import PDFKit
 struct NgoProfileView: View {
     @ObservedObject var homeViewModel: NgoHomeViewModel
     @EnvironmentObject var loginViewModel: LoginViewModel
-
+    
     @State private var showPDFView: Bool = false
     @State private var showFilePicker: Bool = false
     @State private var isPDF: Bool = false
     @State private var showLogoUpdateSheet: Bool = false
     @State private var selectedFileURL: URL? = nil
-
+    @State private var showImagePicker: Bool = false
+    @State private var selectedImage: UIImage? = nil
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -32,31 +34,34 @@ struct NgoProfileView: View {
                             } placeholder: {
                                 ProgressView()
                             }
-                            .frame(width: 50, height: 50)
+                            .frame(width: 100, height: 100)
                             .clipShape(Circle())
                         }
                     } else {
                         Image(systemName: "person.circle.fill")
                             .resizable()
-                            .frame(width: 50, height: 50)
+                            .frame(width: 100, height: 100)
                             .onTapGesture {
                                 showLogoUpdateSheet = true
                             }
                     }
-
+                    
+                    Spacer()
+                    
                     Text(homeViewModel.ngoName)
                         .font(.largeTitle)
                         .bold()
                 }
                 .padding()
-
+                
                 // Profil alanları
-                profileFieldView(fieldName: "Country", fieldKey: "country", fieldText: $homeViewModel.country)
-                profileFieldView(fieldName: "OID Number", fieldKey: "oidNumber", fieldText: $homeViewModel.oidNumber)
-                profileFieldView(fieldName: "E-Mail", fieldKey: "email", fieldText: $homeViewModel.email)
-                profileFieldView(fieldName: "Instagram Profile", fieldKey: "instagram", fieldText: $homeViewModel.instagram)
-                profileFieldView(fieldName: "Facebook Profile", fieldKey: "facebook", fieldText: $homeViewModel.facebook)
+                profileFieldView(fieldName: "Country", fieldKey: "country", fieldText: $homeViewModel.country, homeViewModel: homeViewModel)
+                profileFieldView(fieldName: "OID Number", fieldKey: "oidNumber", fieldText: $homeViewModel.oidNumber, homeViewModel: homeViewModel)
+                profileFieldView(fieldName: "E-Mail", fieldKey: "email", fieldText: $homeViewModel.email, homeViewModel: homeViewModel)
+                profileFieldView(fieldName: "Instagram Profile", fieldKey: "instagram", fieldText: $homeViewModel.instagram, homeViewModel: homeViewModel)
+                profileFieldView(fieldName: "Facebook Profile", fieldKey: "facebook", fieldText: $homeViewModel.facebook, homeViewModel: homeViewModel)
 
+                
                 // PIF güncelleme butonu
                 Button(action: {
                     isPDF = true
@@ -94,7 +99,7 @@ struct NgoProfileView: View {
                 if homeViewModel.isLoading {
                     ProgressView("Uploading...")
                 }
-
+                
                 Button(action: {
                     loginViewModel.logoutUser()
                 }) {
@@ -138,34 +143,49 @@ struct NgoProfileView: View {
             ActionSheet(title: Text("Update Logo"), buttons: [
                 .default(Text("Choose Photo")) {
                     isPDF = false
-                    showFilePicker = true
+                    showImagePicker = true
                 },
                 .cancel()
             ])
         }
-    }
-
-    private func profileFieldView(fieldName: String, fieldKey: String, fieldText: Binding<String>) -> some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading) {
-                Text(fieldName)
-                    .font(.headline)
-                TextField(fieldName, text: fieldText)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
-                    .disabled(!homeViewModel.isEditingField(fieldKey))
+        .sheet(isPresented: $showImagePicker) {
+            ImagePickerView(sourceType: .photoLibrary) { image, fileExtension in
+                if let selectedImage = image, let fileExtension = fileExtension {
+                    homeViewModel.handleImageUpload(image: selectedImage, fileExtension: fileExtension) { uploadedUrl, error in
+                        if let uploadedUrl = uploadedUrl {
+                            homeViewModel.logoUrl = uploadedUrl
+                        } else if let error = error {
+                            print("Failed to upload logo: \(error)")
+                        }
+                        showImagePicker = false
+                    }
+                } else {
+                    showImagePicker = false
+                }
             }
-            .padding(.horizontal)
-
-            Button(action: {
-                homeViewModel.toggleEditing(for: fieldKey, fieldText: fieldText.wrappedValue)
-            }) {
-                Text(homeViewModel.isEditingField(fieldKey) ? "Done" : "Edit")
-                    .foregroundColor(.black)
-            }
-            .padding([.top, .trailing], 10)
         }
     }
 }
 
+func profileFieldView(fieldName: String, fieldKey: String, fieldText: Binding<String>, homeViewModel: NgoHomeViewModel) -> some View {
+    ZStack(alignment: .topTrailing) {
+        VStack(alignment: .leading) {
+            Text(fieldName)
+                .font(.headline)
+            TextField(fieldName, text: fieldText)
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .disabled(!homeViewModel.isEditingField(fieldKey))
+        }
+        .padding(.horizontal)
+        
+        Button(action: {
+            homeViewModel.toggleEditing(for: fieldKey, fieldText: fieldText.wrappedValue)
+        }) {
+            Text(homeViewModel.isEditingField(fieldKey) ? "Done" : "Edit")
+                .foregroundColor(.black)
+        }
+        .padding([.top, .trailing], 10)
+    }
+}

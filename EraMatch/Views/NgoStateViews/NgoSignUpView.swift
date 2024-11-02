@@ -184,23 +184,22 @@ struct NgoSignUpView: View {
                         }
                         .padding(.top)
                         .sheet(isPresented: $showingLogoPicker) {
-                            ImagePickerView(sourceType: .photoLibrary) { image in
+                            ImagePickerView(sourceType: .photoLibrary) { image, fileName in
                                 if let image = image {
-                                    if let fileUrl = viewModel.saveImageToDocuments(image: image) {
-                                        viewModel.handleFileUpload(fileUrl: fileUrl, isPIF: false) { url, fileName in
-                                            DispatchQueue.main.async {
-                                                if let url = url {
-                                                    viewModel.logoUrl = url
-                                                    logoFileName = fileName
-                                                } else {
-                                                    viewModel.alertMessage = "Logo upload failed."
-                                                    viewModel.showingAlert = true
-                                                }
+                                    viewModel.handleImageUpload(image: image, isPIF: false) { url, fileName in
+                                        DispatchQueue.main.async {
+                                            if let url = url {
+                                                viewModel.logoUrl = url
+                                                logoFileName = fileName
+                                            } else {
+                                                viewModel.alertMessage = "Logo upload failed."
+                                                viewModel.showingAlert = true
                                             }
                                         }
                                     }
                                 }
                             }
+                        }
                         }
 
                         // PIF Upload
@@ -298,7 +297,7 @@ struct NgoSignUpView: View {
             }
         }
     }
-}
+
 
 
 
