@@ -70,7 +70,7 @@ struct UserProfileView: View {
                 .padding()
                 .background(Color.white)
                 .cornerRadius(25)
-                .padding(.top, 50)
+                .padding(.top, 20)
             }
             .padding(.leading, 10)
             .padding(.trailing, 10)
@@ -112,7 +112,7 @@ struct UserProfileView: View {
             
             if isBio {
                 TextEditor(text: text)
-                    .frame(height: 150) 
+                    .frame(height: 150)
                     .padding()
                     .background(Color(.white))
                     .cornerRadius(8)
@@ -135,9 +135,3 @@ struct UserProfileView: View {
         }
     }
 }
-
-
-
-
-
-
