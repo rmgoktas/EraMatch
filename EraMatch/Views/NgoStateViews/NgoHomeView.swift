@@ -12,6 +12,7 @@ struct NgoHomeView: View {
     @State private var selectedTab: String = "My Events"
     @ObservedObject var homeViewModel: NgoHomeViewModel
     @EnvironmentObject var loginViewModel: LoginViewModel
+    @State private var isCreateEventViewPresented = false
 
     var body: some View {
         ZStack {
@@ -26,6 +27,7 @@ struct NgoHomeView: View {
                         Image(systemName: "line.horizontal.3")
                             .font(.title)
                             .foregroundColor(.white)
+                            .accessibilityLabel("Open Menu")
                     }
 
                     Spacer()
@@ -40,6 +42,7 @@ struct NgoHomeView: View {
                     Image(systemName: "magnifyingglass")
                         .font(.title)
                         .foregroundColor(.white)
+                        .accessibilityLabel("Search")
                 }
                 .padding(.top, 30)
                 .padding(.horizontal)
@@ -74,7 +77,7 @@ struct NgoHomeView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        // ADD EVENT SHEET
+                        isCreateEventViewPresented = true // Present the CreateEventView
                     }) {
                         Image(systemName: "plus")
                             .font(.system(size: 24))
@@ -84,6 +87,7 @@ struct NgoHomeView: View {
                             .cornerRadius(40)
                             .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5)
                     }
+                    .accessibilityLabel("Create New Event")
                     .padding(.trailing, 20)
                     .padding(.bottom, 90)
                 }
@@ -91,8 +95,10 @@ struct NgoHomeView: View {
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
+        .fullScreenCover(isPresented: $isCreateEventViewPresented) {
+            CreateEventView()
+        }
     }
 }
-
 
 
