@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		99008C502CD6C1710099BFCF /* PDFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99008C4F2CD6C1710099BFCF /* PDFView.swift */; };
+		99008C522CD79C820099BFCF /* CreateEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99008C512CD79C820099BFCF /* CreateEventView.swift */; };
 		991F3A712C52A6C900E1CC1C /* NgoProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F3A702C52A6C900E1CC1C /* NgoProfileView.swift */; };
 		991F3A752C53F46C00E1CC1C /* EventCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991F3A742C53F46C00E1CC1C /* EventCardView.swift */; };
 		9928ACBB2C358F30008F545A /* EraMatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACBA2C358F30008F545A /* EraMatchApp.swift */; };
@@ -22,7 +23,7 @@
 		9928ACF72C370CAE008F545A /* NgoSignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACF62C370CAE008F545A /* NgoSignUpView.swift */; };
 		9928ACF92C370CC0008F545A /* UserSignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACF82C370CC0008F545A /* UserSignUpView.swift */; };
 		9928ACFB2C370CED008F545A /* SelectStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACFA2C370CED008F545A /* SelectStateView.swift */; };
-		9928ACFD2C383731008F545A /* CountryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACFC2C383731008F545A /* CountryList.swift */; };
+		9928ACFD2C383731008F545A /* Contents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928ACFC2C383731008F545A /* Contents.swift */; };
 		9928AD3D2C448432008F545A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9928AD3C2C448432008F545A /* GoogleService-Info.plist */; };
 		9928AD402C44849B008F545A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9928AD3F2C44849B008F545A /* FirebaseAnalytics */; };
 		9928AD422C44849B008F545A /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 9928AD412C44849B008F545A /* FirebaseAnalyticsOnDeviceConversion */; };
@@ -62,6 +63,8 @@
 		9951E8D72CB86E6B001F7B6E /* NgoHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9951E8D62CB86E6B001F7B6E /* NgoHomeViewModel.swift */; };
 		9951E8D92CB87256001F7B6E /* NgoSubmissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9951E8D82CB87256001F7B6E /* NgoSubmissionsView.swift */; };
 		9951E8DB2CB89B32001F7B6E /* NgoMyEventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9951E8DA2CB89B32001F7B6E /* NgoMyEventsView.swift */; };
+		996950852CEFC19A00800A17 /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 996950842CEFC19A00800A17 /* EventModel.swift */; };
+		996950872CEFC1AA00800A17 /* CreateEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 996950862CEFC1AA00800A17 /* CreateEventViewModel.swift */; };
 		99F0FC212C4BDB1C00D51776 /* UserHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F0FC202C4BDB1C00D51776 /* UserHomeViewModel.swift */; };
 		99F0FC252C4C156900D51776 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F0FC242C4C156900D51776 /* ImagePickerView.swift */; };
 		99F0FC2B2C4D0E1A00D51776 /* UserGuideScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F0FC2A2C4D0E1A00D51776 /* UserGuideScreenView.swift */; };
@@ -70,6 +73,7 @@
 
 /* Begin PBXFileReference section */
 		99008C4F2CD6C1710099BFCF /* PDFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFView.swift; sourceTree = "<group>"; };
+		99008C512CD79C820099BFCF /* CreateEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventView.swift; sourceTree = "<group>"; };
 		991F3A702C52A6C900E1CC1C /* NgoProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoProfileView.swift; sourceTree = "<group>"; };
 		991F3A742C53F46C00E1CC1C /* EventCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCardView.swift; sourceTree = "<group>"; };
 		9928ACB72C358F30008F545A /* EraMatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EraMatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,7 +89,7 @@
 		9928ACF62C370CAE008F545A /* NgoSignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoSignUpView.swift; sourceTree = "<group>"; };
 		9928ACF82C370CC0008F545A /* UserSignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignUpView.swift; sourceTree = "<group>"; };
 		9928ACFA2C370CED008F545A /* SelectStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectStateView.swift; sourceTree = "<group>"; };
-		9928ACFC2C383731008F545A /* CountryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryList.swift; sourceTree = "<group>"; };
+		9928ACFC2C383731008F545A /* Contents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contents.swift; sourceTree = "<group>"; };
 		9928AD3C2C448432008F545A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9928AD782C448725008F545A /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		9928AD7B2C448750008F545A /* NgoSignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoSignUpViewModel.swift; sourceTree = "<group>"; };
@@ -97,6 +101,8 @@
 		9951E8D62CB86E6B001F7B6E /* NgoHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoHomeViewModel.swift; sourceTree = "<group>"; };
 		9951E8D82CB87256001F7B6E /* NgoSubmissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoSubmissionsView.swift; sourceTree = "<group>"; };
 		9951E8DA2CB89B32001F7B6E /* NgoMyEventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoMyEventsView.swift; sourceTree = "<group>"; };
+		996950842CEFC19A00800A17 /* EventModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventModel.swift; sourceTree = "<group>"; };
+		996950862CEFC1AA00800A17 /* CreateEventViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventViewModel.swift; sourceTree = "<group>"; };
 		99F0FC202C4BDB1C00D51776 /* UserHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHomeViewModel.swift; sourceTree = "<group>"; };
 		99F0FC242C4C156900D51776 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		99F0FC2A2C4D0E1A00D51776 /* UserGuideScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGuideScreenView.swift; sourceTree = "<group>"; };
@@ -192,7 +198,8 @@
 		9928ACCA2C3595CA008F545A /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				9928ACFC2C383731008F545A /* CountryList.swift */,
+				996950842CEFC19A00800A17 /* EventModel.swift */,
+				9928ACFC2C383731008F545A /* Contents.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -230,6 +237,7 @@
 				9951E8D02CB1906D001F7B6E /* NgoNavBarView.swift */,
 				9951E8D82CB87256001F7B6E /* NgoSubmissionsView.swift */,
 				9951E8DA2CB89B32001F7B6E /* NgoMyEventsView.swift */,
+				99008C512CD79C820099BFCF /* CreateEventView.swift */,
 			);
 			path = NgoStateViews;
 			sourceTree = "<group>";
@@ -272,6 +280,7 @@
 			children = (
 				9928AD7B2C448750008F545A /* NgoSignUpViewModel.swift */,
 				9951E8D62CB86E6B001F7B6E /* NgoHomeViewModel.swift */,
+				996950862CEFC1AA00800A17 /* CreateEventViewModel.swift */,
 			);
 			path = NgoViewModels;
 			sourceTree = "<group>";
@@ -383,10 +392,13 @@
 				9928ACFB2C370CED008F545A /* SelectStateView.swift in Sources */,
 				9928ACD62C35ACC8008F545A /* BackgroundView.swift in Sources */,
 				991F3A712C52A6C900E1CC1C /* NgoProfileView.swift in Sources */,
+				99008C522CD79C820099BFCF /* CreateEventView.swift in Sources */,
+				996950852CEFC19A00800A17 /* EventModel.swift in Sources */,
 				9951E8D72CB86E6B001F7B6E /* NgoHomeViewModel.swift in Sources */,
 				9928ACF72C370CAE008F545A /* NgoSignUpView.swift in Sources */,
 				9928ACD22C359D27008F545A /* OnboardingView.swift in Sources */,
 				99F0FC2F2C4EC81000D51776 /* UserProfileView.swift in Sources */,
+				996950872CEFC1AA00800A17 /* CreateEventViewModel.swift in Sources */,
 				9928ACD42C35A4A0008F545A /* UserHomeView.swift in Sources */,
 				9928AD7C2C448750008F545A /* NgoSignUpViewModel.swift in Sources */,
 				9951E8DB2CB89B32001F7B6E /* NgoMyEventsView.swift in Sources */,
@@ -403,7 +415,7 @@
 				9928ACE52C36F71F008F545A /* LoginView.swift in Sources */,
 				9928AD7E2C448760008F545A /* UserSignUpViewModel.swift in Sources */,
 				9928ACF92C370CC0008F545A /* UserSignUpView.swift in Sources */,
-				9928ACFD2C383731008F545A /* CountryList.swift in Sources */,
+				9928ACFD2C383731008F545A /* Contents.swift in Sources */,
 				9937C5292CB9D04500EFEA38 /* UserSubmissionsView.swift in Sources */,
 				99F0FC252C4C156900D51776 /* ImagePickerView.swift in Sources */,
 				99008C502CD6C1710099BFCF /* PDFView.swift in Sources */,
