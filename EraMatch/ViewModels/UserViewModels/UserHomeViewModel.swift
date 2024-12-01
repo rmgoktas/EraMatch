@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseFirestore
+import FirebaseAuth
 
 class UserHomeViewModel: ObservableObject {
     @Published var userName: String = ""

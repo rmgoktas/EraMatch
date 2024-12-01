@@ -1,6 +1,7 @@
 import SwiftUI
 import Firebase
 import FirebaseStorage
+import FirebaseAuth
 
 class NgoSignUpViewModel: ObservableObject {
     @Published var ngoName = ""

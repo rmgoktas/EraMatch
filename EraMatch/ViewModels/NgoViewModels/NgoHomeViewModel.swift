@@ -9,6 +9,7 @@ import SwiftUI
 import Firebase
 import FirebaseFirestore
 import FirebaseStorage
+import FirebaseAuth
 
 class NgoHomeViewModel: ObservableObject {
     @Published var ngoName: String = ""
