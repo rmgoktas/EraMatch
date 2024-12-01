@@ -15,19 +15,30 @@ struct CreateEventView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Event Details")
+                        .font(.headline)
+                        .padding(.horizontal)
                     TextField("Event Name", text: $viewModel.event.title)
                         .padding()
                         .background(Color.purple.opacity(0.1))
                         .cornerRadius(8)
                         .padding(.horizontal)
                     
-                    TextField("City/Country", text: $viewModel.event.country)
-                        .padding()
-                        .background(Color.purple.opacity(0.1))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
+                    VStack(alignment: .leading) {
+                        Text("Venue")
+                            .font(.headline)
+                            .padding(.horizontal)
+                        TextField("City/Country", text: $viewModel.event.country)
+                            .padding()
+                            .background(Color.purple.opacity(0.1))
+                            .cornerRadius(8)
+                            .padding(.horizontal)
+                    }
                     
+                    Text("Event Type")
+                        .font(.headline)
+                        .padding(.horizontal)
                     Picker("Type", selection: $viewModel.event.type) {
                         ForEach(EventTypes.types, id: \.self) { type in
                             Text(type)
@@ -38,6 +49,11 @@ struct CreateEventView: View {
                     .background(Color.purple.opacity(0.1))
                     .cornerRadius(8)
                     .padding(.horizontal)
+                    .onAppear {
+                        if viewModel.event.type.isEmpty {
+                            viewModel.event.type = "Youth Exchange"
+                        }
+                    }
                     
                     topicPicker
                     
@@ -49,31 +65,45 @@ struct CreateEventView: View {
                     
                     countriesSection
                     
-                    HStack {
-                        Text("Reimbursement Limit:")
-                        TextField("Choose Amount", value: $viewModel.event.reimbursementLimit, formatter: NumberFormatter())
-                            .padding()
-                            .background(Color.purple.opacity(0.1))
-                            .cornerRadius(8)
-                            .keyboardType(.decimalPad)
-                    }
-                    .padding(.horizontal)
-                    
-                    infoPackSection
-                    
-                    photoSection
-                    
-                    TextField("Paste Here", text: $viewModel.event.formLink)
+                    Text("Reimbursement Limit")
+                        .font(.headline)
+                        .padding(.horizontal)
+                    TextField("Reimbursement Limit", value: $viewModel.event.reimbursementLimit, formatter: NumberFormatter())
                         .padding()
                         .background(Color.purple.opacity(0.1))
                         .cornerRadius(8)
                         .padding(.horizontal)
                     
+                    infoPackSection
+                    
+                    photoSection
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Application Form Link")
+                            .font(.headline)
+                            .padding(.horizontal)
+                        
+                        Text("It is recommended to create a form to screen applicants according to the requirements of the event and get to know them better.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal)
+                        
+                        TextField("Paste Here (Optional)", text: $viewModel.event.formLink)
+                            .padding()
+                            .background(Color.purple.opacity(0.1))
+                            .cornerRadius(8)
+                            .padding(.horizontal)
+                    }
+                    
                     Button(action: {
-                        viewModel.createEvent { success in
-                            if success {
-                                showAlert = true
+                        if isFormValid() {
+                            viewModel.createEvent { success in
+                                if success {
+                                    showAlert = true
+                                }
                             }
+                        } else {
+                            showAlert = true
                         }
                     }) {
                         Text("PUBLISH")
@@ -84,7 +114,7 @@ struct CreateEventView: View {
                             .cornerRadius(10)
                     }
                     .padding(.horizontal)
-                    .disabled(viewModel.isLoading)
+                    .disabled(viewModel.isLoading || !isFormValid())
                 }
                 .padding(.vertical)
             }
@@ -97,13 +127,21 @@ struct CreateEventView: View {
             })
         }
         .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("Success"),
-                message: Text("Event created successfully"),
-                dismissButton: .default(Text("OK")) {
-                    presentationMode.wrappedValue.dismiss()
-                }
-            )
+            if isFormValid() {
+                return Alert(
+                    title: Text("Success"),
+                    message: Text("Event created successfully"),
+                    dismissButton: .default(Text("OK")) {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                )
+            } else {
+                return Alert(
+                    title: Text("Incomplete Form"),
+                    message: Text("Please fill in all required fields before publishing."),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
         }
         .overlay(
             Group {
@@ -124,8 +162,8 @@ struct CreateEventView: View {
     }
     
     private var topicPicker: some View {
-        VStack(alignment: .leading) {
-            Text("Topic:")
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Topic")
                 .font(.headline)
             Picker("Topic", selection: $viewModel.event.topic) {
                 ForEach(TopicList.topics + ["Other"], id: \.self) { topic in
@@ -136,13 +174,25 @@ struct CreateEventView: View {
             .padding()
             .background(Color.purple.opacity(0.1))
             .cornerRadius(8)
+            .onAppear {
+                if viewModel.event.topic.isEmpty {
+                    viewModel.event.topic = "Improve Yourself"
+                }
+            }
+            
+            if viewModel.event.topic == "Other" {
+                TextField("Specify other topic", text: $viewModel.event.otherTopic)
+                    .padding()
+                    .background(Color.purple.opacity(0.1))
+                    .cornerRadius(8)
+            }
         }
         .padding(.horizontal)
     }
     
     private var dateRangePicker: some View {
-        VStack(alignment: .leading) {
-            Text("Dates Between:")
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Event Dates")
                 .font(.headline)
             DatePicker("Start Date", selection: $viewModel.event.startDate, displayedComponents: .date)
                 .padding()
@@ -157,13 +207,13 @@ struct CreateEventView: View {
     }
     
     private var includedSection: some View {
-        VStack(alignment: .leading) {
-            Text("Included:")
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Included Items")
                 .font(.headline)
-            HStack {
-                Toggle("Transportation", isOn: .constant(true))
-                Toggle("Accommodation", isOn: .constant(true))
-                Toggle("Food", isOn: .constant(true))
+            VStack(alignment: .leading, spacing: 8) {
+                Toggle("Transportation", isOn: $viewModel.event.includedItems.transportation)
+                Toggle("Accommodation", isOn: $viewModel.event.includedItems.accommodation)
+                Toggle("Food", isOn: $viewModel.event.includedItems.food)
             }
             .padding()
             .background(Color.purple.opacity(0.1))
@@ -173,8 +223,8 @@ struct CreateEventView: View {
     }
     
     private var lookingForSection: some View {
-        VStack(alignment: .leading) {
-            Text("Looking For:")
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Participants")
                 .font(.headline)
             ForEach(viewModel.event.lookingFor.indices, id: \.self) { index in
                 HStack {
@@ -212,8 +262,8 @@ struct CreateEventView: View {
     }
     
     private var countriesSection: some View {
-        VStack(alignment: .leading) {
-            Text("Countries:")
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Participating Countries")
                 .font(.headline)
             ForEach(viewModel.event.countries.indices, id: \.self) { index in
                 HStack {
@@ -252,8 +302,8 @@ struct CreateEventView: View {
     }
     
     private var infoPackSection: some View {
-        VStack(alignment: .leading) {
-            Text("Upload Event's Information Pack:")
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Event Information Pack")
                 .font(.headline)
             HStack {
                 Button(action: {
@@ -285,8 +335,8 @@ struct CreateEventView: View {
     }
     
     private var photoSection: some View {
-        VStack(alignment: .leading) {
-            Text("Upload Event's Logo or Photo of Venue:")
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Event Photo")
                 .font(.headline)
             HStack {
                 Button(action: {
@@ -319,6 +369,18 @@ struct CreateEventView: View {
                 }
             }
         }
+    }
+    
+    private func isFormValid() -> Bool {
+        !viewModel.event.title.isEmpty &&
+        !viewModel.event.country.isEmpty &&
+        !viewModel.event.type.isEmpty &&
+        !viewModel.event.topic.isEmpty &&
+        (viewModel.event.topic != "Other" || !viewModel.event.otherTopic.isEmpty) &&
+        !viewModel.event.lookingFor.isEmpty &&
+        !viewModel.event.countries.isEmpty &&
+        viewModel.selectedInfoPack != nil &&
+        viewModel.selectedPhoto != nil
     }
 }
 
@@ -398,4 +460,3 @@ struct CreateEventView_Previews: PreviewProvider {
         CreateEventView()
     }
 }
-
