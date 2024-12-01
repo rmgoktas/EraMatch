@@ -5,9 +5,14 @@
 //  Created by R. Metehan GÖKTAŞ on 21.11.2024.
 //
 
-
 import Foundation
-import FirebaseFirestoreSwift
+import FirebaseFirestore
+
+struct IncludedItems: Codable {
+    var transportation: Bool = false
+    var accommodation: Bool = false
+    var food: Bool = false
+}
 
 struct Event: Identifiable, Codable {
     @DocumentID var id: String?
@@ -17,14 +22,16 @@ struct Event: Identifiable, Codable {
     var topic: String
     var startDate: Date
     var endDate: Date
-    var included: [String]
+    var includedItems: IncludedItems
     var lookingFor: [Participant]
     var countries: [CountryNGO]
     var reimbursementLimit: Double
     var eventInfoPackURL: String?
     var eventPhotoURL: String?
     var formLink: String
-    var creatorId: String 
+    var creatorId: String
+    var otherTopic: String = ""
+    var imageURL: String
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -34,7 +41,7 @@ struct Event: Identifiable, Codable {
         case topic
         case startDate
         case endDate
-        case included
+        case includedItems
         case lookingFor
         case countries
         case reimbursementLimit
@@ -42,6 +49,8 @@ struct Event: Identifiable, Codable {
         case eventPhotoURL
         case formLink
         case creatorId
+        case otherTopic
+        case imageURL
     }
 }
 
