@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseAuth
 
 class UserSignUpViewModel: ObservableObject {
     @Published var userName = ""
