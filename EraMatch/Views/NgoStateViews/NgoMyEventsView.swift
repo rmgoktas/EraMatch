@@ -13,6 +13,7 @@ struct NgoMyEventsView: View {
     @StateObject private var viewModel = EventCardViewModel()
     @State private var isUserLoggedIn = false
     @State private var userId: String = ""
+    @State private var viewAppeared = false
 
     var body: some View {
         Group {
@@ -22,14 +23,26 @@ struct NgoMyEventsView: View {
                 Text("Lütfen oturum açın")
             }
         }
-        .onAppear(perform: checkUserAuthenticationStatus)
+        .onAppear {
+            checkUserAuthenticationStatus()
+            viewAppeared = true
+        }
+        .onChange(of: viewAppeared) { _ in
+            if isUserLoggedIn {
+                Task {
+                    await viewModel.refreshEvents(for: userId)
+                }
+            }
+        }
     }
 
     private var eventListView: some View {
         ScrollView {
             if viewModel.isLoading {
-                ProgressView("Etkinlikler yükleniyor...")
-            } else if !viewModel.events.isEmpty {
+                ProgressView("Loading events...")
+            } else if viewModel.events.isEmpty {
+                Text("Etkinlik bulunamadı.")
+            } else {
                 LazyVStack(spacing: 16) {
                     ForEach(viewModel.events) { event in
                         EventCardView(event: event) {
@@ -38,9 +51,29 @@ struct NgoMyEventsView: View {
                     }
                 }
                 .padding(.vertical)
-            } else {
-                Text("Hiç etkinlik bulunamadı")
             }
+        }
+        .refreshable {
+            await viewModel.refreshEvents(for: userId)
+        }
+        .navigationBarItems(trailing: refreshButton)
+        .onAppear {
+            if !viewModel.events.isEmpty {
+                Task {
+                    await viewModel.refreshEvents(for: userId)
+                }
+            }
+        }
+    }
+
+    private var refreshButton: some View {
+        Button(action: {
+            Task {
+                await viewModel.refreshEvents(for: userId)
+            }
+        }) {
+            Image(systemName: "arrow.clockwise")
+                .font(.title2)
         }
     }
 
@@ -50,9 +83,11 @@ struct NgoMyEventsView: View {
             userId = user.uid
             print("Oturum açmış kullanıcı ID'si: \(userId)")
             viewModel.fetchEvents(for: userId)
+            viewModel.startListening(for: userId)
         } else {
             isUserLoggedIn = false
             print("Kullanıcı oturum açmamış")
         }
     }
 }
+

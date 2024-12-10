@@ -6,13 +6,32 @@
 //
 
 import SwiftUI
+import FirebaseStorage
 
 struct EventCardView: View {
     let event: Event
     var onDetailTap: () -> Void
+    @StateObject private var imageLoader = ImageLoader()
     
     var body: some View {
         VStack(spacing: 0) {
+            // Event image
+            if let image = imageLoader.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 200)
+                    .clipped()
+            } else {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(height: 200)
+                    .overlay(
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .gray))
+                    )
+            }
+            
             // Top section with included items icons
             HStack(spacing: 12) {
                 if event.includedItems.accommodation {
@@ -75,6 +94,7 @@ struct EventCardView: View {
         .cornerRadius(16)
         .shadow(radius: 5)
         .padding(.horizontal)
+        .onAppear(perform: loadEventImage)
     }
     
     private var dateRangeString: String {
@@ -103,6 +123,12 @@ struct EventCardView: View {
             flag.append(String(UnicodeScalar(base + scalar.value)!))
         }
         return flag
+    }
+    
+    private func loadEventImage() {
+        if let imageUrl = event.eventPhotoURL {
+            imageLoader.loadImage(from: imageUrl)
+        }
     }
 }
 

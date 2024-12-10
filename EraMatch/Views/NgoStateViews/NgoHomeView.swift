@@ -96,8 +96,9 @@ struct NgoHomeView: View {
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
         .fullScreenCover(isPresented: $isCreateEventViewPresented) {
-            CreateEventView()
+            CreateEventView(shouldDismiss: $isCreateEventViewPresented)
         }
+
     }
 }
 

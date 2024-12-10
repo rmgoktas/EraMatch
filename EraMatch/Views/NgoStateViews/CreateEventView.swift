@@ -10,8 +10,11 @@ struct CreateEventView: View {
     @State private var showingPhotoPreview = false
     @State private var pdfData: Data?
     @State private var showAlert = false
+    @State private var isFormLinkValid = false
     @Environment(\.presentationMode) var presentationMode
-    
+    @Binding var shouldDismiss: Bool
+    @State private var navigateToMyEvents = false 
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -83,22 +86,34 @@ struct CreateEventView: View {
                             .font(.headline)
                             .padding(.horizontal)
                         
-                        Text("It is recommended to create a form to screen applicants according to the requirements of the event and get to know them better.")
+                        Text("Create a form to screen applicants according to the requirements of the event and get to know them better.")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                             .padding(.horizontal)
                         
-                        TextField("Paste Here (Optional)", text: $viewModel.event.formLink)
+                        TextField("Paste Google Forms Link", text: $viewModel.event.formLink)
                             .padding()
                             .background(Color.purple.opacity(0.1))
                             .cornerRadius(8)
                             .padding(.horizontal)
+                            .onChange(of: viewModel.event.formLink) { _ in
+                                validateFormLink()
+                            }
+                        
+                        if !isFormLinkValid {
+                            Text("Please enter a valid Google Forms link")
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .padding(.horizontal)
+                        }
                     }
                     
-                    Button(action: {
+                    Button(action: { // Update 2: Updated Button action
                         if isFormValid() {
                             viewModel.createEvent { success in
                                 if success {
+                                    navigateToMyEvents = true // Update 2
+                                } else {
                                     showAlert = true
                                 }
                             }
@@ -115,6 +130,11 @@ struct CreateEventView: View {
                     }
                     .padding(.horizontal)
                     .disabled(viewModel.isLoading || !isFormValid())
+                    .background( // Update 3: Added NavigationLink
+                        NavigationLink(destination: NgoMyEventsView(), isActive: $navigateToMyEvents) {
+                            EmptyView()
+                        }
+                    )
                 }
                 .padding(.vertical)
             }
@@ -129,11 +149,9 @@ struct CreateEventView: View {
         .alert(isPresented: $showAlert) {
             if isFormValid() {
                 return Alert(
-                    title: Text("Success"),
-                    message: Text("Event created successfully"),
-                    dismissButton: .default(Text("OK")) {
-                        presentationMode.wrappedValue.dismiss()
-                    }
+                    title: Text("Error"),
+                    message: Text("There was an error creating the event. Please try again."),
+                    dismissButton: .default(Text("OK"))
                 )
             } else {
                 return Alert(
@@ -153,12 +171,6 @@ struct CreateEventView: View {
                 }
             }
         )
-        .alert(item: Binding<AlertItem?>(
-            get: { viewModel.errorMessage.map { AlertItem(message: $0) } },
-            set: { _ in viewModel.errorMessage = nil }
-        )) { alertItem in
-            Alert(title: Text("Error"), message: Text(alertItem.message))
-        }
     }
     
     private var topicPicker: some View {
@@ -372,7 +384,7 @@ struct CreateEventView: View {
     }
     
     private func isFormValid() -> Bool {
-        !viewModel.event.title.isEmpty &&
+        let isBasicInfoValid = !viewModel.event.title.isEmpty &&
         !viewModel.event.country.isEmpty &&
         !viewModel.event.type.isEmpty &&
         !viewModel.event.topic.isEmpty &&
@@ -380,9 +392,19 @@ struct CreateEventView: View {
         !viewModel.event.lookingFor.isEmpty &&
         !viewModel.event.countries.isEmpty &&
         viewModel.selectedInfoPack != nil &&
-        viewModel.selectedPhoto != nil
+        viewModel.selectedPhoto != nil &&
+        isFormLinkValid
+        
+        return isBasicInfoValid
+    }
+    
+    private func validateFormLink() {
+        isFormLinkValid = !viewModel.event.formLink.isEmpty &&
+            viewModel.event.formLink.starts(with: "https://") &&
+            viewModel.event.formLink.contains("docs.google.com/forms")
     }
 }
+
 
 struct DocumentPicker: UIViewControllerRepresentable {
     @Binding var pdfData: Data?
@@ -450,13 +472,3 @@ struct ImagePicker: UIViewControllerRepresentable {
     }
 }
 
-struct AlertItem: Identifiable {
-    let id = UUID()
-    let message: String
-}
-
-struct CreateEventView_Previews: PreviewProvider {
-    static var previews: some View {
-        CreateEventView()
-    }
-}
