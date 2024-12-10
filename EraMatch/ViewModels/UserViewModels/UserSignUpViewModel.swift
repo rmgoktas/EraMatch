@@ -24,7 +24,7 @@ class UserSignUpViewModel: ObservableObject {
     
     @Published var isLoading = false
     
-    let countries = CountryList.countries // CountryList.swift dosyasından gelen ülkeler dizisi
+    let nationalities = NationalityList.nationalities 
     
     // MARK: - Form Validation
     func isFormValid() -> Bool {
