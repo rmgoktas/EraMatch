@@ -1,9 +1,11 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseStorage
+import FirebaseAuth
 
 class CreateEventViewModel: ObservableObject {
     @Published var event = Event(
+        id: nil,
         title: "",
         country: "",
         type: "",
@@ -14,10 +16,11 @@ class CreateEventViewModel: ObservableObject {
         lookingFor: [],
         countries: [],
         reimbursementLimit: 0,
+        eventInfoPackURL: nil,
+        eventPhotoURL: nil,
         formLink: "",
         creatorId: "",
-        otherTopic: "",
-        imageURL: ""
+        otherTopic: ""
     )
     @Published var selectedInfoPack: URL?
     @Published var selectedPhoto: URL?
@@ -28,7 +31,15 @@ class CreateEventViewModel: ObservableObject {
     private let storage = Storage.storage()
     
     func createEvent(completion: @escaping (Bool) -> Void) {
+        guard let currentUserId = Auth.auth().currentUser?.uid else {
+            self.errorMessage = "User not logged in."
+            completion(false)
+            return
+        }
+        
         isLoading = true
+        self.event.creatorId = currentUserId
+        
         uploadInfoPack { infoPackURL in
             self.uploadPhoto { photoURL in
                 self.event.eventInfoPackURL = infoPackURL
@@ -87,4 +98,3 @@ class CreateEventViewModel: ObservableObject {
         }
     }
 }
-
