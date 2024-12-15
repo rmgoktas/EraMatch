@@ -10,7 +10,7 @@ import Firebase
 import FirebaseAuth
 
 struct NgoMyEventsView: View {
-    @StateObject private var viewModel = EventCardViewModel()
+    @StateObject private var viewModel = EventCardViewModel.shared
     @State private var isUserLoggedIn = false
     @State private var userId: String = ""
     @State private var viewAppeared = false
@@ -45,7 +45,7 @@ struct NgoMyEventsView: View {
             } else {
                 LazyVStack(spacing: 16) {
                     ForEach(viewModel.events) { event in
-                        EventCardView(event: event) {
+                        NGOEventCardView(event: event) {
                             print("Etkinliğe tıklandı: \(event.title)")
                         }
                     }
