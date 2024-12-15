@@ -49,7 +49,7 @@ class LoginViewModel: ObservableObject {
             
             UserDefaults.standard.set(self.email, forKey: "userEmail")
             UserDefaults.standard.set(true, forKey: "isLoggedIn")
-
+            
             self.checkUserType(uid: uid)
         }
     }
@@ -96,17 +96,26 @@ class LoginViewModel: ObservableObject {
     }
     
     func logoutUser() {
-        do {
-            try Auth.auth().signOut()
-            navigateToTravellerHome = false
-            navigateToNGOHome = false
-            UserDefaults.standard.removeObject(forKey: "userEmail")
-            UserDefaults.standard.set(false, forKey: "isLoggedIn")
-            self.isLoggedIn = false
-        } catch let signOutError as NSError {
-            alertMessage = "Error signing out: \(signOutError.localizedDescription)"
-            showingAlert = true
-            print("Sign out error: \(signOutError.localizedDescription)")
+        Task { @MainActor in
+            do {
+                try Auth.auth().signOut()
+                navigateToTravellerHome = false
+                navigateToNGOHome = false
+                
+                // oturum temizle
+                UserDefaults.standard.removeObject(forKey: "userEmail")
+                UserDefaults.standard.set(false, forKey: "isLoggedIn")
+                self.isLoggedIn = false
+                
+                EventCardViewModel.shared.clearCache()
+                EventCardViewModel.shared.clearImageCache()
+                
+                
+            } catch let signOutError as NSError {
+                alertMessage = "Error signing out: \(signOutError.localizedDescription)"
+                showingAlert = true
+                print("Sign out error: \(signOutError.localizedDescription)")
+            }
         }
     }
 }
