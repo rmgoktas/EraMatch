@@ -53,8 +53,6 @@ struct NgoHomeView: View {
                         switch selectedTab {
                         case "My Events":
                             NgoMyEventsView()
-                        case "Submissions":
-                            NgoSubmissionsView()
                         case "Profile":
                             NgoProfileView(homeViewModel: homeViewModel)
                         default:
@@ -66,31 +64,9 @@ struct NgoHomeView: View {
                     .background(Color.clear)
                 }
 
-                NgoNavBarView(selectedTab: $selectedTab)
+                NgoNavBarView(selectedTab: $selectedTab, isCreateEventViewPresented: $isCreateEventViewPresented)
                     .padding(.horizontal)
                     .padding(.top, 10)
-            }
-
-            // Floating Action Button
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        isCreateEventViewPresented = true // Present the CreateEventView
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 24))
-                            .foregroundColor(.white)
-                            .padding(20)
-                            .background(Color.purple)
-                            .cornerRadius(40)
-                            .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5)
-                    }
-                    .accessibilityLabel("Create New Event")
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 90)
-                }
             }
         }
         .navigationBarHidden(true)
@@ -98,8 +74,6 @@ struct NgoHomeView: View {
         .fullScreenCover(isPresented: $isCreateEventViewPresented) {
             CreateEventView(shouldDismiss: $isCreateEventViewPresented)
         }
-
     }
 }
-
 
