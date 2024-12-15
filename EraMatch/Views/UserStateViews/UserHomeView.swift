@@ -181,7 +181,7 @@ struct UserHomeView: View {
             .background(Color.white)
             .cornerRadius(25)
             .shadow(radius: 10)
-            .padding(.top, 60) 
+            .padding(.top, 60)
         }
     }
 
