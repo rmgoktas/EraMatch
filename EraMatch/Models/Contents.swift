@@ -19,7 +19,7 @@ struct TopicList {
         "Climate Change",
         "Artistic Skills",
         "Equality Rights",
-        "Digital Skills (STEM)",
+        "Digital Skills",
         "Health Care",
         "Other"
     ]
