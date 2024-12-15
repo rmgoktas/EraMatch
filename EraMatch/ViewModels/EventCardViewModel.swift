@@ -6,6 +6,8 @@ import SwiftUI
 
 @MainActor
 class EventCardViewModel: ObservableObject {
+    static let shared = EventCardViewModel()
+    
     @Published var events: [Event] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -13,15 +15,22 @@ class EventCardViewModel: ObservableObject {
     
     private var db = Firestore.firestore()
     private var cache: [String: [Event]] = [:]
+    private var cachedEvents: [Event] = []
+    private var lastFetchTime: Date?
+    private let cacheValidityDuration: TimeInterval = 300
+    private var isFetching = false
+    private let imageCache = NSCache<NSString, UIImage>()
+    
+    private init() {}
     
     func fetchEvents(for creatorId: String) {
         if let cachedEvents = cache[creatorId] {
-            print("Veriler önbellekten yüklendi.")
+            print("Data loaded from cache")
             self.events = cachedEvents
             return
         }
         
-        print("Veriler önbellekte yok, Firebase'den çekiliyor...")
+        print("Data not in cache, fetching from Firebase...")
         isLoading = true
         db.collection("events").whereField("creatorId", isEqualTo: creatorId).getDocuments { [weak self] (querySnapshot, error) in
             DispatchQueue.main.async {
@@ -45,17 +54,17 @@ class EventCardViewModel: ObservableObject {
                     return event
                 }
                 
-                print("Veriler başarıyla çekildi. Olay sayısı: \(fetchedEvents.count)")
+                print("Data fetched successfully. Event count: \(fetchedEvents.count)")
                 self?.events = fetchedEvents
-                self?.cache[creatorId] = fetchedEvents // Veriyi önbelleğe kaydet
+                self?.cache[creatorId] = fetchedEvents
             }
         }
     }
     
     func refreshEvents(for creatorId: String) async {
-        print("Veriler yenileniyor...")
+        print("Refreshing data...")
         isLoading = true
-        cache[creatorId] = nil // Önbelleği temizle
+        cache[creatorId] = nil
         
         do {
             let querySnapshot = try await db.collection("events").whereField("creatorId", isEqualTo: creatorId).getDocuments()
@@ -68,9 +77,9 @@ class EventCardViewModel: ObservableObject {
                 return event
             }
             
-            print("Veriler başarıyla yenilendi. Olay sayısı: \(fetchedEvents.count)")
+            print("Data refreshed successfully. Event count: \(fetchedEvents.count)")
             self.events = fetchedEvents
-            self.cache[creatorId] = fetchedEvents // Veriyi önbelleğe kaydet
+            self.cache[creatorId] = fetchedEvents
         } catch {
             print("Error refreshing events: \(error.localizedDescription)")
             self.errorMessage = error.localizedDescription
@@ -82,19 +91,19 @@ class EventCardViewModel: ObservableObject {
     func startListening(for creatorId: String) {
         db.collection("events").whereField("creatorId", isEqualTo: creatorId).addSnapshotListener { [weak self] querySnapshot, error in
             if let error = error {
-                print("Snapshot dinleme hatası: \(error.localizedDescription)")
+                print("Snapshot listening error: \(error.localizedDescription)")
                 return
             }
             
             guard let documents = querySnapshot?.documents else {
-                print("Snapshot'ta döküman bulunamadı")
+                print("No documents found in snapshot")
                 return
             }
             
             let updatedEvents = documents.compactMap { try? $0.data(as: Event.self) }
             DispatchQueue.main.async {
                 self?.events = updatedEvents
-                self?.cache[creatorId] = updatedEvents // Önbelleği güncelle
+                self?.cache[creatorId] = updatedEvents
             }
         }
     }
@@ -120,16 +129,51 @@ class EventCardViewModel: ObservableObject {
         }
         
         func fetchEventsForUser() async {
-            isLoading = true
+            print("fetchEventsForUser called")
+            print("Cache status: events count: \(cachedEvents.count), last fetch time: \(lastFetchTime?.description ?? "nil")")
+            
+            // Eğer zaten bir fetch işlemi devam ediyorsa, yeni fetch işlemini engelle
+            guard !isFetching else {
+                print("Fetch already in progress, skipping...")
+                return
+            }
+            
+            // Cache kontrolü
+            if !cachedEvents.isEmpty, let lastFetch = lastFetchTime {
+                let timeSinceLastFetch = Date().timeIntervalSince(lastFetch)
+                print("Time since last fetch: \(timeSinceLastFetch) seconds")
+                
+                if timeSinceLastFetch < cacheValidityDuration {
+                    print("Loading data from cache...")
+                    await MainActor.run {
+                        self.events = self.cachedEvents
+                        self.isLoading = false
+                    }
+                    return
+                } else {
+                    print("Cache expired, reloading...")
+                }
+            } else {
+                print("Cache empty, loading for the first time...")
+            }
+            
+            isFetching = true
+            defer { isFetching = false }
+            
+            await MainActor.run {
+                self.isLoading = true
+                self.errorMessage = nil
+            }
             
             await fetchUserNationality()
             
             guard !userNationality.isEmpty else {
-                isLoading = false
+                await MainActor.run {
+                    self.isLoading = false
+                    self.errorMessage = "User nationality not found"
+                }
                 return
             }
-            
-            print("Fetching events for user with nationality: \(userNationality)")
             
             do {
                 let querySnapshot = try await db.collection("events").getDocuments()
@@ -144,16 +188,67 @@ class EventCardViewModel: ObservableObject {
                     event.lookingFor.contains { $0.nationality.lowercased() == userNationality.lowercased() }
                 }
                 
-                print("Events fetched successfully. Event count: \(fetchedEvents.count)")
-                self.events = fetchedEvents
+                await MainActor.run {
+                    self.events = fetchedEvents
+                    self.cachedEvents = fetchedEvents
+                    self.lastFetchTime = Date()
+                    self.isLoading = false
+                    print("Data loaded successfully and cached")
+                }
             } catch {
-                print("Error fetching events: \(error.localizedDescription)")
-                self.errorMessage = error.localizedDescription
+                await MainActor.run {
+                    self.errorMessage = error.localizedDescription
+                    self.isLoading = false
+                }
             }
-            
-            isLoading = false
         }
+    
+    @MainActor
+    func clearCache() {
+        cachedEvents = []
+        lastFetchTime = nil
+        cache.removeAll()
+        events = []
     }
+    
+    // Cache'i manuel olarak yenilemek için
+    func forceRefresh() async {
+        clearCache()
+        await fetchEventsForUser()
+    }
+    
+    func loadImage(from urlString: String) async -> UIImage? {
+        // cache kontrol
+        if let cachedImage = imageCache.object(forKey: urlString as NSString) {
+            print("Image loaded from cache: \(urlString)")
+            return cachedImage
+        }
+        
+        guard let url = URL(string: urlString) else {
+            print("Invalid image URL: \(urlString)")
+            return nil
+        }
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            if let image = UIImage(data: data) {
+                // caching done
+                imageCache.object(forKey: urlString as NSString)
+                print("Image cached: \(urlString)")
+                return image
+            }
+        } catch {
+            print("Error loading image: \(error.localizedDescription)")
+        }
+        
+        return nil
+    }
+    
+    func clearImageCache() {
+        imageCache.removeAllObjects()
+        print("Image cache cleared")
+    }
+}
 
 
 
