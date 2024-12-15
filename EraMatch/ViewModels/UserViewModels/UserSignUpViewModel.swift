@@ -24,7 +24,7 @@ class UserSignUpViewModel: ObservableObject {
     
     @Published var isLoading = false
     
-    let nationalities = NationalityList.nationalities 
+    let countries = CountryList.countries
     
     // MARK: - Form Validation
     func isFormValid() -> Bool {
@@ -53,7 +53,7 @@ class UserSignUpViewModel: ObservableObject {
             let db = Firestore.firestore()
             db.collection("travellers").document(uid).setData([
                 "uid": uid,
-                "type": userType, // Burada userType değişkenini kullanarak type alanını ayarlıyoruz
+                "type": userType,
                 "userName": self.userName,
                 "email": self.userEmail,
                 "country": self.userCountry
