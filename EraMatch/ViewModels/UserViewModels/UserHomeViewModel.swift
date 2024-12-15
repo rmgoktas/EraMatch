@@ -12,7 +12,7 @@ import FirebaseAuth
 
 class UserHomeViewModel: ObservableObject {
     @Published var userName: String = ""
-    @Published var topics = ["Improve Yourself", "Climate Change", "Artistic Skills", "Equality Rights", "Digital Skills (STEM)", "Health Care"]
+    @Published var topics = ["Improve Yourself", "Climate Change", "Artistic Skills", "Equality Rights", "Digital Skills", "Health Care"]
     
     @Published var username = ""
     @Published var bio = ""
