@@ -38,6 +38,11 @@
 		996950852CEFC19A00800A17 /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 996950842CEFC19A00800A17 /* EventModel.swift */; };
 		996950872CEFC1AA00800A17 /* CreateEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 996950862CEFC1AA00800A17 /* CreateEventViewModel.swift */; };
 		996950892CF2991500800A17 /* EventCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 996950882CF2991500800A17 /* EventCardViewModel.swift */; };
+		998BC40B2D112E1300140E9D /* UserEventDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998BC40A2D112E1300140E9D /* UserEventDetailsView.swift */; };
+		998BC40D2D1130C300140E9D /* UserSubmissionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998BC40C2D1130C300140E9D /* UserSubmissionViewModel.swift */; };
+		998BC40F2D11329500140E9D /* NgoEventDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998BC40E2D11329500140E9D /* NgoEventDetailsView.swift */; };
+		998BC41E2D123CCA00140E9D /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998BC41D2D123CCA00140E9D /* SplashScreenView.swift */; };
+		998BC4222D124AA300140E9D /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998BC4212D124AA300140E9D /* NotificationsView.swift */; };
 		9994D9402CF7639D003F8C6A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9994D93F2CF7639D003F8C6A /* FirebaseAnalytics */; };
 		9994D9422CF7639D003F8C6A /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 9994D9412CF7639D003F8C6A /* FirebaseAnalyticsOnDeviceConversion */; };
 		9994D9442CF7639D003F8C6A /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 9994D9432CF7639D003F8C6A /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -99,6 +104,11 @@
 		996950842CEFC19A00800A17 /* EventModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventModel.swift; sourceTree = "<group>"; };
 		996950862CEFC1AA00800A17 /* CreateEventViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventViewModel.swift; sourceTree = "<group>"; };
 		996950882CF2991500800A17 /* EventCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCardViewModel.swift; sourceTree = "<group>"; };
+		998BC40A2D112E1300140E9D /* UserEventDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEventDetailsView.swift; sourceTree = "<group>"; };
+		998BC40C2D1130C300140E9D /* UserSubmissionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSubmissionViewModel.swift; sourceTree = "<group>"; };
+		998BC40E2D11329500140E9D /* NgoEventDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NgoEventDetailsView.swift; sourceTree = "<group>"; };
+		998BC41D2D123CCA00140E9D /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
+		998BC4212D124AA300140E9D /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
 		99F0FC202C4BDB1C00D51776 /* UserHomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHomeViewModel.swift; sourceTree = "<group>"; };
 		99F0FC242C4C156900D51776 /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		99F0FC2A2C4D0E1A00D51776 /* UserGuideScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGuideScreenView.swift; sourceTree = "<group>"; };
@@ -209,6 +219,7 @@
 		9928ACDD2C36DBAF008F545A /* UserStateViews */ = {
 			isa = PBXGroup;
 			children = (
+				998BC40A2D112E1300140E9D /* UserEventDetailsView.swift */,
 				9951E8D22CB190BF001F7B6E /* UserNavBarView.swift */,
 				9928ACD32C35A4A0008F545A /* UserHomeView.swift */,
 				9928ACF82C370CC0008F545A /* UserSignUpView.swift */,
@@ -223,6 +234,7 @@
 		9928ACDE2C36DBC1008F545A /* NgoStateViews */ = {
 			isa = PBXGroup;
 			children = (
+				998BC40E2D11329500140E9D /* NgoEventDetailsView.swift */,
 				9928ACDF2C36DCAC008F545A /* NgoHomeView.swift */,
 				9928ACF62C370CAE008F545A /* NgoSignUpView.swift */,
 				991F3A702C52A6C900E1CC1C /* NgoProfileView.swift */,
@@ -237,6 +249,8 @@
 		9928ACE12C36DCC5008F545A /* PublicStateViews */ = {
 			isa = PBXGroup;
 			children = (
+				998BC4212D124AA300140E9D /* NotificationsView.swift */,
+				998BC41D2D123CCA00140E9D /* SplashScreenView.swift */,
 				9928ACD52C35ACC8008F545A /* BackgroundView.swift */,
 				9928ACD12C359D27008F545A /* OnboardingView.swift */,
 				9928ACE42C36F71F008F545A /* LoginView.swift */,
@@ -262,6 +276,7 @@
 		99F0FC222C4BDCDF00D51776 /* UserViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				998BC40C2D1130C300140E9D /* UserSubmissionViewModel.swift */,
 				99F0FC202C4BDB1C00D51776 /* UserHomeViewModel.swift */,
 				9928AD7D2C448760008F545A /* UserSignUpViewModel.swift */,
 			);
@@ -393,14 +408,19 @@
 				9928ACF72C370CAE008F545A /* NgoSignUpView.swift in Sources */,
 				9928ACD22C359D27008F545A /* OnboardingView.swift in Sources */,
 				99F0FC2F2C4EC81000D51776 /* UserProfileView.swift in Sources */,
+				998BC41E2D123CCA00140E9D /* SplashScreenView.swift in Sources */,
 				996950872CEFC1AA00800A17 /* CreateEventViewModel.swift in Sources */,
 				9928ACD42C35A4A0008F545A /* UserHomeView.swift in Sources */,
+				998BC40B2D112E1300140E9D /* UserEventDetailsView.swift in Sources */,
 				9928AD7C2C448750008F545A /* NgoSignUpViewModel.swift in Sources */,
+				998BC40F2D11329500140E9D /* NgoEventDetailsView.swift in Sources */,
+				998BC40D2D1130C300140E9D /* UserSubmissionViewModel.swift in Sources */,
 				9951E8DB2CB89B32001F7B6E /* NgoMyEventsView.swift in Sources */,
 				9951E8D92CB87256001F7B6E /* NgoSubmissionsView.swift in Sources */,
 				99F0FC212C4BDB1C00D51776 /* UserHomeViewModel.swift in Sources */,
 				9928ACE02C36DCAC008F545A /* NgoHomeView.swift in Sources */,
 				9928ACBD2C358F30008F545A /* ContentView.swift in Sources */,
+				998BC4222D124AA300140E9D /* NotificationsView.swift in Sources */,
 				9928AD792C448725008F545A /* LoginViewModel.swift in Sources */,
 				9951E8D32CB190BF001F7B6E /* UserNavBarView.swift in Sources */,
 				9951E8D12CB1906D001F7B6E /* NgoNavBarView.swift in Sources */,
