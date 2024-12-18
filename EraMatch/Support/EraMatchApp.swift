@@ -28,7 +28,7 @@ struct EraMatchApp: App {
                 if isFirstLaunch {
                     OnboardingView(isFirstLaunch: $isFirstLaunch)
                 } else {
-                    ContentView()
+                    SplashScreenView()
                         .environmentObject(loginViewModel)
                 }
             }
