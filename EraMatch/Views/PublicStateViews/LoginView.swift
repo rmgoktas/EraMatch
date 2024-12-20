@@ -12,46 +12,43 @@ struct LoginView: View {
                 BackgroundView()
 
                 VStack(alignment: .leading) {
-                    Text("EraMatch")
-                        .font(.custom("", size: 50))
-                        .foregroundColor(.white)
-                        .padding(.top, 60)
+                    HStack {
+                        Image("logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
+                            .padding(.top, 70)
+                            .padding(.bottom, 20)
+
+                        Text("EraMatch")
+                            .font(.custom("Futura", size: 50))
+                            .foregroundColor(.white)
+                            .padding(.top, 30)
+                    }
+                    .frame(maxWidth: .infinity)
 
                     Text("Welcome!")
                         .font(.title)
                         .bold()
                         .foregroundColor(.white)
-                        .padding(.top, 75)
+                        .padding(.top, 45)
 
-                    // E-mail TextField
                     TextField("E-mail", text: $viewModel.email)
                         .padding()
                         .background(Color.white.opacity(0.2))
-                        .cornerRadius(10)
+                        .cornerRadius(30)
                         .autocapitalization(.none)
                         .keyboardType(.emailAddress)
                         .foregroundColor(.white)
-                        .padding(.top, 20)
+                        .padding(.top, 10)
 
-                    // Password SecureField
                     SecureField("Password", text: $viewModel.password)
                         .padding()
                         .background(Color.white.opacity(0.2))
-                        .cornerRadius(10)
+                        .cornerRadius(30)
                         .foregroundColor(.white)
                         .padding(.top, 10)
 
-                    // Forgot Password
-                    HStack {
-                        Spacer()
-                        Button("I forgot my password") {
-                            // Şifre unutma işlemi
-                        }
-                        .foregroundColor(.white)
-                    }
-                    .padding(.top, 10)
-
-                    // Sign In Button
                     HStack {
                         Spacer()
                         Button(action: {
@@ -63,14 +60,13 @@ struct LoginView: View {
                                 .padding()
                                 .frame(maxWidth: .infinity)
                                 .background(Color.white)
-                                .cornerRadius(10)
+                                .cornerRadius(30)
                         }
                     }
-                    .padding(.top, 10)
+                    .padding(.top, 50)
 
                     Spacer()
 
-                    // Sign Up Section
                     HStack {
                         Text("Are you new here?")
                             .foregroundColor(.white)
@@ -85,8 +81,7 @@ struct LoginView: View {
                     Spacer()
                 }
                 .padding()
-
-                // Loading Indicator
+                
                 if viewModel.isLoading {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
@@ -100,6 +95,7 @@ struct LoginView: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
+            
             // Kullanıcı türüne göre yönlendirme
             .background(
                 NavigationLink(
