@@ -13,6 +13,7 @@ struct NgoHomeView: View {
     @ObservedObject var homeViewModel: NgoHomeViewModel
     @EnvironmentObject var loginViewModel: LoginViewModel
     @State private var isCreateEventViewPresented = false
+    @State private var isNotificationPresented = false
 
     var body: some View {
         ZStack {
@@ -39,10 +40,14 @@ struct NgoHomeView: View {
 
                     Spacer()
 
-                    Image(systemName: "magnifyingglass")
-                        .font(.title)
-                        .foregroundColor(.white)
-                        .accessibilityLabel("Search")
+                    Button(action: {
+                        isNotificationPresented.toggle()
+                    }) {
+                        Image(systemName: "bell")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .accessibilityLabel("Notifications")
+                    }
                 }
                 .padding(.top, 30)
                 .padding(.horizontal)
@@ -72,7 +77,10 @@ struct NgoHomeView: View {
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
         .fullScreenCover(isPresented: $isCreateEventViewPresented) {
-            CreateEventView(shouldDismiss: $isCreateEventViewPresented)
+            CreateEventView(shouldDismiss: $isCreateEventViewPresented, creatorId: loginViewModel.userId ?? "")
+        }
+        .sheet(isPresented: $isNotificationPresented) {
+            NotificationView(shouldDismiss: $isNotificationPresented)
         }
     }
 }

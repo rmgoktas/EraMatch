@@ -12,8 +12,7 @@ struct UserHomeView: View {
     @State private var isMenuOpen = false
     @EnvironmentObject var loginViewModel: LoginViewModel
     @State private var selectedTab: String = "Home"
-    @State private var isSearching = false
-    @State private var searchText = ""
+    @State private var isNotificationsSheetPresented = false
 
     var body: some View {
         ZStack {
@@ -51,6 +50,9 @@ struct UserHomeView: View {
             homeViewModel.fetchUsername()
         }
         .navigationBarBackButtonHidden(true)
+        .sheet(isPresented: $isNotificationsSheetPresented) {
+            NotificationView(shouldDismiss: $isNotificationsSheetPresented)
+        }
     }
     
     private var headerView: some View {
@@ -67,47 +69,25 @@ struct UserHomeView: View {
             
             Spacer()
             
-            if isSearching {
-                HStack {
-                    TextField("Search...", text: $searchText)
-                        .padding(.leading, 10)
-                    Button(action: {
-                        withAnimation {
-                            isSearching = false
-                            searchText = ""
-                        }
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
-                    }
-                }
-                .padding(10)
-                .background(Color.white)
-                .cornerRadius(10)
-                .transition(.move(edge: .trailing))
-            } else {
-                Text(selectedTab)
-                    .font(.title3)
-                    .bold()
-                    .foregroundColor(.white)
-            }
+            Text(selectedTab)
+                .font(.title3)
+                .bold()
+                .foregroundColor(.white)
             
             Spacer()
             
             Button(action: {
-                withAnimation {
-                    isSearching.toggle()
-                }
+                isNotificationsSheetPresented.toggle()
             }) {
-                Image(systemName: isSearching ? "xmark" : "magnifyingglass")
-                    .font(.title)
+                Image(systemName: "bell")
+                    .font(.title3)
                     .foregroundColor(.white)
             }
         }
         .padding(.top, 30)
         .padding(.horizontal)
     }
-    
+
     private var homeTabView: some View {
         VStack {
             Text("Hi, \(homeViewModel.userName)!")
@@ -126,65 +106,67 @@ struct UserHomeView: View {
                         Spacer()
                     }
 
-                    HStack {
-                        Image(systemName: "airplane")
-                            .font(.title2)
-                        VStack(alignment: .leading) {
-                            Text("Search Free Travels")
-                                .font(.headline)
-                                .foregroundColor(.black)
-                            Text("Find and filter travel events")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                    Button(action: {
+                        selectedTab = "Events"
+                    }) {
+                        HStack {
+                            Image(systemName: "airplane")
+                                .font(.title2)
+                            VStack(alignment: .leading) {
+                                Text("Search Free Travels")
+                                    .font(.headline)
+                                    .foregroundColor(.black)
+                                Text("Find and filter travel events")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
                         }
-                        Spacer()
-                        Image(systemName: "chevron.right")
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
                     }
                     .padding()
                     .background(Color.white)
-                    .cornerRadius(15)
-                    .shadow(radius: 5)
+                    .cornerRadius(25)
+
+                    VStack(alignment: .leading) {
+                        Text("   Search by Topics")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(.top, 20)
+
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
+                            ForEach(homeViewModel.topics, id: \.self) { topic in
+                                Button(action: {
+                                    print("Selected topic: \(topic)")
+                                }) {
+                                    HStack {
+                                        Text(topic)
+                                            .padding(10)
+                                            .frame(maxWidth: .infinity)
+                                            .foregroundColor(.black)
+                                            .background(Color.white)
+                                            .cornerRadius(12)
+                                            .shadow(radius: 2)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.bottom, 30)
                 }
                 .padding()
                 .background(Color.white)
                 .cornerRadius(25)
-
-                // New Section for Topics
-                VStack(alignment: .leading) {
-                    Text("   Search by Topics")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .padding(.top, 20)
-
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
-                        ForEach(homeViewModel.topics, id: \.self) { topic in
-                            Button(action: {
-                                print("Selected topic: \(topic)")
-                            }) {
-                                HStack {
-                                    Text(topic)
-                                        .padding(10)
-                                        .frame(maxWidth: .infinity)
-                                        .foregroundColor(.black)
-                                        .background(Color.white)
-                                        .cornerRadius(12)
-                                        .shadow(radius: 2)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.horizontal)
-                }
-                .padding(.bottom, 30)
+                .shadow(radius: 10)
+                .padding(.top, 60)
             }
-            .padding()
-            .background(Color.white)
-            .cornerRadius(25)
-            .shadow(radius: 10)
-            .padding(.top, 60)
         }
     }
-
     
     private var overlayMenu: some View {
         ZStack(alignment: .leading) {
@@ -197,8 +179,9 @@ struct UserHomeView: View {
                 }
 
             sliderMenu
-                .transition(.move(edge: .leading))
-                .animation(.easeInOut(duration: 0.3))
+                .frame(width: 300)
+                .offset(x: isMenuOpen ? 0 : -300)
+                .animation(.easeInOut, value: isMenuOpen)
         }
     }
 
