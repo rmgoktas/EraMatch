@@ -4,6 +4,7 @@ import FirebaseStorage
 import FirebaseAuth
 
 class CreateEventViewModel: ObservableObject {
+    @Published var events: [Event] = []
     @Published var event = Event(
         id: nil,
         title: "",
@@ -22,6 +23,7 @@ class CreateEventViewModel: ObservableObject {
         creatorId: "",
         otherTopic: ""
     )
+    
     @Published var selectedInfoPack: URL?
     @Published var selectedPhoto: URL?
     @Published var isLoading = false
@@ -196,5 +198,30 @@ class CreateEventViewModel: ObservableObject {
     func isValidOIDFormat(_ oid: String) -> Bool {
         let pattern = "^E[0-9]{8}$"
         return oid.range(of: pattern, options: .regularExpression) != nil
+    }
+    
+    func refreshEvents(for creatorId: String) async {
+        print("Refreshing data...")
+        isLoading = true
+        
+        do {
+            let querySnapshot = try await db.collection("events").whereField("creatorId", isEqualTo: creatorId).getDocuments()
+            
+            let fetchedEvents = querySnapshot.documents.compactMap { queryDocumentSnapshot -> Event? in
+                var event = try? queryDocumentSnapshot.data(as: Event.self)
+                if event?.id == nil {
+                    event?.id = queryDocumentSnapshot.documentID
+                }
+                return event
+            }
+            
+            print("Data refreshed successfully. Event count: \(fetchedEvents.count)")
+            self.events = fetchedEvents
+        } catch {
+            print("Error refreshing events: \(error.localizedDescription)")
+            self.errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
     }
 }
