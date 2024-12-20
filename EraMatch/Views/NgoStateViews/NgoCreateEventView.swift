@@ -15,6 +15,8 @@ struct CreateEventView: View {
     @Binding var shouldDismiss: Bool
     @State private var navigateToMyEvents = false
     @Environment(\.dismiss) var dismiss
+    @State private var isEventCreated = false
+    var creatorId: String
 
     var body: some View {
         NavigationView {
@@ -260,11 +262,7 @@ struct CreateEventView: View {
     private var publishButton: some View {
         Button("Publish") {
             if isFormValid() {
-                viewModel.createEvent { success in
-                    if success {
-                        dismiss()
-                    }
-                }
+                createEvent()
             }
         }
         .disabled(!isFormValid())
@@ -279,7 +277,7 @@ struct CreateEventView: View {
                         ProgressView()
                             .scaleEffect(1.5)
                         Text("Creating event...")
-                            .foregroundColor(.white)
+                            .foregroundColor(.black)
                     }
                     .padding(24)
                     .background(Color(UIColor.systemBackground))
@@ -310,6 +308,18 @@ struct CreateEventView: View {
         isFormLinkValid = !viewModel.event.formLink.isEmpty &&
             viewModel.event.formLink.starts(with: "https://") &&
             viewModel.event.formLink.contains("docs.google.com/forms")
+    }
+    
+    private func createEvent() {
+        viewModel.createEvent { success in
+            if success {
+                isEventCreated = true
+                dismiss()
+                Task {
+                    await viewModel.refreshEvents(for: creatorId)
+                }
+            }
+        }
     }
 }
 
