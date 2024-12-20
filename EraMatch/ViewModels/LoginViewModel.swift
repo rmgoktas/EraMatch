@@ -14,6 +14,7 @@ class LoginViewModel: ObservableObject {
     @Published var navigateToTravellerHome = false
     @Published var navigateToNGOHome = false
     @Published var isLoggedIn: Bool = false
+    @Published var userId: String?
     
     init() {
         if let savedEmail = UserDefaults.standard.string(forKey: "userEmail") {
@@ -25,6 +26,7 @@ class LoginViewModel: ObservableObject {
         Auth.auth().addStateDidChangeListener { [weak self] _, user in
             self?.currentUser = user
             self?.isLoggedIn = user != nil
+            self?.userId = user?.uid
         }
     }
     
@@ -102,14 +104,19 @@ class LoginViewModel: ObservableObject {
                 navigateToTravellerHome = false
                 navigateToNGOHome = false
                 
-                // oturum temizle
                 UserDefaults.standard.removeObject(forKey: "userEmail")
                 UserDefaults.standard.set(false, forKey: "isLoggedIn")
                 self.isLoggedIn = false
                 
+                // hasApplied değerini sıfırla
+                if let userId = Auth.auth().currentUser?.uid {
+                    UserDefaults.standard.removeObject(forKey: "applied_\(userId)")
+                }
+                
+                resetApplicationStatus()
+                
                 EventCardViewModel.shared.clearCache()
                 EventCardViewModel.shared.clearImageCache()
-                
                 
             } catch let signOutError as NSError {
                 alertMessage = "Error signing out: \(signOutError.localizedDescription)"
@@ -117,5 +124,10 @@ class LoginViewModel: ObservableObject {
                 print("Sign out error: \(signOutError.localizedDescription)")
             }
         }
+    }
+    
+    private func resetApplicationStatus() {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        UserDefaults.standard.removeObject(forKey: "applied_\(userId)")
     }
 }
