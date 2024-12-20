@@ -10,8 +10,11 @@ import FirebaseStorage
 
 struct NGOEventCardView: View {
     let event: Event
-    var onDetailTap: () -> Void
+    let onTap: () -> Void
     @StateObject private var imageLoader = ImageLoader()
+    @State private var showEventDetails = false
+    @State private var showDeleteAlert = false
+    @StateObject private var eventViewModel = EventCardViewModel.shared
     
     var body: some View {
         VStack(spacing: 0) {
@@ -31,7 +34,6 @@ struct NGOEventCardView: View {
                     )
             }
             
-            // icons
             HStack(spacing: 12) {
                 if event.includedItems.accommodation {
                     IconView(systemName: "bed.double.fill")
@@ -43,16 +45,10 @@ struct NGOEventCardView: View {
                     IconView(systemName: "fork.knife")
                 }
                 Spacer()
-                // Country flag
-                if let countryCode = getCountryCode(from: event.country) {
-                    Text(countryFlag(from: countryCode))
-                        .font(.system(size: 30))
-                }
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)
             
-            //details
             VStack(alignment: .leading, spacing: 8) {
                 Text(event.title)
                     .font(.title2)
@@ -72,12 +68,15 @@ struct NGOEventCardView: View {
                         .font(.subheadline)
                 }
                 
-                // Detail button
                 HStack {
                     Spacer()
-                    Button(action: onDetailTap) {
+                    Button(action: {
+                        print("Button tapped: \(event.title)") // Debugging için
+                        showEventDetails = true
+                        onTap()
+                    }) {
                         Image(systemName: "arrow.right")
-                            .foregroundColor(.yellow)
+                            .foregroundColor(.white)
                             .padding(12)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
@@ -94,6 +93,22 @@ struct NGOEventCardView: View {
         .shadow(radius: 5)
         .padding(.horizontal)
         .onAppear(perform: loadEventImage)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            print("Event tapped: \(event.title)")
+            onTap()
+        }
+        .sheet(isPresented: $showEventDetails) {
+            NgoEventDetailsView(event: event)
+        }
+        .alert("Delete Event", isPresented: $showDeleteAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                deleteEvent()
+            }
+        } message: {
+            Text("Are you sure you want to delete this event? This action cannot be undone.")
+        }
     }
     
     private var dateRangeString: String {
@@ -104,32 +119,40 @@ struct NGOEventCardView: View {
         return "\(startString) - \(endString)"
     }
     
-    private func getCountryCode(from country: String) -> String? {
-        // Extract country code
-        let components = country.components(separatedBy: ", ")
-        guard let countryName = components.last else { return nil }
-        
-        //demo
-        let countryCodes = ["SPAIN": "ES"]
-        return countryCodes[countryName]
-    }
-    
-    private func countryFlag(from countryCode: String) -> String {
-        // Convert country code to flag emoji
-        let base: UInt32 = 127397
-        var flag = ""
-        for scalar in countryCode.unicodeScalars {
-            flag.append(String(UnicodeScalar(base + scalar.value)!))
-        }
-        return flag
-    }
-    
     private func loadEventImage() {
         if let imageUrl = event.eventPhotoURL {
             imageLoader.loadImage(from: imageUrl)
         }
     }
+    
+    private func deleteEvent() {
+        guard let eventId = event.id else { return }
+        
+        Task {
+            do {
+                try await eventViewModel.deleteEvent(eventId: eventId)
+                print("Event successfully deleted")
+            } catch {
+                print("Error deleting event: \(error.localizedDescription)")
+            }
+        }
+    }
 }
+
+struct IconView: View {
+    let systemName: String
+    
+    var body: some View {
+        Image(systemName: systemName)
+            .foregroundColor(.white)
+            .padding(8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.black)
+            )
+    }
+}
+
 
 struct UserEventCardView: View {
     let event: Event
@@ -138,7 +161,6 @@ struct UserEventCardView: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            // Image background
             if let imageUrl = event.eventPhotoURL {
                 Group {
                     if let loadedImage = imageLoader.image {
@@ -157,12 +179,10 @@ struct UserEventCardView: View {
                 }
             }
             
-            // Content and Icons
             VStack(spacing: 16) {
                 Spacer()
                 
                 HStack(alignment: .top, spacing: 16) {
-                    // Left side texts
                     VStack(alignment: .leading, spacing: 8) {
                         Text(event.title)
                             .font(.title3)
@@ -188,7 +208,6 @@ struct UserEventCardView: View {
                     
                     Spacer()
                     
-                    // Right side icons
                     VStack(alignment: .center, spacing: 12) {
                         if event.includedItems.transportation {
                             Image(systemName: "airplane")
@@ -210,7 +229,6 @@ struct UserEventCardView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)
                 
-                // Centered View Details button
                 Button(action: onDetailTap) {
                     Text("View Details")
                         .font(.headline)
@@ -260,16 +278,3 @@ struct UserEventCardView: View {
     }
 }
 
-struct IconView: View {
-    let systemName: String
-    
-    var body: some View {
-        Image(systemName: systemName)
-            .foregroundColor(.yellow)
-            .padding(8)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.black)
-            )
-    }
-}
