@@ -3,12 +3,15 @@ import SwiftUI
 struct UserEventsView: View {
     @StateObject private var viewModel = EventCardViewModel.shared
     @State private var currentIndex = 0
+    @State private var selectedEvent: Event?
+    @State private var showEventDetails = false
     @GestureState private var dragOffset: CGFloat = 0
     
     var body: some View {
         VStack {
             if viewModel.isLoading {
                 ProgressView("Loading events...")
+                    .foregroundColor(.white)
                     .progressViewStyle(CircularProgressViewStyle(tint: .purple))
                     .scaleEffect(1.5)
             } else if let errorMessage = viewModel.errorMessage {
@@ -17,14 +20,15 @@ struct UserEventsView: View {
                     .padding()
             } else if viewModel.events.isEmpty {
                 Text("No events found for your country.")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white)
                     .padding()
             } else {
                 GeometryReader { geometry in
                     ZStack {
                         ForEach(Array(viewModel.events.enumerated().reversed()), id: \.element.id) { index, event in
                             UserEventCardView(event: event) {
-                                // TODO: Navigate to details
+                                selectedEvent = event
+                                showEventDetails = true
                             }
                             .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.65)
                             .offset(x: calculateXOffset(for: index, geometry: geometry),
@@ -66,6 +70,11 @@ struct UserEventsView: View {
         }
         .refreshable {
             await viewModel.forceRefresh()
+        }
+        .sheet(isPresented: $showEventDetails) {
+            if let event = selectedEvent {
+                UserEventDetailsView(event: event)
+            }
         }
     }
     
