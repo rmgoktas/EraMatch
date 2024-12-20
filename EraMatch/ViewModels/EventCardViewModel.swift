@@ -248,6 +248,21 @@ class EventCardViewModel: ObservableObject {
         imageCache.removeAllObjects()
         print("Image cache cleared")
     }
+    
+    func deleteEvent(eventId: String) async throws {
+        let db = Firestore.firestore()
+        try await db.collection("events").document(eventId).delete()
+        
+        if let index = events.firstIndex(where: { $0.id == eventId }) {
+            events.remove(at: index)
+        }
+        
+        if let index = cachedEvents.firstIndex(where: { $0.id == eventId }) {
+            cachedEvents.remove(at: index)
+        }
+        
+        cache.removeValue(forKey: eventId)
+    }
 }
 
 
