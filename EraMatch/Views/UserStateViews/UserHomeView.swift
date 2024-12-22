@@ -107,13 +107,16 @@ struct UserHomeView: View {
                     }
 
                     Button(action: {
+                        Task {
+                            await EventCardViewModel.shared.fetchEventsForUser()
+                        }
                         selectedTab = "Events"
                     }) {
                         HStack {
                             Image(systemName: "airplane")
                                 .font(.title2)
                             VStack(alignment: .leading) {
-                                Text("Search Free Travels")
+                                Text("Search All Free Travels")
                                     .font(.headline)
                                     .foregroundColor(.black)
                                 Text("Find and filter travel events")
@@ -142,6 +145,11 @@ struct UserHomeView: View {
                             ForEach(homeViewModel.topics, id: \.self) { topic in
                                 Button(action: {
                                     print("Selected topic: \(topic)")
+                                    Task {
+                                        let userCountry = homeViewModel.country 
+                                        await EventCardViewModel.shared.fetchEventsByTopic(for: userCountry, topic: topic) // load for topics and country
+                                        selectedTab = "Events"
+                                    }
                                 }) {
                                     HStack {
                                         Text(topic)
