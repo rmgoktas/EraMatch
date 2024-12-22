@@ -12,6 +12,8 @@ class EventCardViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var userNationality: String = ""
+    @Published var showAlert = false
+    @Published var alertMessage = ""
     
     private var db = Firestore.firestore()
     private var cache: [String: [Event]] = [:]
@@ -262,6 +264,44 @@ class EventCardViewModel: ObservableObject {
         }
         
         cache.removeValue(forKey: eventId)
+    }
+    
+    func fetchEventsByTopic(for userCountry: String, topic: String) async {
+        print("Fetching events for country: \(userCountry) and topic: \(topic)...")
+        isLoading = true
+        
+        do {
+            let querySnapshot = try await db.collection("events")
+                .whereField("topic", isEqualTo: topic)
+                .getDocuments()
+            
+            let fetchedEvents = querySnapshot.documents.compactMap { queryDocumentSnapshot -> Event? in
+                var event = try? queryDocumentSnapshot.data(as: Event.self)
+                if event?.id == nil {
+                    event?.id = queryDocumentSnapshot.documentID
+                }
+                return event
+            }.filter { event in
+                event.lookingFor.contains { $0.nationality.lowercased() == userCountry.lowercased() }
+            }
+            
+            print("Fetched events: \(fetchedEvents)")
+            
+            if fetchedEvents.isEmpty {
+                print("No events found for the specified criteria.")
+                self.alertMessage = "No events found for the specified criteria."
+                self.showAlert = true
+            } else {
+                print("Data fetched successfully. Event count: \(fetchedEvents.count)")
+            }
+            
+            self.events = fetchedEvents
+        } catch {
+            print("Error fetching events: \(error.localizedDescription)")
+            self.errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
     }
 }
 
