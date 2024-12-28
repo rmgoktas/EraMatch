@@ -278,7 +278,11 @@ struct NgoSignUpView: View {
                         Spacer()
 
                         NavigationLink(
-                            destination: NgoHomeView(homeViewModel: homeViewModel),
+                            destination: NgoHomeView(homeViewModel: homeViewModel)
+                                .environmentObject(loginViewModel)
+                                .onAppear {
+                                    homeViewModel.loadNgoData()
+                                },
                             isActive: $viewModel.navigateToHome,
                             label: {
                                 EmptyView()

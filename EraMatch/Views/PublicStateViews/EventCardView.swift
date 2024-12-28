@@ -158,6 +158,7 @@ struct UserEventCardView: View {
     let event: Event
     var onDetailTap: () -> Void
     @StateObject private var imageLoader = ImageLoader()
+    @State private var isDetailReady = false
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -229,7 +230,10 @@ struct UserEventCardView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 20)
                 
-                Button(action: onDetailTap) {
+                Button(action: {
+                    isDetailReady = true
+                    onDetailTap()
+                }) {
                     Text("View Details")
                         .font(.headline)
                         .padding(.vertical, 6)

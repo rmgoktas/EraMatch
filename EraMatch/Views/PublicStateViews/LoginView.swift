@@ -5,6 +5,7 @@ struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
     @StateObject private var ngoHomeViewModel = NgoHomeViewModel()
     @StateObject private var userHomeViewModel = UserHomeViewModel()
+    @State private var showSignUpOptions = false
 
     var body: some View {
         NavigationStack {
@@ -70,9 +71,10 @@ struct LoginView: View {
                     HStack {
                         Text("Are you new here?")
                             .foregroundColor(.white)
-                        NavigationLink(destination: SelectStateView()) {
+                        NavigationLink(destination: SelectStateView()
+                            .environmentObject(viewModel)) {
                             Text("Sign Up")
-                                .bold()
+                                .fontWeight(.bold)
                                 .foregroundColor(.white)
                         }
                     }

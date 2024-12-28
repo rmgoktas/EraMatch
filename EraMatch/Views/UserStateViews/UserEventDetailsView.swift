@@ -7,8 +7,10 @@
 
 import SwiftUI
 import WebKit
+import PDFKit
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 
 struct UserEventDetailsView: View {
     let event: Event
@@ -19,10 +21,8 @@ struct UserEventDetailsView: View {
     @StateObject private var imageLoader = ImageLoader()
     @State private var showConfirmationDialog = false
     @StateObject private var submissionViewModel = UserSubmissionViewModel()
-    
-    // NGO detayları için state değişkenleri
     @State private var showNGOSheet = false
-    @State private var selectedNGO: String? // Seçilen NGO'nun adı
+    @State private var selectedNGO: CountryNGO?
     
     init(event: Event) {
         self.event = event
@@ -67,6 +67,14 @@ struct UserEventDetailsView: View {
             }
             .padding()
         }
+        .onAppear {
+            if event.id != nil {
+                Task {
+                    await submissionViewModel.fetchUserSubmissions()
+                    checkIfUserApplied()
+                }
+            }
+        }
         .sheet(isPresented: $showWebView) {
             SafariWebView(url: URL(string: event.formLink)!)
         }
@@ -76,16 +84,8 @@ struct UserEventDetailsView: View {
             }
         }
         .sheet(isPresented: $showNGOSheet) {
-            // NGO bilgilerini gösteren view
-        }
-        .onAppear {
-            if event.id != nil {
-                Task {
-                    await submissionViewModel.fetchUserSubmissions()
-                    checkIfUserApplied()
-                }
-            } else {
-                print("Event ID is nil, cannot load event details.")
+            if let ngo = selectedNGO {
+                NGODetailsView(countryNGO: ngo)
             }
         }
         .onChange(of: showWebView) { isPresented in
@@ -179,32 +179,29 @@ struct UserEventDetailsView: View {
     }
     
     private var countriesSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            sectionTitle("Participating Organizations")
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Participating NGOs")
+                .font(.headline)
             
-            ForEach(event.countries, id: \.country) { country in
-                HStack {
-                    Text(CountryList.flag(for: country.country))
-                    Text(country.country)
-                    Spacer()
-                    Button(action: {
-                        selectedNGO = country.ngoName
-                        showNGOSheet = false
-                    }) {
-                        Text(country.ngoName)
-                            .foregroundColor(.black)
+            ForEach(event.countries, id: \.country) { countryNGO in
+                Button(action: {
+                    showNGODetails(countryNGO)
+                }) {
+                    HStack {
+                        Text("\(CountryList.flag(for: countryNGO.country)) \(countryNGO.country)")
+                        Spacer()
+                        Text(countryNGO.ngoName)
+                            .foregroundColor(.gray)
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.gray)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .padding(.vertical, 8)
                 }
-                .padding(.vertical, 4)
             }
         }
         .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .fill(Color(.systemBackground))
-                .shadow(radius: 5)
-        )
+        .background(Color.white.opacity(0.1))
+        .cornerRadius(10)
     }
     
     private var includedItemsSection: some View {
@@ -290,6 +287,11 @@ struct UserEventDetailsView: View {
         // Kullanıcının başvuru yapıp yapmadığının kontrolü
         hasApplied = submissions.contains { $0.userId == userId && $0.eventId == event.id }
     }
+    
+    private func showNGODetails(_ ngo: CountryNGO) {
+        selectedNGO = ngo
+        showNGOSheet = true
+    }
 }
 
 // WebView için UIViewRepresentable yapısı
@@ -340,5 +342,274 @@ struct IncludedItemBadge: View {
                 .fill(Color.blue.opacity(0.1))
         )
         .foregroundColor(.blue)
+    }
+}
+
+struct NGODetailsView: View {
+    let countryNGO: CountryNGO
+    @Environment(\.dismiss) var dismiss
+    @State private var ngoData: NGO?
+    @State private var isLoading = true
+    @State private var showPDFViewer = false
+    @State private var pdfFileData: Data?
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 20) {
+                    if isLoading {
+                        ProgressView()
+                            .padding()
+                    } else if let ngo = ngoData {
+                        // Logo
+                        if let logoUrl = ngo.logoUrl, !logoUrl.isEmpty {
+                            AsyncImage(url: URL(string: logoUrl)) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 120, height: 120)
+                                    .clipShape(Circle())
+                            } placeholder: {
+                                Image(systemName: "building.2")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        
+                        // NGO Info
+                        Group {
+                            Text(ngo.ngoName)
+                                .font(.title)
+                                .bold()
+                            
+                            Text("\(CountryList.flag(for: ngo.country)) \(ngo.country)")
+                                .font(.headline)
+                                .foregroundColor(.gray)
+                            
+                            DetailRow(icon: "number", 
+                                    title: "OID Number", 
+                                    value: ngo.oidNumber)
+                            
+                            DetailRow(icon: "envelope", 
+                                    title: "Email", 
+                                    value: ngo.email)
+                        }
+                        .padding(.horizontal)
+                        
+                        // Social Media Links
+                        VStack(spacing: 15) {
+                            if let instagram = ngo.instagram, !instagram.isEmpty {
+                                LinkButton(title: "Instagram", icon: "camera", url: "https://instagram.com/\(instagram)")
+                            }
+                            if let facebook = ngo.facebook, !facebook.isEmpty {
+                                LinkButton(title: "Facebook", icon: "f.square", url: "https://facebook.com/\(facebook)")
+                            }
+                        }
+                        .padding()
+                        
+                        // PIF Document
+                        Group {
+                            if let pifUrl = ngo.pifUrl, !pifUrl.isEmpty {
+                                Button(action: {
+                                    downloadAndShowPDF(from: pifUrl)
+                                }) {
+                                    HStack {
+                                        if isLoading {
+                                            ProgressView()
+                                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                        } else {
+                                            Image(systemName: "doc.fill")
+                                            Text("View PIF Document")
+                                        }
+                                    }
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.blue)
+                                    .cornerRadius(10)
+                                }
+                                .disabled(isLoading)
+                                .padding(.horizontal)
+                                .sheet(isPresented: $showPDFViewer) {
+                                    if let pdfData = pdfFileData {
+                                        PDFViewer(pdfData: pdfData)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(trailing: Button(action: { dismiss() }) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(.gray)
+            })
+            .background(Color(.systemBackground))
+        }
+        .onAppear {
+            loadNGOData()
+        }
+    }
+    
+    private func loadNGOData() {
+        isLoading = true
+        
+        let db = Firestore.firestore()
+        db.collection("ngos")
+            .whereField("ngoName", isEqualTo: countryNGO.ngoName)
+            .whereField("country", isEqualTo: countryNGO.country)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching NGO data: \(error.localizedDescription)")
+                    isLoading = false
+                    return
+                }
+                
+                if let document = snapshot?.documents.first {
+                    let data = document.data()
+                    // PIF URL'yi direkt olarak kontrol edelim
+                    if let pifUrl = data["pifUrl"] as? String, !pifUrl.isEmpty {
+                        print("Found PIF URL in raw data: \(pifUrl)")
+                    }
+                    
+                    do {
+                        var ngo = try document.data(as: NGO.self)
+                        ngo.id = document.documentID
+                        print("Successfully decoded NGO: \(ngo.ngoName)")
+                        print("PIF URL in NGO model: \(String(describing: ngo.pifUrl))")
+                        
+                        DispatchQueue.main.async {
+                            self.ngoData = ngo
+                            self.isLoading = false
+                        }
+                    } catch {
+                        print("Error decoding NGO data: \(error.localizedDescription)")
+                        print("Raw document data: \(data)")
+                        isLoading = false
+                    }
+                } else {
+                    print("No NGO found")
+                    isLoading = false
+                }
+            }
+    }
+    
+    private func downloadAndShowPDF(from urlString: String) {
+        guard !urlString.isEmpty else {
+            print("Empty URL string")
+            return
+        }
+        
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL string: \(urlString)")
+            return
+        }
+        
+        isLoading = true
+        print("Starting PDF download from: \(urlString)")
+        
+        let storage = Storage.storage()
+        let storageRef = storage.reference(forURL: urlString)
+        
+        storageRef.getData(maxSize: 10 * 1024 * 1024) { data, error in
+            DispatchQueue.main.async {
+                self.isLoading = false
+                
+                if let error = error {
+                    print("Firebase Storage error: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let data = data else {
+                    print("No data received")
+                    return
+                }
+                
+                guard PDFDocument(data: data) != nil else {
+                    print("Invalid PDF data")
+                    return
+                }
+                
+                print("PDF downloaded successfully")
+                self.pdfFileData = data
+                self.showPDFViewer = true
+            }
+        }
+    }
+}
+
+struct LinkButton: View {
+    let title: String
+    let icon: String
+    let url: String
+    
+    var body: some View {
+        Button(action: {
+            if let url = URL(string: url) {
+                UIApplication.shared.open(url)
+            }
+        }) {
+            HStack {
+                Image(systemName: icon)
+                Text(title)
+            }
+            .foregroundColor(.white)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.blue.opacity(0.8))
+            .cornerRadius(10)
+        }
+    }
+}
+
+struct PDFViewerView: View {
+    let url: URL
+    @Environment(\.dismiss) var dismiss
+    @State private var isLoading = true
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                PDFKitView(url: url)
+                
+                if isLoading {
+                    ProgressView("Loading PDF...")
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(
+                leading: Text("PIF Document").bold(),
+                trailing: Button(action: { dismiss() }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.gray)
+                }
+            )
+        }
+        .onAppear {
+            // Give a short delay to show loading indicator
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                isLoading = false
+            }
+        }
+    }
+}
+
+struct PDFKitView: UIViewRepresentable {
+    let url: URL
+    
+    func makeUIView(context: Context) -> PDFView {
+        let pdfView = PDFView()
+        pdfView.autoScales = true
+        return pdfView
+    }
+    
+    func updateUIView(_ pdfView: PDFView, context: Context) {
+        if let document = PDFDocument(url: url) {
+            pdfView.document = document
+        }
     }
 }

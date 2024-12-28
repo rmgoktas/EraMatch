@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct SelectStateView: View {
+    @EnvironmentObject var loginViewModel: LoginViewModel
+    
     var body: some View {
         ZStack {
             BackgroundView() // Arka planı ayarlıyoruz
@@ -34,8 +36,9 @@ struct SelectStateView: View {
                     .scaledToFit()
                     .frame(width: UIScreen.main.bounds.width * 0.80)
                 
-                NavigationLink(destination: NgoSignUpView(userType: "ngo")) {
-                    Text("I’M MEMBER OF A NGO")
+                NavigationLink(destination: NgoSignUpView(userType: "ngo")
+                    .environmentObject(loginViewModel)) {
+                    Text("I'M MEMBER OF A NGO")
                         .font(.headline)
                         .foregroundColor(.black)
                         .padding()
