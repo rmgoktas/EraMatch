@@ -32,14 +32,7 @@ struct UserProfileView: View {
                             Text(homeViewModel.userName)
                                 .font(.title)
                                 .fontWeight(.bold)
-                            Button(action: {
-                                // TODO pp update
-                            }) {
-                                Text("Update profile picture")
-                                    .font(.caption)
-                                    .foregroundColor(.blue)
-                            }
-                        }
+                    }
                         .padding(.trailing)
                     }
                     .padding(.horizontal)
@@ -97,7 +90,7 @@ struct UserProfileView: View {
                     }) {
                         Text("Done")
                             .font(.caption)
-                            .foregroundColor(.blue)
+                            .foregroundColor(.black)
                     }
                 } else {
                     Button(action: {
@@ -105,7 +98,7 @@ struct UserProfileView: View {
                     }) {
                         Text("Edit")
                             .font(.caption)
-                            .foregroundColor(.blue)
+                            .foregroundColor(.black)
                     }
                 }
             }

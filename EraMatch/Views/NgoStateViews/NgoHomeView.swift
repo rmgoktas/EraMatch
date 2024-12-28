@@ -20,19 +20,6 @@ struct NgoHomeView: View {
             BackgroundView()
             VStack {
                 HStack {
-                    Button(action: {
-                        withAnimation {
-                            isMenuOpen.toggle()
-                        }
-                    }) {
-                        Image(systemName: "line.horizontal.3")
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .accessibilityLabel("Open Menu")
-                    }
-
-                    Spacer()
-
                     Text(selectedTab)
                         .font(.title3)
                         .bold()
@@ -58,8 +45,10 @@ struct NgoHomeView: View {
                         switch selectedTab {
                         case "My Events":
                             NgoMyEventsView()
+                                .environmentObject(loginViewModel)
                         case "Profile":
                             NgoProfileView(homeViewModel: homeViewModel)
+                                .environmentObject(loginViewModel)
                         default:
                             Text("Unknown Tab")
                         }
@@ -73,6 +62,9 @@ struct NgoHomeView: View {
                     .padding(.horizontal)
                     .padding(.top, 10)
             }
+        }
+        .onAppear {
+            homeViewModel.loadNgoData()
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
