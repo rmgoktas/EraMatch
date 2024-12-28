@@ -15,6 +15,8 @@ struct NGO: Codable, Identifiable {
     var country: String
     var logoUrl: String?
     var pifUrl: String?
+    var instagram: String?
+    var facebook: String?
     
     enum CodingKeys: String, CodingKey {
         case id = "uid"
@@ -25,5 +27,7 @@ struct NGO: Codable, Identifiable {
         case country
         case logoUrl
         case pifUrl
+        case instagram
+        case facebook
     }
 }
