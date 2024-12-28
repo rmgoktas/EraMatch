@@ -177,11 +177,16 @@ func profileFieldView(fieldName: String, fieldKey: String, fieldText: Binding<St
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
                 .disabled(!homeViewModel.isEditingField(fieldKey))
+                .onChange(of: homeViewModel.isEditingField(fieldKey)) { isEditing in
+                    print("\(fieldKey) editing state changed to: \(isEditing)")
+                }
         }
         .padding(.horizontal)
         
         Button(action: {
-            homeViewModel.toggleEditing(for: fieldKey, fieldText: fieldText.wrappedValue)
+            withAnimation {
+                homeViewModel.toggleEditing(for: fieldKey, fieldText: fieldText.wrappedValue)
+            }
         }) {
             Text(homeViewModel.isEditingField(fieldKey) ? "Done" : "Edit")
                 .foregroundColor(.black)
