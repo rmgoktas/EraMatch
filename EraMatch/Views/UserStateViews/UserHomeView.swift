@@ -12,7 +12,9 @@ struct UserHomeView: View {
     @State private var isMenuOpen = false
     @EnvironmentObject var loginViewModel: LoginViewModel
     @State private var selectedTab: String = "Home"
+    @State private var isGuideSheetPresented = false
     @State private var isNotificationsSheetPresented = false
+    @State private var guideContent: GuideContent = .whatIsEraMatch
 
     var body: some View {
         ZStack {
@@ -56,36 +58,68 @@ struct UserHomeView: View {
     }
     
     private var headerView: some View {
-        HStack {
-            Button(action: {
-                withAnimation {
-                    isMenuOpen.toggle()
-                }
-            }) {
-                Image(systemName: "line.horizontal.3")
-                    .font(.title)
-                    .foregroundColor(.white)
-            }
-            
-            Spacer()
-            
+        HStack(spacing: 16) {
+            // Tab Title - Left aligned
             Text(selectedTab)
-                .font(.title3)
+                .font(.title2)
                 .bold()
                 .foregroundColor(.white)
             
             Spacer()
             
-            Button(action: {
-                isNotificationsSheetPresented.toggle()
-            }) {
-                Image(systemName: "bell")
-                    .font(.title3)
-                    .foregroundColor(.white)
+            // Right side buttons
+            HStack(spacing: 20) {
+                // Help Menu
+                Menu {
+                    Button("What is EraMatch?") {
+                        isGuideSheetPresented = true
+                        guideContent = .whatIsEraMatch
+                    }
+                    Button("How Do I Participate?") {
+                        isGuideSheetPresented = true
+                        guideContent = .howDoIParticipate
+                    }
+                    Button("Do I Have to Pay?") {
+                        isGuideSheetPresented = true
+                        guideContent = .doIHaveToPay
+                    }
+                    Button("What Can I Do on EraMatch?") {
+                        isGuideSheetPresented = true
+                        guideContent = .whatCanIDo
+                    }
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                }
+                .sheet(isPresented: $isGuideSheetPresented) {
+                    GuideScreenView(content: guideContent)
+                }
+                
+                // Notifications Button
+                Button(action: {
+                    isNotificationsSheetPresented.toggle()
+                }) {
+                    Image(systemName: "bell")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                }
+                .sheet(isPresented: $isNotificationsSheetPresented) {
+                    NotificationView(shouldDismiss: $isNotificationsSheetPresented)
+                }
             }
         }
-        .padding(.top, 30)
         .padding(.horizontal)
+        .padding(.top, getSafeAreaTop())
+        .padding(.bottom, 10)
+    }
+
+    private func getSafeAreaTop() -> CGFloat {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            return window.safeAreaInsets.top
+        }
+        return 0
     }
 
     private var homeTabView: some View {
