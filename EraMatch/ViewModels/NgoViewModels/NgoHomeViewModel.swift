@@ -24,7 +24,7 @@ class NgoHomeViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     private var db = Firestore.firestore()
     private var storage = Storage.storage()
-    private var editingFields: [String: Bool] = [
+    @Published private var editingFields: [String: Bool] = [
         "country": false,
         "oidNumber": false,
         "email": false,
@@ -212,15 +212,22 @@ class NgoHomeViewModel: ObservableObject {
         }
     }
     
-    func isEditingField(_ key: String) -> Bool {
-        return editingFields[key] ?? false
+    func toggleEditing(for key: String, fieldText: String) {
+        DispatchQueue.main.async {
+            self.editingFields[key]?.toggle()
+            
+            // Eğer editing mode'dan çıkıyorsak, değeri güncelle
+            if !(self.editingFields[key] ?? false) {
+                self.updateField(key, value: fieldText)
+            }
+        }
+        
+        // Debug için
+        print("Toggle editing for \(key): \(self.editingFields[key] ?? false)")
     }
     
-    func toggleEditing(for key: String, fieldText: String) {
-        editingFields[key]?.toggle()
-        if !isEditingField(key) {
-            updateField(key, value: fieldText)
-        }
+    func isEditingField(_ key: String) -> Bool {
+        return editingFields[key] ?? false
     }
     
     func openPif() {
