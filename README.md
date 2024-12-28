@@ -43,7 +43,7 @@ Designed for travelers and NGOs to connect. Travelers can find and apply for fre
 ## Screenshots
 
 <p align="center">
-  <img src = "https://i.imgur.com/hlcVGWR.jpeg" width=900>
+  <img src = "https://i.imgur.com/PtUH80M.png" width=900>
 </p>
 
 - **And More !**
