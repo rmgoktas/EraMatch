@@ -399,10 +399,10 @@ struct NGODetailsView: View {
                         // Social Media Links
                         VStack(spacing: 15) {
                             if let instagram = ngo.instagram, !instagram.isEmpty {
-                                LinkButton(title: "Instagram", icon: "camera", url: "https://instagram.com/\(instagram)")
+                                LinkButton(title: "Instagram", icon: "camera", url: "\(instagram)")
                             }
                             if let facebook = ngo.facebook, !facebook.isEmpty {
-                                LinkButton(title: "Facebook", icon: "f.square", url: "https://facebook.com/\(facebook)")
+                                LinkButton(title: "Facebook", icon: "f.square", url: "\(facebook)")
                             }
                         }
                         .padding()
