@@ -37,6 +37,7 @@ struct UserEventsView: View {
                             .zIndex(Double(viewModel.events.count - index))
                             .animation(.spring(response: 0.3, dampingFraction: 0.8), value: dragOffset)
                             .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
+                            .allowsHitTesting(index == currentIndex)
                         }
                     }
                     .frame(width: geometry.size.width, height: geometry.size.height)
