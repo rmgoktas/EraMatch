@@ -1,7 +1,7 @@
 <h1 align="center"> EraMatch </h1> <br>
 <p align="center">
   <a href="">
-    <img alt="EraMatch" title="EraMatch" src="https://i.imgur.com/NPxheH0.png" width="350">
+    <img alt="EraMatch" title="EraMatch" src="https://i.imgur.com/NPxheH0.png" width="250">
   </a>
 </p>
 
