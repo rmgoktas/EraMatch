@@ -1,4 +1,4 @@
-<h1 align="center"> EraMatch </h1> <br>
+<h1 align="center"> EraMatch: Your Bridge to Free* Travel. </h1> <br>
 <p align="center">
   <a href="">
     <img alt="EraMatch" title="EraMatch" src="https://i.imgur.com/NPxheH0.png" width="250">
