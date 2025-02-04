@@ -10,7 +10,6 @@ import SwiftUI
 struct UserProfileView: View {
     @EnvironmentObject var loginViewModel: LoginViewModel
     @ObservedObject var homeViewModel: UserHomeViewModel
-    @State private var selectedTab: String = "Profile"
     
     @State private var isEditingBio = false
     @State private var isEditingCountry = false
@@ -19,30 +18,40 @@ struct UserProfileView: View {
     @State private var isEditingFacebook = false
 
     var body: some View {
-        VStack {
+        ZStack(alignment: .top) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    HStack {
+                    // Profile Header
+                    HStack(spacing: 20) {
                         Image(systemName: "person.circle.fill")
                             .resizable()
-                            .frame(width: 100, height: 100)
+                            .frame(width: 80, height: 80)
                             .clipShape(Circle())
+                            .foregroundColor(.gray)
+                        
+                        Text(homeViewModel.userName)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        
                         Spacer()
-                        VStack(alignment: .leading) {
-                            Text(homeViewModel.userName)
-                                .font(.title)
-                                .fontWeight(.bold)
-                    }
-                        .padding(.trailing)
                     }
                     .padding(.horizontal)
+                    .padding(.top, getSafeAreaTop())
 
-                    profileField(title: "Bio", text: $homeViewModel.bio, isEditing: $isEditingBio, field: "bio", isBio: true)
-                    profileField(title: "Country", text: $homeViewModel.country, isEditing: $isEditingCountry, field: "country")
-                    profileField(title: "E-Mail", text: $homeViewModel.email, isEditing: $isEditingEmail, field: "email")
-                    profileField(title: "Instagram Profile", text: $homeViewModel.instagram, isEditing: $isEditingInstagram, field: "instagram")
-                    profileField(title: "Facebook Profile", text: $homeViewModel.facebook, isEditing: $isEditingFacebook, field: "facebook")
+                    // Profile Fields
+                    VStack(spacing: 24) {
+                        profileField(title: "Bio", text: $homeViewModel.bio, isEditing: $isEditingBio, field: "bio", isBio: true)
+                        profileField(title: "Country", text: $homeViewModel.country, isEditing: $isEditingCountry, field: "country")
+                        profileField(title: "E-Mail", text: $homeViewModel.email, isEditing: $isEditingEmail, field: "email")
+                        profileField(title: "Instagram Profile", text: $homeViewModel.instagram, isEditing: $isEditingInstagram, field: "instagram")
+                        profileField(title: "Facebook Profile", text: $homeViewModel.facebook, isEditing: $isEditingFacebook, field: "facebook")
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .padding(.horizontal)
                     
+                    // Sign Out Button
                     Button(action: {
                         loginViewModel.logoutUser()
                     }) {
@@ -51,80 +60,75 @@ struct UserProfileView: View {
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.white)
-                            .cornerRadius(10)
+                            .background(Color(.systemBackground))
+                            .cornerRadius(12)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.red, lineWidth: 2)
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.red, lineWidth: 1)
                             )
                     }
-                    .padding(.top, 20)
+                    .padding(.horizontal)
+                    .padding(.top, 24)
                 }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(25)
-                .padding(.top, 20)
             }
-            .padding(.leading, 10)
-            .padding(.trailing, 10)
+            .background(Color(.systemGroupedBackground))
+            
+            // Blur overlay for top safe area
+            Rectangle()
+                .fill(Color(.systemGroupedBackground))
+                .frame(height: getSafeAreaTop())
+                .frame(maxWidth: .infinity)
+                .blur(radius: 20)
+                .overlay(
+                    Rectangle()
+                        .fill(Color(.systemGroupedBackground).opacity(0.8))
+                )
+                .ignoresSafeArea()
         }
         .onAppear {
             homeViewModel.loadUserData()
         }
-        .navigationBarBackButtonHidden(true)
     }
 
     private func profileField(title: String, text: Binding<String>, isEditing: Binding<Bool>, field: String, isBio: Bool = false) -> some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(title)
                     .font(.headline)
-                    .padding(.top, 8)
                 
                 Spacer()
                 
-                if isEditing.wrappedValue {
-                    Button(action: {
+                Button(action: {
+                    if isEditing.wrappedValue {
                         homeViewModel.updateUserField(field: field, value: text.wrappedValue)
-                        isEditing.wrappedValue = false
-                    }) {
-                        Text("Done")
-                            .font(.caption)
-                            .foregroundColor(.black)
                     }
-                } else {
-                    Button(action: {
-                        isEditing.wrappedValue = true
-                    }) {
-                        Text("Edit")
-                            .font(.caption)
-                            .foregroundColor(.black)
-                    }
+                    isEditing.wrappedValue.toggle()
+                }) {
+                    Text(isEditing.wrappedValue ? "Done" : "Edit")
+                        .font(.subheadline)
+                        .foregroundColor(.accentColor)
                 }
             }
             
             if isBio {
                 TextEditor(text: text)
-                    .frame(height: 150)
-                    .padding()
-                    .background(Color(.white))
+                    .frame(height: 100)
+                    .padding(8)
+                    .background(Color(.systemGray6))
                     .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
                     .disabled(!isEditing.wrappedValue)
             } else {
                 TextField(title, text: text)
-                    .padding()
-                    .background(Color(.white))
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
                     .disabled(!isEditing.wrappedValue)
             }
         }
+    }
+    
+    private func getSafeAreaTop() -> CGFloat {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first
+        else { return 47 }
+        return window.safeAreaInsets.top
     }
 }

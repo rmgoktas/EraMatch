@@ -8,72 +8,75 @@
 import SwiftUI
 
 struct NgoHomeView: View {
-    @State private var isMenuOpen = false
-    @State private var selectedTab: String = "My Events"
     @ObservedObject var homeViewModel: NgoHomeViewModel
     @EnvironmentObject var loginViewModel: LoginViewModel
     @State private var isCreateEventViewPresented = false
     @State private var isNotificationPresented = false
-
+    
     var body: some View {
-        ZStack {
-            BackgroundView()
-            VStack {
-                HStack {
-                    Text(selectedTab)
-                        .font(.title3)
-                        .bold()
-                        .foregroundColor(.white)
-
-                    Spacer()
-
-                    Button(action: {
-                        isNotificationPresented.toggle()
-                    }) {
-                        Image(systemName: "bell")
-                            .font(.title3)
-                            .foregroundColor(.white)
-                            .accessibilityLabel("Notifications")
-                    }
-                }
-                .padding(.top, 30)
-                .padding(.horizontal)
-                .background(Color.black.opacity(0))
-
-                ScrollView {
-                    VStack(spacing: 20) {
-                        switch selectedTab {
-                        case "My Events":
-                            NgoMyEventsView()
-                                .environmentObject(loginViewModel)
-                        case "Profile":
-                            NgoProfileView(homeViewModel: homeViewModel)
-                                .environmentObject(loginViewModel)
-                        default:
-                            Text("Unknown Tab")
+        TabView {
+            NavigationStack {
+                NgoMyEventsView()
+                    .environmentObject(loginViewModel)
+                    .navigationBarTitleDisplayMode(.large)
+                    .navigationTitle("My Events")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            HStack(spacing: 20) {
+                                Button(action: {
+                                    isNotificationPresented.toggle()
+                                }) {
+                                    Image(systemName: "bell")
+                                        .foregroundColor(.primary)
+                                }
+                            }
                         }
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical)
-                    .background(Color.clear)
-                }
-
-                NgoNavBarView(selectedTab: $selectedTab, isCreateEventViewPresented: $isCreateEventViewPresented)
-                    .padding(.horizontal)
-                    .padding(.top, 10)
+            }
+            .tabItem {
+                Label("My Events", systemImage: "calendar")
+            }
+            
+            NavigationStack {
+                NgoProfileView(homeViewModel: homeViewModel)
+                    .environmentObject(loginViewModel)
+                    .navigationBarTitleDisplayMode(.large)
+                    .navigationTitle("Profile")
+            }
+            .tabItem {
+                Label("Profile", systemImage: "person")
             }
         }
         .onAppear {
             homeViewModel.loadNgoData()
         }
-        .navigationBarHidden(true)
-        .navigationBarBackButtonHidden(true)
+        .overlay(alignment: .bottom) {
+            Button(action: {
+                isCreateEventViewPresented = true
+            }) {
+                Image(systemName: "plus")
+                    .font(.title2.bold())
+                    .foregroundColor(.white)
+                    .frame(width: 56, height: 56)
+                    .background(Color.black)
+                    .clipShape(Circle())
+                    .shadow(radius: 4)
+            }
+            .padding(.bottom, 64)
+        }
         .fullScreenCover(isPresented: $isCreateEventViewPresented) {
             CreateEventView(shouldDismiss: $isCreateEventViewPresented, creatorId: loginViewModel.userId ?? "")
         }
         .sheet(isPresented: $isNotificationPresented) {
             NotificationView(shouldDismiss: $isNotificationPresented)
         }
+    }
+}
+
+struct NgoHomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        NgoHomeView(homeViewModel: NgoHomeViewModel())
+            .environmentObject(LoginViewModel())
     }
 }
 

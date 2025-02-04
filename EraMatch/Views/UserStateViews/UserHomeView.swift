@@ -9,282 +9,193 @@ import SwiftUI
 
 struct UserHomeView: View {
     @StateObject private var homeViewModel = UserHomeViewModel()
-    @State private var isMenuOpen = false
     @EnvironmentObject var loginViewModel: LoginViewModel
-    @State private var selectedTab: String = "Home"
     @State private var isGuideSheetPresented = false
     @State private var isNotificationsSheetPresented = false
     @State private var guideContent: GuideContent = .whatIsEraMatch
-
+    @State private var selectedTab = 0
+    
     var body: some View {
-        ZStack {
-            BackgroundView()
+        NavigationStack {
+            TabView(selection: $selectedTab) {
+                ZStack(alignment: .top) {
+                    ScrollView {
+                        VStack(spacing: 24) {
+                            // Welcome Section
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Hi,")
+                                    .font(.title)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.secondary)
+                                Text(homeViewModel.userName)
+                                    .font(.largeTitle)
+                                    .fontWeight(.bold)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                            .padding(.top, getSafeAreaTop())
+                            
+                            // Quick Actions Section
+                            VStack(spacing: 20) {
+                                HStack {
+                                    Text("Quick Actions")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                    Spacer()
+                                }
+                                .padding(.horizontal)
 
-            VStack {
-                headerView
-                VStack(spacing: 20) {
-                    switch selectedTab {
-                    case "Home":
-                        homeTabView
-                    case "Profile":
-                        UserProfileView(homeViewModel: homeViewModel)
-                    case "Events":
-                        UserEventsView()
-                    case "Submissions":
-                        UserSubmissionsView()
-                    default:
-                        Text("Unknown Tab")
+                                Button(action: {
+                                    Task {
+                                        await EventCardViewModel.shared.fetchEventsForUser()
+                                        selectedTab = 1
+                                    }
+                                }) {
+                                    HStack(spacing: 16) {
+                                        Image(systemName: "airplane")
+                                            .font(.title2)
+                                            .foregroundColor(.white)
+                                            .frame(width: 40, height: 40)
+                                            .background(Color.blue)
+                                            .clipShape(Circle())
+                                        
+                                        VStack(alignment: .leading) {
+                                            Text("Search All Free Travels")
+                                                .font(.headline)
+                                                .foregroundColor(.primary)
+                                            Text("Find and filter travel events")
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        Spacer()
+                                        Image(systemName: "chevron.right")
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .padding()
+                                    .background(Color(.systemBackground))
+                                    .cornerRadius(16)
+                                    .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+                                }
+                                .padding(.horizontal)
+                            }
+                            
+                            // Topics Section
+                            VStack(alignment: .leading, spacing: 20) {
+                                Text("Search by Topics")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .padding(.horizontal)
+
+                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                                    ForEach(homeViewModel.topics, id: \.self) { topic in
+                                        Button(action: {
+                                            Task {
+                                                let userCountry = homeViewModel.country 
+                                                await EventCardViewModel.shared.fetchEventsByTopic(for: userCountry, topic: topic)
+                                                selectedTab = 1
+                                            }
+                                        }) {
+                                            Text(topic)
+                                                .font(.subheadline)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.primary)
+                                                .padding(.vertical, 12)
+                                                .frame(maxWidth: .infinity)
+                                                .background(Color(.systemBackground))
+                                                .cornerRadius(12)
+                                                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
+                    }
+                    .background(Color(.systemGroupedBackground))
+                    
+                    // Blur overlay for top safe area
+                    Rectangle()
+                        .fill(Color(.systemGroupedBackground))
+                        .frame(height: getSafeAreaTop())
+                        .frame(maxWidth: .infinity)
+                        .blur(radius: 20)
+                        .overlay(
+                            Rectangle()
+                                .fill(Color(.systemGroupedBackground).opacity(0.8))
+                        )
+                        .ignoresSafeArea()
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack(spacing: 20) {
+                            Menu {
+                                Button("What is EraMatch?") {
+                                    isGuideSheetPresented = true
+                                    guideContent = .whatIsEraMatch
+                                }
+                                Button("How Do I Participate?") {
+                                    isGuideSheetPresented = true
+                                    guideContent = .howDoIParticipate
+                                }
+                                Button("Do I Have to Pay?") {
+                                    isGuideSheetPresented = true
+                                    guideContent = .doIHaveToPay
+                                }
+                                Button("What Can I Do on EraMatch?") {
+                                    isGuideSheetPresented = true
+                                    guideContent = .whatCanIDo
+                                }
+                            } label: {
+                                Image(systemName: "questionmark.circle")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(.primary)
+                            }
+                            
+                            Button(action: {
+                                isNotificationsSheetPresented.toggle()
+                            }) {
+                                Image(systemName: "bell")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(.primary)
+                            }
+                        }
                     }
                 }
-                .padding(.horizontal)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                UserNavBarView(selectedTab: $selectedTab)
-                    .padding(.horizontal)
-                    .padding(.top)
+                .tag(0)
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
+                
+                UserEventsView()
+                    .tag(1)
+                    .tabItem {
+                        Label("Events", systemImage: "calendar")
+                    }
+                
+                UserProfileView(homeViewModel: homeViewModel)
+                    .tag(2)
+                    .tabItem {
+                        Label("Profile", systemImage: "person")
+                    }
             }
-
-            if isMenuOpen {
-                overlayMenu
-            }
+            .navigationBarBackButtonHidden(true)
         }
         .onAppear {
             homeViewModel.fetchUsername()
         }
-        .navigationBarBackButtonHidden(true)
+        .sheet(isPresented: $isGuideSheetPresented) {
+            GuideScreenView(content: guideContent)
+        }
         .sheet(isPresented: $isNotificationsSheetPresented) {
             NotificationView(shouldDismiss: $isNotificationsSheetPresented)
         }
     }
     
-    private var headerView: some View {
-        HStack(spacing: 16) {
-            // Tab Title - Left aligned
-            Text(selectedTab)
-                .font(.title2)
-                .bold()
-                .foregroundColor(.white)
-            
-            Spacer()
-            
-            // Right side buttons
-            HStack(spacing: 20) {
-                // Help Menu
-                Menu {
-                    Button("What is EraMatch?") {
-                        isGuideSheetPresented = true
-                        guideContent = .whatIsEraMatch
-                    }
-                    Button("How Do I Participate?") {
-                        isGuideSheetPresented = true
-                        guideContent = .howDoIParticipate
-                    }
-                    Button("Do I Have to Pay?") {
-                        isGuideSheetPresented = true
-                        guideContent = .doIHaveToPay
-                    }
-                    Button("What Can I Do on EraMatch?") {
-                        isGuideSheetPresented = true
-                        guideContent = .whatCanIDo
-                    }
-                } label: {
-                    Image(systemName: "questionmark.circle")
-                        .font(.system(size: 20))
-                        .foregroundColor(.white)
-                }
-                .sheet(isPresented: $isGuideSheetPresented) {
-                    GuideScreenView(content: guideContent)
-                }
-                
-                // Notifications Button
-                Button(action: {
-                    isNotificationsSheetPresented.toggle()
-                }) {
-                    Image(systemName: "bell")
-                        .font(.system(size: 20))
-                        .foregroundColor(.white)
-                }
-                .sheet(isPresented: $isNotificationsSheetPresented) {
-                    NotificationView(shouldDismiss: $isNotificationsSheetPresented)
-                }
-            }
-        }
-        .padding(.horizontal)
-        .padding(.top, getSafeAreaTop())
-        .padding(.bottom, 10)
-    }
-
     private func getSafeAreaTop() -> CGFloat {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            return window.safeAreaInsets.top
-        }
-        return 0
-    }
-
-    private var homeTabView: some View {
-        VStack {
-            Text("Hi, \(homeViewModel.userName)!")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .padding(.top, 40)
-
-            VStack {
-                VStack {
-                    HStack {
-                        Text("What to Do ?")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .padding(.top, 10)
-                        Spacer()
-                    }
-
-                    Button(action: {
-                        Task {
-                            await EventCardViewModel.shared.fetchEventsForUser()
-                        }
-                        selectedTab = "Events"
-                    }) {
-                        HStack {
-                            Image(systemName: "airplane")
-                                .font(.title2)
-                            VStack(alignment: .leading) {
-                                Text("Search All Free Travels")
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-                                Text("Find and filter travel events")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                            }
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                        }
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(15)
-                        .shadow(radius: 5)
-                    }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(25)
-
-                    VStack(alignment: .leading) {
-                        Text("   Search by Topics")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .padding(.top, 20)
-
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
-                            ForEach(homeViewModel.topics, id: \.self) { topic in
-                                Button(action: {
-                                    print("Selected topic: \(topic)")
-                                    Task {
-                                        let userCountry = homeViewModel.country 
-                                        await EventCardViewModel.shared.fetchEventsByTopic(for: userCountry, topic: topic) // load for topics and country
-                                        selectedTab = "Events"
-                                    }
-                                }) {
-                                    HStack {
-                                        Text(topic)
-                                            .padding(10)
-                                            .frame(maxWidth: .infinity)
-                                            .foregroundColor(.black)
-                                            .background(Color.white)
-                                            .cornerRadius(12)
-                                            .shadow(radius: 2)
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-                    .padding(.bottom, 30)
-                }
-                .padding()
-                .background(Color.white)
-                .cornerRadius(25)
-                .shadow(radius: 10)
-                .padding(.top, 60)
-            }
-        }
-    }
-    
-    private var overlayMenu: some View {
-        ZStack(alignment: .leading) {
-            Color.black.opacity(0.5)
-                .edgesIgnoringSafeArea(.all)
-                .onTapGesture {
-                    withAnimation {
-                        isMenuOpen = false
-                    }
-                }
-
-            sliderMenu
-                .frame(width: 300)
-                .offset(x: isMenuOpen ? 0 : -300)
-                .animation(.easeInOut, value: isMenuOpen)
-        }
-    }
-
-    private var sliderMenu: some View {
-        ZStack(alignment: .leading) {
-            BackgroundView()
-            
-            VStack(alignment: .leading) {
-                HStack {
-                    Text("EraMatch")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    Spacer()
-                    Button(action: {
-                        withAnimation {
-                            isMenuOpen = false
-                        }
-                    }) {
-                        Image(systemName: "arrow.backward")
-                            .font(.title)
-                            .foregroundColor(.black)
-                    }
-                }
-                .padding()
-                
-                List {
-                    NavigationLink(destination: GuideScreenView(content: .whatIsEraMatch)) {
-                        Text("What is EraMatch ?")
-                    }
-                    NavigationLink(destination: GuideScreenView(content: .howDoIParticipate)) {
-                        Text("How Do I Participate ?")
-                    }
-                    NavigationLink(destination: GuideScreenView(content: .doIHaveToPay)) {
-                        Text("Do I Have to Pay ?")
-                    }
-                    NavigationLink(destination: GuideScreenView(content: .whatCanIDo)) {
-                        Text("What Can I Do on EraMatch ?")
-                    }
-                }
-                
-                Spacer()
-                
-                Button(action: {
-                    loginViewModel.logoutUser()
-                    withAnimation {
-                        isMenuOpen = false
-                    }
-                }) {
-                    HStack {
-                        Text("Sign Out")
-                        Image(systemName: "arrow.right.circle")
-                    }
-                    .padding(.bottom, 50)
-                    .padding(.leading, 180)
-                }
-            }
-            .frame(width: 300)
-            .background(Color.white)
-            .offset(x: isMenuOpen ? 0 : -300, y: 50)
-            .edgesIgnoringSafeArea(.top)
-        }
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first
+        else { return 47 }
+        return window.safeAreaInsets.top
     }
 }
 

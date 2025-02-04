@@ -30,8 +30,6 @@
 		9928AD7E2C448760008F545A /* UserSignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9928AD7D2C448760008F545A /* UserSignUpViewModel.swift */; };
 		9937C5272CB9D03400EFEA38 /* UserEventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9937C5262CB9D03400EFEA38 /* UserEventsView.swift */; };
 		9937C5292CB9D04500EFEA38 /* UserSubmissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9937C5282CB9D04500EFEA38 /* UserSubmissionsView.swift */; };
-		9951E8D12CB1906D001F7B6E /* NgoNavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9951E8D02CB1906D001F7B6E /* NgoNavBarView.swift */; };
-		9951E8D32CB190BF001F7B6E /* UserNavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9951E8D22CB190BF001F7B6E /* UserNavBarView.swift */; };
 		9951E8D72CB86E6B001F7B6E /* NgoHomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9951E8D62CB86E6B001F7B6E /* NgoHomeViewModel.swift */; };
 		9951E8D92CB87256001F7B6E /* NgoSubmissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9951E8D82CB87256001F7B6E /* NgoSubmissionsView.swift */; };
 		9951E8DB2CB89B32001F7B6E /* NgoMyEventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9951E8DA2CB89B32001F7B6E /* NgoMyEventsView.swift */; };
@@ -422,8 +420,6 @@
 				9928ACBD2C358F30008F545A /* ContentView.swift in Sources */,
 				998BC4222D124AA300140E9D /* NotificationsView.swift in Sources */,
 				9928AD792C448725008F545A /* LoginViewModel.swift in Sources */,
-				9951E8D32CB190BF001F7B6E /* UserNavBarView.swift in Sources */,
-				9951E8D12CB1906D001F7B6E /* NgoNavBarView.swift in Sources */,
 				991F3A752C53F46C00E1CC1C /* EventCardView.swift in Sources */,
 				9937C5272CB9D03400EFEA38 /* UserEventsView.swift in Sources */,
 				9928ACBB2C358F30008F545A /* EraMatchApp.swift in Sources */,

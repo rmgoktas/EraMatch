@@ -23,110 +23,117 @@ struct NgoProfileView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // Logo ve NGO adı
-                HStack {
+                // Profile Header
+                HStack(spacing: 20) {
                     if let logoUrl = homeViewModel.logoUrl {
-                        Button(action: {
+                        AsyncImage(url: logoUrl) { image in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .frame(width: 80, height: 80)
+                        .clipShape(Circle())
+                        .onTapGesture {
                             showLogoUpdateSheet = true
-                        }) {
-                            AsyncImage(url: logoUrl) { image in
-                                image.resizable()
-                            } placeholder: {
-                                ProgressView()
-                            }
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
                         }
                     } else {
                         Image(systemName: "person.circle.fill")
                             .resizable()
-                            .frame(width: 100, height: 100)
+                            .frame(width: 80, height: 80)
+                            .clipShape(Circle())
+                            .foregroundColor(.gray)
                             .onTapGesture {
                                 showLogoUpdateSheet = true
                             }
                     }
                     
-                    Spacer()
-                    
                     Text(homeViewModel.ngoName)
-                        .font(.largeTitle)
+                        .font(.title2)
                         .bold()
+                    
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.top)
+                
+                // Profile Fields
+                VStack(spacing: 24) {
+                    profileFieldView(fieldName: "Country", fieldKey: "country", fieldText: $homeViewModel.country, homeViewModel: homeViewModel)
+                    profileFieldView(fieldName: "OID Number", fieldKey: "oidNumber", fieldText: $homeViewModel.oidNumber, homeViewModel: homeViewModel)
+                    profileFieldView(fieldName: "E-Mail", fieldKey: "email", fieldText: $homeViewModel.email, homeViewModel: homeViewModel)
+                    profileFieldView(fieldName: "Instagram Profile", fieldKey: "instagram", fieldText: $homeViewModel.instagram, homeViewModel: homeViewModel)
+                    profileFieldView(fieldName: "Facebook Profile", fieldKey: "facebook", fieldText: $homeViewModel.facebook, homeViewModel: homeViewModel)
                 }
                 .padding()
+                .background(Color(.systemBackground))
+                .cornerRadius(12)
+                .padding(.horizontal)
                 
-                // Profil alanları
-                profileFieldView(fieldName: "Country", fieldKey: "country", fieldText: $homeViewModel.country, homeViewModel: homeViewModel)
-                profileFieldView(fieldName: "OID Number", fieldKey: "oidNumber", fieldText: $homeViewModel.oidNumber, homeViewModel: homeViewModel)
-                profileFieldView(fieldName: "E-Mail", fieldKey: "email", fieldText: $homeViewModel.email, homeViewModel: homeViewModel)
-                profileFieldView(fieldName: "Instagram Profile", fieldKey: "instagram", fieldText: $homeViewModel.instagram, homeViewModel: homeViewModel)
-                profileFieldView(fieldName: "Facebook Profile", fieldKey: "facebook", fieldText: $homeViewModel.facebook, homeViewModel: homeViewModel)
-
-                
-                // PIF güncelleme butonu
-                Button(action: {
-                    isPDF = true
-                    showFilePicker = true
-                }) {
-                    Text("Update PIF")
-                        .font(.footnote)
-                        .foregroundColor(.black)
-                }
-                .padding(.top, 5)
-                .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.pdf]) { result in
-                    switch result {
-                    case .success(let url):
-                        homeViewModel.uploadPDF(url: url)
-                    case .failure(let error):
-                        print("Error selecting file: \(error.localizedDescription)")
-                    }
-                }
-                
-                if let pifUrl = homeViewModel.pifUrl {
+                // PIF Section
+                VStack(spacing: 16) {
                     Button(action: {
-                        homeViewModel.loadPDFData()
-                        showPDFView = true
+                        isPDF = true
+                        showFilePicker = true
                     }) {
-                        Text("View PIF")
+                        Text("Update PIF")
                             .font(.headline)
-                            .foregroundColor(.black)
-                            .padding()
+                            .foregroundColor(.primary)
                             .frame(maxWidth: .infinity)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
+                            .padding()
+                            .background(Color(.systemBackground))
+                            .cornerRadius(12)
                     }
-                    .padding(.horizontal)
+                    
+                    if let pifUrl = homeViewModel.pifUrl {
+                        Button(action: {
+                            homeViewModel.loadPDFData()
+                            showPDFView = true
+                        }) {
+                            Text("View PIF")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color(.systemBackground))
+                                .cornerRadius(12)
+                        }
+                    }
+                    
+                    if homeViewModel.isLoading {
+                        ProgressView("Uploading...")
+                    }
                 }
-                if homeViewModel.isLoading {
-                    ProgressView("Uploading...")
-                }
+                .padding(.horizontal)
                 
+                // Sign Out Button
                 Button(action: {
                     loginViewModel.logoutUser()
                 }) {
-                    Text("SIGN OUT")
-                        .font(.headline)
+                    Text("Sign Out")
                         .foregroundColor(.red)
-                        .padding()
+                        .font(.headline)
                         .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color(.systemBackground))
+                        .cornerRadius(12)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.red, lineWidth: 2)
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.red, lineWidth: 1)
                         )
                 }
                 .padding(.horizontal)
+                .padding(.top, 8)
             }
-            .padding(.all, 20)
-            .background(Color.white)
-            .cornerRadius(8)
-            .padding(.horizontal)
         }
+        .background(Color(.systemGroupedBackground))
         .sheet(isPresented: $showPDFView) {
             if let pdfData = homeViewModel.pdfData {
                 PDFViewer(pdfData: pdfData)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .fileImporter(isPresented: $showFilePicker, allowedContentTypes: isPDF ? [.pdf] : [.image], onCompletion: { result in
+        .fileImporter(isPresented: $showFilePicker, allowedContentTypes: isPDF ? [.pdf] : [.image]) { result in
             switch result {
             case .success(let url):
                 selectedFileURL = url
@@ -138,7 +145,7 @@ struct NgoProfileView: View {
             case .failure(let error):
                 print("File selection error: \(error.localizedDescription)")
             }
-        })
+        }
         .actionSheet(isPresented: $showLogoUpdateSheet) {
             ActionSheet(title: Text("Update Logo"), buttons: [
                 .default(Text("Choose Photo")) {
@@ -168,29 +175,28 @@ struct NgoProfileView: View {
 }
 
 func profileFieldView(fieldName: String, fieldKey: String, fieldText: Binding<String>, homeViewModel: NgoHomeViewModel) -> some View {
-    ZStack(alignment: .topTrailing) {
-        VStack(alignment: .leading) {
+    VStack(alignment: .leading, spacing: 8) {
+        HStack {
             Text(fieldName)
                 .font(.headline)
-            TextField(fieldName, text: fieldText)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
-                .disabled(!homeViewModel.isEditingField(fieldKey))
-                .onChange(of: homeViewModel.isEditingField(fieldKey)) { isEditing in
-                    print("\(fieldKey) editing state changed to: \(isEditing)")
+            
+            Spacer()
+            
+            Button(action: {
+                if homeViewModel.isEditingField(fieldKey) {
+                    homeViewModel.toggleEditing(for: fieldKey, fieldText: fieldText.wrappedValue)
+                } else {
+                    homeViewModel.toggleEditing(for: fieldKey, fieldText: "")
                 }
-        }
-        .padding(.horizontal)
-        
-        Button(action: {
-            withAnimation {
-                homeViewModel.toggleEditing(for: fieldKey, fieldText: fieldText.wrappedValue)
+            }) {
+                Text(homeViewModel.isEditingField(fieldKey) ? "Done" : "Edit")
+                    .font(.subheadline)
+                    .foregroundColor(.accentColor)
             }
-        }) {
-            Text(homeViewModel.isEditingField(fieldKey) ? "Done" : "Edit")
-                .foregroundColor(.black)
         }
-        .padding([.top, .trailing], 10)
+        
+        TextField(fieldName, text: fieldText)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .disabled(!homeViewModel.isEditingField(fieldKey))
     }
 }
